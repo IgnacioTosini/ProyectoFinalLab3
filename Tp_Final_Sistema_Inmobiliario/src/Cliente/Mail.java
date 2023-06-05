@@ -2,8 +2,10 @@ package Cliente;
 
 import Interfaces.IJson;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.event.WindowStateListener;
 import java.util.Objects;
 
 public class Mail implements IJson {
@@ -16,6 +18,7 @@ public class Mail implements IJson {
 
     /**
      * Función que sirve para validar que sea un mail los el String que se pasa por parametros.
+     *
      * @param mail Es el mail a evaluar.
      * @return Retorna verdadero en caso de que sea un mail y false en caso de que no.
      */
@@ -45,32 +48,31 @@ public class Mail implements IJson {
         boolean validacion = false;
 
         if (mail != null) {
-            if (mail instanceof Mail) {
-                if (Objects.equals(this.mail, ((Mail) mail).getMail())) {
+            if(mail instanceof String) {
+                if (this.mail.equalsIgnoreCase((String) mail)) {
                     validacion = true;
                 }
             }
         }
+
+
+
         return validacion;
     }
 
     @Override
-    public JSONObject toJsonObj() {
-        return null;
+    public JSONObject toJsonObj() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+
+            jsonObject.put("mail", mail);
+
+        return jsonObject;
     }
 
     @Override
-    public JSONArray toJsonArray() {
-        return null;
-    }
+    public void fromJsonObj(JSONObject obj) throws JSONException {
 
-    @Override
-    public void fromJsonObj(JSONObject obj) {
-
-    }
-
-    @Override
-    public void fromJsonArray(JSONArray array) {
+            mail = obj.getString("mail");
 
     }
 }

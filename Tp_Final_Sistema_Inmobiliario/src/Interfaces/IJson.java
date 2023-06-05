@@ -2,16 +2,14 @@ package Interfaces;
 
 import netscape.javascript.JSObject;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public interface IJson {
 
-    JSONObject toJsonObj();
+    JSONObject toJsonObj() throws JSONException;
 
-    JSONArray toJsonArray();
+    void fromJsonObj(JSONObject obj) throws JSONException;
 
-    void fromJsonObj(JSONObject obj);
-
-    void fromJsonArray(JSONArray array);
 
 }

@@ -5,6 +5,7 @@ import Excepciones.CantNumException;
 import Excepciones.TotalDigitosException;
 import Interfaces.IJson;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
@@ -69,22 +70,22 @@ public class Contraseña implements IJson {
     }
 
     @Override
-    public JSONObject toJsonObj() {
-        return null;
+    public JSONObject toJsonObj() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+
+            jsonObject.put("contraseña", contraseña);
+
+
+        return jsonObject;
     }
 
-    @Override
-    public JSONArray toJsonArray() {
-        return null;
-    }
 
     @Override
-    public void fromJsonObj(JSONObject obj) {
+    public void fromJsonObj(JSONObject obj) throws JSONException {
 
-    }
 
-    @Override
-    public void fromJsonArray(JSONArray array) {
+            contraseña = obj.getString("contraseña");
+
 
     }
 }

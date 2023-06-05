@@ -2,6 +2,7 @@ package Cliente;
 
 import Interfaces.IJson;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -12,11 +13,11 @@ public class Usuario implements IJson {
     private String nombreYApellido;
     private Contraseña contraseña;
     private String dni;
-    private String mail;
+    private Mail mail;
     private int edad;
     private ArrayList<String> historial;
 
-    public Usuario(String nombreYApellido, Contraseña contraseña, String dni, String mail, int edad) {
+    public Usuario(String nombreYApellido, Contraseña contraseña, String dni, Mail mail, int edad) {
         this.nombreYApellido = nombreYApellido;
         this.contraseña = contraseña;
         this.dni = dni;
@@ -41,9 +42,9 @@ public class Usuario implements IJson {
         return validacion;
     }
 
-    public boolean encontrarPorMail(String mail) {
+    public boolean encontrarPorMail(Mail mail) {
         boolean validacion = false;
-        if (this.mail.equalsIgnoreCase(mail)) {
+        if (this.mail.equals(mail)) {
             validacion = true;
         }
         return validacion;
@@ -75,22 +76,42 @@ public class Usuario implements IJson {
     }
 
     @Override
-    public JSONObject toJsonObj() {
+    public JSONObject toJsonObj() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+
+            jsonObject.put("nombreYApellido", nombreYApellido);
+            jsonObject.put("contraseña", contraseña.toJsonObj());
+            jsonObject.put("dni", dni);
+            jsonObject.put("mail", mail.toJsonObj());
+            jsonObject.put("edad", edad);
+
+            JSONArray array = new JSONArray();
+            for(int i = 0; i<= historial.size(); i++){
+                array.put(historial.get(i));
+            }
+
+            jsonObject.put("historial", array);
+
+
         return null;
     }
 
-    @Override
-    public JSONArray toJsonArray() {
-        return null;
-    }
 
     @Override
-    public void fromJsonObj(JSONObject obj) {
+    public void fromJsonObj(JSONObject obj) throws JSONException {
 
-    }
 
-    @Override
-    public void fromJsonArray(JSONArray array) {
+            nombreYApellido = obj.getString("nombreYApellido");
+            contraseña.fromJsonObj(obj.getJSONObject("contraseña"));
+            dni = obj.getString("dni");
+            mail.fromJsonObj(obj.getJSONObject("mail"));
+            edad = obj.getInt("edad");
+            JSONArray array = obj.getJSONArray("historial");
+
+            for(int i = 0; i< array.length(); i++){
+                historial.add(array.getString(i));
+            }
+
 
     }
 }
