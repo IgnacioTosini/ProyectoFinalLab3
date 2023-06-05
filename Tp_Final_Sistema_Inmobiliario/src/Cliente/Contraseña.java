@@ -18,6 +18,10 @@ public class Contraseña implements IJson {
         this.contraseña = contraseña;
     }
 
+    public Contraseña(){
+        contraseña = "";
+    }
+
     /**
      * Sistema de control de requisitos minimos para crear contrasñas (1 mayuscula, 1 numero y 8 carcateres).
      *
@@ -60,8 +64,8 @@ public class Contraseña implements IJson {
         boolean validacion = false;
 
         if (contra != null) {
-            if (contra instanceof Contraseña) {
-                if (Objects.equals(this.contraseña, ((Contraseña) contra).getContraseña())) {
+            if (contra instanceof String) {
+                if (Objects.equals(this.contraseña, (String) contra )) {
                     validacion = true;
                 }
             }

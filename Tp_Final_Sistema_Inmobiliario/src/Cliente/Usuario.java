@@ -23,8 +23,17 @@ public class Usuario implements IJson {
         this.dni = dni;
         this.mail = mail;
         this.edad = edad;
+        historial = new ArrayList<>();
     }
 
+    public Usuario() {
+        this.nombreYApellido = "";
+        this.contraseña = new Contraseña();
+        this.dni = "";
+        this.mail = new Mail();
+        this.edad = 0;
+        this.historial = new ArrayList<>();
+    }
 
     public boolean encontrarPorNombre(String nombre) {
         boolean validacion = false;
@@ -114,4 +123,25 @@ public class Usuario implements IJson {
 
 
     }
+
+    public String getNombreYApellido() {
+        return nombreYApellido;
+    }
+
+    public Contraseña getContraseña() {
+        return contraseña;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public Mail getMail() {
+        return mail;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
 }

@@ -16,6 +16,10 @@ public class Mail implements IJson {
         this.mail = mail;
     }
 
+    public Mail(){
+        mail = "";
+    }
+
     /**
      * Función que sirve para validar que sea un mail los el String que se pasa por parametros.
      *

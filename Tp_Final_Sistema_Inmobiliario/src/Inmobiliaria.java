@@ -32,18 +32,19 @@ public class Inmobiliaria implements IJson {
         return null;
     }
 
-    @Override
-    public JSONArray toJsonArray() {
-        return null;
-    }
 
     @Override
     public void fromJsonObj(JSONObject obj) {
 
     }
 
-    @Override
-    public void fromJsonArray(JSONArray array) {
+    public Usuario buscarUsuario(String nombre){
 
+        return usuarios.get(nombre);
     }
+
+    public void agregarUsuario(Usuario usuario){
+        usuarios.put(usuario.getNombreYApellido(), usuario);
+    }
+
 }
