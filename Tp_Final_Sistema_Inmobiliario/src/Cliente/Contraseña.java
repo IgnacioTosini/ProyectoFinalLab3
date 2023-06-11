@@ -35,7 +35,7 @@ public class Contraseña implements IJson {
         int cantMayus = 0;
 
         if (contraseña.length() < 8) {
-            throw new TotalDigitosException("Ingreso menos de 8 digitos a su contraseña", contraseña.length());
+            throw new TotalDigitosException("Ingreso menos de 8 digitos a su contraseña, ingreso: ", contraseña.length());
         }
 
         for (int i = 0; i < contraseña.length(); i++) {
