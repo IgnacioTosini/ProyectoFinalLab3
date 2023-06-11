@@ -2,7 +2,9 @@ package Excepciones;
 
 public class TotalDigitosException extends Exception{
 
-    public TotalDigitosException(String message) {
+    private int cantDigitos;
+    public TotalDigitosException(String message, int cantDigitos) {
         super(message);
+        this.cantDigitos = cantDigitos;
     }
 }

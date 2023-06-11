@@ -4,8 +4,8 @@ public class Casa extends Vivienda {
     private boolean patio;
     private short pisos;
 
-    public Casa(Estado estado, String direccion, boolean vendido, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, int precio, boolean patio, short pisos) {
-        super(estado, direccion, vendido , ambientes, cantBanios, metrosCuadrados, amueblado, cochera, precio);
+    public Casa(Estado estado, String direccion, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, int precio, boolean patio, short pisos) {
+        super(estado, direccion , ambientes, cantBanios, metrosCuadrados, amueblado, cochera, precio);
         this.patio = patio;
         this.pisos = pisos;
     }

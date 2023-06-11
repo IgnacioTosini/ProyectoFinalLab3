@@ -9,12 +9,14 @@ public class Impreso<T> {
     }
 
 
-    public void agregar(T elemento){
+    public void agregar(T elemento) {
         fila.addLast(elemento);
     }
 
-    public T imprimir(){
-        return fila.getFirst();
+    public T imprimir() {
+        T aux = fila.getFirst();
+        fila.removeFirst();
+        return aux;
     }
 }
 

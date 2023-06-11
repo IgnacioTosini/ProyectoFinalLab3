@@ -1,6 +1,11 @@
 package Lugares;
 
-public class Cochera {
+import Interfaces.IComprobarFecha;
+
+import java.util.ArrayList;
+
+public class Cochera implements IComprobarFecha {
+    private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
     private short piso;
@@ -10,6 +15,7 @@ public class Cochera {
     private boolean ascensor;
 
     public Cochera(String direccion, Estado estado, short piso, short posicion, boolean vendido, String medioDeAcceso, boolean ascensor) {
+        disponibilidad = new ArrayList<>();
         this.direccion = direccion;
         this.estado = estado;
         this.piso = piso;
@@ -20,6 +26,7 @@ public class Cochera {
     }
 
     public Cochera() {
+        disponibilidad  = new ArrayList<>();
         direccion = "";
         estado = null;
         piso = 0;
@@ -57,5 +64,20 @@ public class Cochera {
 
     public boolean isAscensor() {
         return ascensor;
+    }
+
+
+    @Override
+    public boolean validarFecha(Fecha fecha) {
+        Fecha aux = new Fecha();
+        boolean validacion = false;
+        for(int i = 0; i<disponibilidad.size(); i++){
+            aux = disponibilidad.get(i);
+            if(aux.comprobarFecha(fecha)){
+                validacion = true;
+            }
+        }
+
+        return validacion;
     }
 }

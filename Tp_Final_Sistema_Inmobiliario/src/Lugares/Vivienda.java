@@ -1,5 +1,10 @@
 package Lugares;
 
+import Interfaces.IComprobarFecha;
+import Interfaces.IJson;
+
+import java.util.ArrayList;
+
 /**
  * @author
  * @since
@@ -7,11 +12,11 @@ package Lugares;
  *
  */
 
-public abstract class Vivienda {
-    //private ArrayList<Fecha> disponibilidad;
+public abstract class Vivienda implements IComprobarFecha {
+    private ArrayList<Fecha> disponibilidad;
     private Estado estado;
     private String direccion;
-    private boolean vendido;
+    //La disponibilidad se hara en un metodo donde va a evaluar la fecha del alquiler
     private short ambientes;
     private short cantBanios;
     private int metrosCuadrados;
@@ -19,10 +24,10 @@ public abstract class Vivienda {
     private boolean cochera;
     private int precio;
 
-    public Vivienda(Estado estado, String direccion, boolean vendido , short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, int precio) {
+    public Vivienda(Estado estado, String direccion, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, int precio) {
         this.estado = estado;
         this.direccion = direccion;
-        this.vendido = vendido;
+        disponibilidad = new ArrayList<>();
         this.ambientes = ambientes;
         this.cantBanios = cantBanios;
         this.metrosCuadrados = metrosCuadrados;
@@ -34,7 +39,7 @@ public abstract class Vivienda {
     public Vivienda() {
         estado = null;
         direccion = "";
-        vendido = false;
+        disponibilidad = new ArrayList<>();
         ambientes = 0;
         cantBanios = 0;
         metrosCuadrados = 0;
@@ -64,10 +69,6 @@ public abstract class Vivienda {
         return direccion;
     }
 
-    public boolean isVendido() {
-        return vendido;
-    }
-
     public short getAmbientes() {
         return ambientes;
     }
@@ -90,6 +91,20 @@ public abstract class Vivienda {
 
     public int getPrecio() {
         return precio;
+    }
+
+    @Override
+    public boolean validarFecha(Fecha fecha) {
+        Fecha aux = new Fecha();
+        boolean validacion = false;
+        for(int i = 0; i<disponibilidad.size(); i++){
+            aux = disponibilidad.get(i);
+            if(aux.comprobarFecha(fecha)){
+                validacion = true;
+            }
+        }
+
+        return validacion;
     }
 
 

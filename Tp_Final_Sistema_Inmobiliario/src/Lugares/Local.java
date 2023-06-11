@@ -1,6 +1,11 @@
 package Lugares;
 
-public class Local {
+import Interfaces.IComprobarFecha;
+
+import java.util.ArrayList;
+
+public class Local implements IComprobarFecha {
+    private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
     private short ambientes;
@@ -9,6 +14,7 @@ public class Local {
     private int precio;
 
     public Local(String direccion, Estado estado, short ambientes, boolean vidriera, boolean vendido, int precio) {
+        disponibilidad = new ArrayList<>();
         this.direccion = direccion;
         this.estado = estado;
         this.ambientes = ambientes;
@@ -18,6 +24,7 @@ public class Local {
     }
 
     public Local() {
+        disponibilidad = new ArrayList<>();
         direccion = "";
         estado = null;
         ambientes = 0;
@@ -50,5 +57,19 @@ public class Local {
 
     public int getPrecio() {
         return precio;
+    }
+
+    @Override
+    public boolean validarFecha(Fecha fecha) {
+        Fecha aux = new Fecha();
+        boolean validacion = false;
+        for(int i = 0; i<disponibilidad.size(); i++){
+            aux = disponibilidad.get(i);
+            if(aux.comprobarFecha(fecha)){
+                validacion = true;
+            }
+        }
+
+        return validacion;
     }
 }
