@@ -1,13 +1,15 @@
 import Cliente.Usuario;
+import Controladores.ControladoraInmobiliaria;
+import Excepciones.EleccionIncorrectaException;
+import Excepciones.LugarExistenteException;
+import Excepciones.NoDisponibleException;
 import Interfaces.IJson;
 import Lugares.*;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.spi.CalendarDataProvider;
 
 public class Inmobiliaria implements IJson {
     private TreeSet<Vivienda> viviendas; //(Ord por precio)
@@ -120,38 +122,79 @@ public class Inmobiliaria implements IJson {
     }
 
 
-    public void alquilar(Usuario usuario, String direccion, String tipo, Fecha fecha) {  //Tipo es el tipo de inmueble al alquilar.
-
+    public void alquilar(Usuario usuario, String direccion, String tipo, Fecha fecha) throws NoDisponibleException, LugarExistenteException, EleccionIncorrectaException {  //Tipo es el tipo de inmueble al alquilar.
+        double precioFinal = 0;
         switch (tipo.toLowerCase()) {
             case "casa":
                 Casa casa = buscarCasa(direccion); //Excepcion en todos por si no se encuentra, si casa es null.
-                if(casa.validarFecha(fecha)){
-
+                if (casa != null) {
+                    if (casa.validarFecha(fecha)) {
+                        int eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        precioFinal = casa.metodoDePago(eleccion);
+                        usuario.agregarHistorial(casa.getDireccion() + " " + fecha.toString());
+                        casa.agregarDisponibilidad(fecha);
+                    } else {
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                    }
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
                 }
                 break;
             case "departamento":
                 Departamento departamento = buscarDepartamento(direccion);
-                if(departamento.validarFecha(fecha)){  // hacer exception de fecha no encontrada
-                    // agregar datos en el historial del usuario.
-                    // agregar fecha nueva en el inmueble
-                    // poner en lista de imprecion de factura
+
+                if (departamento != null) {
+                    if (departamento.validarFecha(fecha)) {
+                        int eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        precioFinal = departamento.metodoDePago(eleccion);
+                        usuario.agregarHistorial(departamento.getDireccion() + " " + fecha.toString());
+                        departamento.agregarDisponibilidad(fecha);
+
+
+                        // agregar datos en el historial del usuario.
+                        // agregar fecha nueva en el inmueble
+                        // poner en lista de imprecion de factura
+                    } else {
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                    }
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
                 }
+
                 break;
             case "local":
                 Local local = buscarLocal(direccion);
-                if(local.validarFecha(fecha)){
-
+                if (local != null) {
+                    if (local.validarFecha(fecha)) {
+                        int eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        precioFinal = local.metodoDePago(eleccion);
+                        usuario.agregarHistorial(local.getDireccion() + " " + fecha.toString());
+                        local.agregarDisponibilidad(fecha);
+                    } else {
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                    }
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
                 }
                 break;
             case "cochera":
                 Cochera cochera = buscarCochera(direccion);
-                if(cochera.validarFecha(fecha)){
-
+                if (cochera != null) {
+                    if (cochera.validarFecha(fecha)) {
+                        int eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        precioFinal = cochera.metodoDePago(eleccion);
+                        usuario.agregarHistorial(cochera.getDireccion() + " " + fecha.toString());
+                        cochera.agregarDisponibilidad(fecha);
+                    } else {
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                    }
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
                 }
                 break;
             default:
+                    throw new EleccionIncorrectaException("Elección Invalida");
 
-                break;
         }
 
 
@@ -164,7 +207,7 @@ public class Inmobiliaria implements IJson {
             Iterator it = viviendas.iterator();
             while (it.hasNext() && flag == false) {
                 if (it instanceof Casa) {
-                    if (((Casa) it).getDireccion().equals(direccion)) {
+                    if (((Casa) it).getDireccion().equals(direccion) && ((Casa) it).getEstado().name().equalsIgnoreCase("baja")) {
                         casa = (Casa) it;
                         flag = true;
                     }
@@ -183,7 +226,7 @@ public class Inmobiliaria implements IJson {
             Iterator it = viviendas.iterator();
             while (it.hasNext() && flag == false) {
                 if (it instanceof Departamento) {
-                    if (((Departamento) it).getDireccion().equals(direccion)) {
+                    if (((Departamento) it).getDireccion().equals(direccion)&& ((Departamento) it).getEstado().name().equalsIgnoreCase("baja")) {
                         departamento = (Departamento) it;
                         flag = true;
                     }
@@ -202,7 +245,7 @@ public class Inmobiliaria implements IJson {
             Iterator it = locales.iterator();
             while (it.hasNext() && flag == false) {
                 if (it instanceof Local) {
-                    if (((Local) it).getDireccion().equals(direccion)) {
+                    if (((Local) it).getDireccion().equals(direccion) && ((Local) it).getEstado().name().equalsIgnoreCase("baja")) {
                         local = (Local) it;
                         flag = true;
                     }
@@ -221,7 +264,7 @@ public class Inmobiliaria implements IJson {
             Iterator it = cocheras.iterator();
             while (it.hasNext() && flag == false) {
                 if (it instanceof Cochera) {
-                    if (((Cochera) it).getDireccion().equals(direccion)) {
+                    if (((Cochera) it).getDireccion().equals(direccion) && ((Cochera) it).getEstado().name().equalsIgnoreCase("baja")) {
                         cochera = (Cochera) it;
                         flag = true;
                     }

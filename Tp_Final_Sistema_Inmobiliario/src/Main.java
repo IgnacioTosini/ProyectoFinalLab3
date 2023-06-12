@@ -1,11 +1,12 @@
-import Cliente.Mail;
-import Cliente.TiposMail;
-import Cliente.Usuario;
+import Controladores.ControladoraUsuario;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("holacomoesta"+ TiposMail.Yahoo.getTipomail());
+        Inmobiliaria inmobiliaria = new Inmobiliaria("Los de la UTN", "El puerto", "223641889", "utnmardel@gmail.com");
+        ControladoraUsuario controladoraUsuario = new ControladoraUsuario();
+
+        controladoraUsuario.menu(inmobiliaria);
 
 
     }

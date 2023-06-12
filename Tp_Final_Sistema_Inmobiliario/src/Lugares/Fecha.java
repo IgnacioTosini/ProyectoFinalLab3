@@ -1,8 +1,13 @@
 package Lugares;
 
-import java.util.Calendar;
+import Interfaces.IJson;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Fecha {
+import java.util.Calendar;
+import java.util.Date;
+
+public class Fecha implements IJson {
 
     private Calendar fechaEntrada;
     private Calendar fechaSalida;
@@ -34,6 +39,49 @@ public class Fecha {
     }
 
 
+    @Override
+    public String toString() {
+        return "Fecha{" +
+                "fechaEntrada=" + fechaEntrada +
+                ", fechaSalida=" + fechaSalida +
+                '}';
+    }
 
+    @Override
+    public JSONObject toJsonObj() throws JSONException {
+        Date dateEntrada = fechaEntrada.getTime();
+        int diaEntrada = dateEntrada.getDay();
+        int mesEntrada = dateEntrada.getMonth();
+        int añoEntrada = dateEntrada.getYear();
 
+        Date dateSalida = fechaSalida.getTime();
+        int diaSalida = dateSalida.getDay();
+        int mesSalida = dateSalida.getMonth();
+        int añoSalida = dateSalida.getYear();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("diaEntrada", diaEntrada );
+        jsonObject.put("mesEntrada", mesEntrada);
+        jsonObject.put("añoEntrada", añoEntrada);
+
+        jsonObject.put("diaSalida", diaSalida);
+        jsonObject.put("mesSalida", mesSalida);
+        jsonObject.put("añoSalida", añoSalida);
+        return jsonObject;
+    }
+
+    @Override
+    public void fromJsonObj(JSONObject obj) throws JSONException {
+        int diaEntrada = obj.getInt("diaEntrada");
+        int mesEntrada = obj.getInt("mesEntrada");
+        int añoEntrada = obj.getInt("añoEntrada");
+
+        fechaEntrada.set(añoEntrada,mesEntrada,diaEntrada);
+
+        int diaSalida = obj.getInt("diaSalida");
+        int mesSalida = obj.getInt("mesSalida");
+        int añoSalida = obj.getInt("añoSalida");
+
+        fechaSalida.set(añoSalida,mesSalida,diaSalida);
+    }
 }

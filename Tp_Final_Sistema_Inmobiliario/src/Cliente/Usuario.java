@@ -5,10 +5,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Usuario implements IJson {
+public class Usuario implements IJson, Serializable, Comparable {
 
     private String nombreYApellido;
     private Contraseña contraseña;
@@ -78,7 +79,7 @@ public class Usuario implements IJson {
                 "nombreYApellido='" + nombreYApellido + '\'' +
                 ", contraseña=" + contraseña +
                 ", dni='" + dni + '\'' +
-                ", mail='" + mail + '\'' +
+                ", mail=" + mail +
                 ", edad=" + edad +
                 ", historial=" + historial +
                 '}';
@@ -144,4 +145,19 @@ public class Usuario implements IJson {
         return edad;
     }
 
+    public void agregarHistorial(String dato){
+        historial.add(dato);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+
+        if(o != null){
+            if(o instanceof Usuario){
+                valor = dni.compareTo(((Usuario) o).getDni());
+            }
+        }
+        return valor;
+    }
 }
