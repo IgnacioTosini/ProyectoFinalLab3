@@ -1,10 +1,13 @@
 package Lugares;
 
 import Interfaces.IComprobarFecha;
+import Interfaces.IJson;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Local implements IComprobarFecha {
+public class Local implements IComprobarFecha, IJson, Comparable {
     private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
@@ -59,6 +62,52 @@ public class Local implements IComprobarFecha {
         return precio;
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean validacion = false;
+        if(obj != null){
+            if(obj instanceof Local){
+                if(direccion.equals(((Local) obj).getDireccion())){
+                    validacion = true;
+                }
+            }
+        }
+
+
+        return validacion;
+    }
+
+    @Override
+    public int hashCode(){
+        return 1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+        if(o != null){
+            if(o instanceof Local){
+                valor = direccion.compareTo(((Local) o).getDireccion());
+            }
+        }
+        return valor;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Local{" +
+                "disponibilidad=" + disponibilidad +
+                ", direccion='" + direccion + '\'' +
+                ", estado=" + estado +
+                ", ambientes=" + ambientes +
+                ", vidriera=" + vidriera +
+                ", vendido=" + vendido +
+                ", precio=" + precio +
+                '}';
+    }
+
     @Override
     public boolean validarFecha(Fecha fecha) {
         Fecha aux = new Fecha();
@@ -71,5 +120,15 @@ public class Local implements IComprobarFecha {
         }
 
         return validacion;
+    }
+
+    @Override
+    public JSONObject toJsonObj() throws JSONException {
+        return null;
+    }
+
+    @Override
+    public void fromJsonObj(JSONObject obj) throws JSONException {
+
     }
 }

@@ -1,6 +1,10 @@
 package Lugares;
 
-public class Departamento extends Vivienda{
+import Interfaces.IJson;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Departamento extends Vivienda implements IJson, Comparable {
     private String nroPiso;
     private String disposicion;
 
@@ -17,11 +21,42 @@ public class Departamento extends Vivienda{
     }
 
     @Override
+    public boolean equals(Object obj) {
+        boolean validacion = false;
+        if(obj != null){
+            if(obj instanceof Departamento){
+                if(getDireccion().equals(((Departamento) obj).getDireccion())){
+                    validacion = true;
+                }
+            }
+        }
+
+
+        return validacion;
+    }
+
+    @Override
+    public int hashCode(){
+        return 1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+        if(o != null){
+            if(o instanceof Departamento){
+                valor = getDireccion().compareTo(((Departamento) o).getDireccion());
+            }
+        }
+        return valor;
+    }
+
+    @Override
     public String toString() {
-        return super.toString() +
-                "Tipo de Vivienda: Departamento" +
-                "Numero de piso: '" + nroPiso + '\'' +
-                ", Disposicion: '" + disposicion + '\'';
+        return "Departamento{" +
+                "nroPiso='" + nroPiso + '\'' +
+                ", disposicion='" + disposicion + '\'' +
+                "} " + super.toString();
     }
 
     public String getNroPiso() {
@@ -30,5 +65,15 @@ public class Departamento extends Vivienda{
 
     public String getDisposicion() {
         return disposicion;
+    }
+
+    @Override
+    public JSONObject toJsonObj() throws JSONException {
+        return null;
+    }
+
+    @Override
+    public void fromJsonObj(JSONObject obj) throws JSONException {
+
     }
 }

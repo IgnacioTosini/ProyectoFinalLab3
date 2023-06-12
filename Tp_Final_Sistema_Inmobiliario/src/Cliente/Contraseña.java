@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class Contraseña implements IJson {
+public class Contraseña implements IJson, Comparable {
 
     private String contraseña;
 
@@ -74,6 +74,22 @@ public class Contraseña implements IJson {
     }
 
     @Override
+    public int hashCode(){
+        return 1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+        if(o != null){
+            if(o instanceof Contraseña){
+                valor = contraseña.compareTo(((Contraseña) o).getContraseña());
+            }
+        }
+        return valor;
+    }
+
+    @Override
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
@@ -92,4 +108,8 @@ public class Contraseña implements IJson {
 
 
     }
+
+
+
+
 }

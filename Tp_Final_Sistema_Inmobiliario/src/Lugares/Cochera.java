@@ -1,10 +1,13 @@
 package Lugares;
 
 import Interfaces.IComprobarFecha;
+import Interfaces.IJson;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Cochera implements IComprobarFecha {
+public class Cochera implements IComprobarFecha, IJson, Comparable {
     private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
@@ -37,6 +40,50 @@ public class Cochera implements IComprobarFecha {
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+        boolean validacion = false;
+        if(obj != null){
+            if(obj instanceof Cochera){
+                if(direccion.equals(((Cochera) obj).getDireccion())){
+                    validacion = true;
+                }
+            }
+        }
+
+
+        return validacion;
+    }
+
+    @Override
+    public int hashCode(){
+        return 1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+        if(o != null){
+            if(o instanceof Cochera){
+                valor = direccion.compareTo(((Cochera) o).getDireccion());
+            }
+        }
+        return valor;
+    }
+
+    @Override
+    public String toString() {
+        return "Cochera{" +
+                "disponibilidad=" + disponibilidad +
+                ", direccion='" + direccion + '\'' +
+                ", estado=" + estado +
+                ", piso=" + piso +
+                ", posicion=" + posicion +
+                ", vendido=" + vendido +
+                ", medioDeAcceso='" + medioDeAcceso + '\'' +
+                ", ascensor=" + ascensor +
+                '}';
+    }
 
     public String getDireccion() {
         return direccion;
@@ -79,5 +126,15 @@ public class Cochera implements IComprobarFecha {
         }
 
         return validacion;
+    }
+
+    @Override
+    public JSONObject toJsonObj() throws JSONException {
+        return null;
+    }
+
+    @Override
+    public void fromJsonObj(JSONObject obj) throws JSONException {
+
     }
 }

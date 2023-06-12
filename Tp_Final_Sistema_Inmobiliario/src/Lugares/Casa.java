@@ -1,6 +1,13 @@
 package Lugares;
 
-public class Casa extends Vivienda {
+import Cliente.Contraseña;
+import Interfaces.IJson;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Objects;
+
+public class Casa extends Vivienda implements IJson, Comparable {
     private boolean patio;
     private short pisos;
 
@@ -18,10 +25,41 @@ public class Casa extends Vivienda {
 
     @Override
     public String toString() {
-        return super.toString() +
-                "Tipo Vivienda: Casa" +
-                "Patio: " + patio +
-                ", Pisos: " + pisos;
+        return "Casa{" +
+                "patio=" + patio +
+                ", pisos=" + pisos +
+                "} " + super.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean validacion = false;
+        if(obj != null){
+            if(obj instanceof Casa){
+                if(getDireccion().equals(((Casa) obj).getDireccion())){
+                    validacion = true;
+                }
+            }
+        }
+
+
+        return validacion;
+    }
+
+    @Override
+    public int hashCode(){
+        return 1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+        if(o != null){
+            if(o instanceof Casa){
+                valor = getDireccion().compareTo(((Casa) o).getDireccion());
+            }
+        }
+        return valor;
     }
 
     public boolean isPatio() {
@@ -30,5 +68,18 @@ public class Casa extends Vivienda {
 
     public short getPisos() {
         return pisos;
+    }
+
+    @Override
+    public JSONObject toJsonObj() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+
+
+        return null;
+    }
+
+    @Override
+    public void fromJsonObj(JSONObject obj) throws JSONException {
+
     }
 }

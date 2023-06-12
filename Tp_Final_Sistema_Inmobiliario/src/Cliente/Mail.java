@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import java.awt.event.WindowStateListener;
 import java.util.Objects;
 
-public class Mail implements IJson {
+public class Mail implements IJson, Comparable {
 
     private String mail;
 
@@ -68,6 +68,22 @@ public class Mail implements IJson {
     }
 
     @Override
+    public int hashCode(){
+        return 1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int valor = 0;
+        if(o != null){
+            if(o instanceof Mail){
+                valor = mail.compareTo(((Mail) o).getMail());
+            }
+        }
+        return valor;
+    }
+
+    @Override
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
@@ -79,5 +95,12 @@ public class Mail implements IJson {
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
         mail = obj.getString("mail");
+    }
+
+    @Override
+    public String toString() {
+        return "Mail{" +
+                "mail='" + mail + '\'' +
+                '}';
     }
 }
