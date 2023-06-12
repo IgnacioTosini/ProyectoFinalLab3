@@ -1,3 +1,5 @@
+package Empresa;
+
 import Cliente.Usuario;
 import Controladores.ControladoraInmobiliaria;
 import Excepciones.EleccionIncorrectaException;
@@ -48,8 +50,9 @@ public class Inmobiliaria implements IJson {
     }
 
     public void agregarUsuario(Usuario usuario) {
-
-        usuarios.put(usuario.getNombreYApellido(), usuario);
+        if (usuario != null){
+            usuarios.put(usuario.getNombreYApellido(), usuario);
+        }
     }
 
 

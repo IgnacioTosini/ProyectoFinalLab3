@@ -1,4 +1,4 @@
-package Excepciones;
+package Excepciones.Contraseña;
 
 public class TotalDigitosException extends Exception{
 

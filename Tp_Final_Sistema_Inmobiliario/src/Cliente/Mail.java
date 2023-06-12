@@ -1,7 +1,7 @@
 package Cliente;
 
-import Excepciones.ArrobaException;
-import Excepciones.PuntoComException;
+import Excepciones.Mail.ArrobaException;
+import Excepciones.Mail.PuntoComException;
 import Interfaces.IJson;
 import org.json.JSONArray;
 import org.json.JSONException;

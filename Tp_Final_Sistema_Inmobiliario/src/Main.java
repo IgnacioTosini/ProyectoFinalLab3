@@ -1,4 +1,5 @@
 import Controladores.ControladoraUsuario;
+import Empresa.Inmobiliaria;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,7 +8,5 @@ public class Main {
         ControladoraUsuario controladoraUsuario = new ControladoraUsuario();
 
         controladoraUsuario.menu(inmobiliaria);
-
-
     }
 }
