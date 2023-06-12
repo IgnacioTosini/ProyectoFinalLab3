@@ -1,6 +1,4 @@
-import Cliente.Mail;
-import Cliente.TiposMail;
-import Cliente.Usuario;
+import Controladores.ControladoraUsuario;
 
 public class Main {
     public static void main(String[] args) {

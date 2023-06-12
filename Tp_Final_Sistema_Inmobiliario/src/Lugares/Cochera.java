@@ -1,13 +1,17 @@
 package Lugares;
 
+import Controladores.ControladoraInmobiliaria;
+import Excepciones.EleccionIncorrectaException;
 import Interfaces.IComprobarFecha;
 import Interfaces.IJson;
+import Interfaces.IMetodoDePago;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Cochera implements IComprobarFecha, IJson, Comparable {
+public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePago {
     private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
@@ -16,8 +20,10 @@ public class Cochera implements IComprobarFecha, IJson, Comparable {
     private boolean vendido;
     private String medioDeAcceso;
     private boolean ascensor;
+    private double precio;
 
-    public Cochera(String direccion, Estado estado, short piso, short posicion, boolean vendido, String medioDeAcceso, boolean ascensor) {
+
+    public Cochera(String direccion, Estado estado, short piso, short posicion, boolean vendido, String medioDeAcceso, boolean ascensor, double precio) {
         disponibilidad = new ArrayList<>();
         this.direccion = direccion;
         this.estado = estado;
@@ -26,6 +32,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable {
         this.vendido = vendido;
         this.medioDeAcceso = medioDeAcceso;
         this.ascensor = ascensor;
+        this.precio = precio;
     }
 
     public Cochera() {
@@ -37,6 +44,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable {
         vendido = false;
         medioDeAcceso = "";
         ascensor = false;
+        precio = 0;
     }
 
 
@@ -112,6 +120,41 @@ public class Cochera implements IComprobarFecha, IJson, Comparable {
     public boolean isAscensor() {
         return ascensor;
     }
+    public void agregarDisponibilidad(Fecha fecha){
+        disponibilidad.add(fecha);
+    }
+
+    private void setDisponibilidad(ArrayList<Fecha> disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    private void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    private void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    private void setPiso(short piso) {
+        this.piso = piso;
+    }
+
+    private void setPosicion(short posicion) {
+        this.posicion = posicion;
+    }
+
+    private void setVendido(boolean vendido) {
+        this.vendido = vendido;
+    }
+
+    private void setMedioDeAcceso(String medioDeAcceso) {
+        this.medioDeAcceso = medioDeAcceso;
+    }
+
+    private void setAscensor(boolean ascensor) {
+        this.ascensor = ascensor;
+    }
 
 
     @Override
@@ -130,11 +173,97 @@ public class Cochera implements IComprobarFecha, IJson, Comparable {
 
     @Override
     public JSONObject toJsonObj() throws JSONException {
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("estado", estado.name());
+        jsonObject.put("direccion", direccion);
+        jsonObject.put("piso", piso);
+        jsonObject.put("posicion", posicion);
+        jsonObject.put("vendido", vendido);
+        jsonObject.put("mediosDeAcceso", medioDeAcceso);
+        jsonObject.put("ascensor", ascensor);
+
+
+        JSONArray jsonArray = new JSONArray();
+        for(int i = 0; i<disponibilidad.size();i++){
+            jsonArray.put(disponibilidad.get(i).toJsonObj());
+        }
+        jsonObject.put("disponibilidad", jsonArray);
+
+        return jsonObject;
     }
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
+        String estado = obj.getString("estado");
+        if(estado.equals("Vendido")){
+            setEstado(Estado.Vendido);
+        } else if (estado.equals("EnVenta")) {
+            setEstado(Estado.EnVenta);
+        }else if(estado.equals("EnAlquiler")){
+            setEstado(Estado.EnAlquiler);
+        }else if(estado.equals("Baja")){
+            setEstado(Estado.Baja);
+        }
 
+        setDireccion(obj.getString("direccion"));
+        setPiso((short) obj.getInt("piso"));
+        setPosicion((short) obj.getInt("posicion"));
+        setVendido(obj.getBoolean("vendido"));
+        setMedioDeAcceso(obj.getString("medioDeAcceso"));
+        setAscensor(obj.getBoolean("ascensor"));
+
+        JSONArray jsonArray = obj.getJSONArray("disponibilidad");
+
+        Fecha fecha = new Fecha();
+        for(int i = 0; i<jsonArray.length();i++){
+            fecha.fromJsonObj((JSONObject) jsonArray.get(i));
+            disponibilidad.add(fecha);
+        }
+    }
+
+    @Override
+    public double metodoDePago(int eleccion) throws EleccionIncorrectaException {
+        double valorFinal = 0;
+        if(eleccion == 1){
+            valorFinal = pagoEfectivo();
+        } else if (eleccion == 2) {
+            valorFinal = pagoDebito();
+        } else if (eleccion == 3) {
+            valorFinal = pagoCredito();
+        }else{
+            throw new EleccionIncorrectaException("El valor ingresado es incorrecto");
+        }
+
+        return valorFinal;
+    }
+
+    @Override
+    public double pagoEfectivo() {
+        double valorFinal = precio- precio*0.2;
+
+        return valorFinal;
+    }
+
+    @Override
+    public double pagoDebito() {
+
+        return precio;
+    }
+
+    @Override
+    public double pagoCredito() {
+        boolean seguir = true;
+        double valorFinal = 0;
+        while(seguir){
+            try {
+                int cantCuotas = ControladoraInmobiliaria.cantCuotas();
+                valorFinal = precio + (precio*0.1)*cantCuotas;
+                seguir = false;
+            } catch (EleccionIncorrectaException e) {
+                seguir = true;
+            }
+        }
+
+        return valorFinal;
     }
 }

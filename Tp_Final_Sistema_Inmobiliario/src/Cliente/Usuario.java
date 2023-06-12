@@ -145,6 +145,10 @@ public class Usuario implements IJson, Serializable, Comparable {
         return edad;
     }
 
+    public void agregarHistorial(String dato){
+        historial.add(dato);
+    }
+
     @Override
     public int compareTo(Object o) {
         int valor = 0;

@@ -2,6 +2,7 @@ package Lugares;
 
 import Interfaces.IComprobarFecha;
 import Interfaces.IJson;
+import Interfaces.IMetodoDePago;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  *
  */
 
-public abstract class Vivienda implements IComprobarFecha {
+public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable {
     private ArrayList<Fecha> disponibilidad;
     private Estado estado;
     private String direccion;
@@ -22,9 +23,9 @@ public abstract class Vivienda implements IComprobarFecha {
     private int metrosCuadrados;
     private boolean amueblado;
     private boolean cochera;
-    private int precio;
+    private double precio;
 
-    public Vivienda(Estado estado, String direccion, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, int precio) {
+    public Vivienda(Estado estado, String direccion, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, double precio) {
         this.estado = estado;
         this.direccion = direccion;
         disponibilidad = new ArrayList<>();
@@ -89,8 +90,50 @@ public abstract class Vivienda implements IComprobarFecha {
         return cochera;
     }
 
-    public int getPrecio() {
+    public double getPrecio() {
         return precio;
+    }
+
+    public void agregarDisponibilidad(Fecha fecha){
+        disponibilidad.add(fecha);
+    }
+    public Fecha buscarFecha(int pos){
+        return disponibilidad.get(pos);
+    }
+    public int cantDeFechas(){
+        return disponibilidad.size();
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public void setAmbientes(short ambientes) {
+        this.ambientes = ambientes;
+    }
+
+    public void setCantBanios(short cantBanios) {
+        this.cantBanios = cantBanios;
+    }
+
+    public void setMetrosCuadrados(int metrosCuadrados) {
+        this.metrosCuadrados = metrosCuadrados;
+    }
+
+    public void setAmueblado(boolean amueblado) {
+        this.amueblado = amueblado;
+    }
+
+    public void setCochera(boolean cochera) {
+        this.cochera = cochera;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
     }
 
     @Override

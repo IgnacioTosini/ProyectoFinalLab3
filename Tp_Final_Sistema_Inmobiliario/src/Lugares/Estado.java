@@ -1,6 +1,6 @@
 package Lugares;
 
 public enum Estado {
-    Vendido, EnVenta, EnAlquiler
+    Vendido, EnVenta, EnAlquiler, Baja
 
 }
