@@ -1,5 +1,6 @@
 package Lugares;
 
+import Interfaces.IBuscar;
 import Interfaces.IComprobarFecha;
 import Interfaces.IJson;
 import Interfaces.IMetodoDePago;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  *
  */
 
-public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable {
+public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable, IBuscar {
     private ArrayList<Fecha> disponibilidad;
     private Estado estado;
     private String direccion;
@@ -150,5 +151,12 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
         return validacion;
     }
 
-
+    @Override
+    public boolean buscar(String direccion) {
+        boolean encontrado = false;
+        if (direccion.equalsIgnoreCase(direccion)){
+            encontrado = true;
+        }
+        return encontrado;
+    }
 }

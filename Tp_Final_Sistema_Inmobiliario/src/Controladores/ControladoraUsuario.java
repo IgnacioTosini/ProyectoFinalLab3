@@ -33,14 +33,14 @@ public class ControladoraUsuario extends Component {
      */
     public Usuario menu(Inmobiliaria inmobiliaria) {
         Usuario usuario = new Usuario();
-        new MenuInicioGUI(inmobiliaria);
-        /*System.out.println("Buen día ¿Qué le gustaría realizar?");
-        int opcion = 0;
-        System.out.println("1. Loguearse \n2. Registrarse");
-        opcion = teclado.nextInt();
+        //new MenuInicioGUI(inmobiliaria);
         String respuesta = "si";
-
         do {
+            System.out.println("Buen día ¿Qué le gustaría realizar?");
+            int opcion = 0;
+            System.out.println("1. Loguearse \n2. Registrarse");
+            opcion = teclado.nextInt();
+
             switch (opcion) {
                 case 1:
                     while (respuesta.equalsIgnoreCase("si")) {
@@ -73,9 +73,9 @@ public class ControladoraUsuario extends Component {
                     System.out.println("Valor ingresado no valido");
                     break;
             }
-            System.out.println("Quiero volver al menu?, presione s");
+            System.out.println("Quiero volver al menu?, presione si");
             respuesta = teclado.nextLine();
-        } while (respuesta.equals("s"));*/
+        } while (respuesta.equals("si"));
         return usuario;
     }
 
@@ -87,8 +87,9 @@ public class ControladoraUsuario extends Component {
      * @throws UsuarioNoEncontradoException
      * @throws MalContraseñaException
      */
-    /*public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
+    public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
         System.out.println("Ingrese su nombre");
+        teclado.nextLine();
         String nombre = teclado.nextLine();
 
         Usuario usuario = inmobiliaria.buscarUsuario(nombre);
@@ -97,15 +98,15 @@ public class ControladoraUsuario extends Component {
 
         }
         System.out.println("Ingrese su contraseña");
-        teclado.nextLine();
         String contraseña = teclado.nextLine();
         if (!usuario.getContraseña().equals(contraseña)) {
             throw new MalContraseñaException("Contraseña incorrecta");
         }
+        System.out.println(usuario);
         return usuario;
-    }*/
+    }
 
-    public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
+    /*public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
         JFrame frame = new JFrame("Inicio de sesión");
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3, 2));
@@ -126,8 +127,8 @@ public class ControladoraUsuario extends Component {
             throw new RuntimeException("Inicio de sesión cancelado por el usuario");
         }
 
-        String nombre = usuarioField.getText();
-        Usuario usuario = inmobiliaria.buscarUsuario(nombre);
+        String mail = usuarioField.getText();
+        Usuario usuario = inmobiliaria.buscarUsuario(mail);
         if (usuario == null) {
             throw new UsuarioNoEncontradoException("Usuario no encontrado");
         }
@@ -138,7 +139,7 @@ public class ControladoraUsuario extends Component {
         }
 
         return usuario;
-    }
+    }*/
 
 
     /**
@@ -146,7 +147,7 @@ public class ControladoraUsuario extends Component {
      *
      * @return retorna el usuario que se registro
      */
-    /*public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
+    public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
         String nombre = "";
         String contraseña = "";
         String dni = "";
@@ -226,9 +227,9 @@ public class ControladoraUsuario extends Component {
         System.out.println("termine y usuario: " + usuario);
 
         return usuario;
-    }*/
+    }
 
-    public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, PuntoComException, ArrobaException {
+    /*public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, PuntoComException, ArrobaException {
         JFrame frame = new JFrame("Registro");
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(7, 2));
@@ -324,7 +325,7 @@ public class ControladoraUsuario extends Component {
 
         Usuario usuario = new Usuario(nombre, contra, dni, correo, edad);
         return usuario;
-    }
+    }*/
 
     /**
      * Función el cual te crea un mail de distintos tipos.
@@ -332,7 +333,7 @@ public class ControladoraUsuario extends Component {
      * @param eleccion
      * @return Retorna un String en formato de mail
      */
-    /*public String menuTipoMail(int eleccion) {
+    public String menuTipoMail(int eleccion) {
         String mail = "";
         boolean valido = false;
         switch (eleccion) {
@@ -367,9 +368,9 @@ public class ControladoraUsuario extends Component {
                 System.out.println("La opcion ingresada es invalida");
         }
         return mail;
-    }*/
+    }
 
-    public String menuTipoMail(int eleccion) {
+    /*public String menuTipoMail(int eleccion) {
         JFrame frame = new JFrame("Tipo de mail");
         JPanel panel = new JPanel(new GridLayout(2, 1));
 
@@ -400,7 +401,7 @@ public class ControladoraUsuario extends Component {
         }
 
         return mail;
-    }
+    }*/
 }
 
 
