@@ -154,7 +154,7 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
     @Override
     public boolean buscar(String direccion) {
         boolean encontrado = false;
-        if (direccion.equalsIgnoreCase(direccion)){
+        if (this.direccion.equalsIgnoreCase(direccion)){
             encontrado = true;
         }
         return encontrado;

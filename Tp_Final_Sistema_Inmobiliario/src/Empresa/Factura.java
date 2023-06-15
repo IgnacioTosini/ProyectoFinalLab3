@@ -59,8 +59,6 @@ public class Factura implements IJson, Comparable {
                     valor = 1;
                 } else if (((Factura) o).getId() < id) {
                     valor = -1;
-                } else {
-                    valor = 0;
                 }
             }
         }

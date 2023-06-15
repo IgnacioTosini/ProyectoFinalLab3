@@ -76,7 +76,7 @@ public class Abm<T extends IBuscar> {
 
         while (iterator.hasNext()) {
             if (nombreClase.equalsIgnoreCase(iterator.getClass().getName())){
-                listado.concat(iterator.toString());
+                listado = listado.concat(iterator.toString());
             }
             iterator.next();
         }
