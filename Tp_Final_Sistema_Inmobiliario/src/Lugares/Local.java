@@ -18,16 +18,14 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     private Estado estado;
     private short ambientes;
     private boolean vidriera;
-    private boolean vendido;
     private double precio;
 
-    public Local(String direccion, Estado estado, short ambientes, boolean vidriera, boolean vendido, double precio) {
+    public Local(String direccion, Estado estado, short ambientes, boolean vidriera, double precio) {
         disponibilidad = new ArrayList<>();
         this.direccion = direccion;
         this.estado = estado;
         this.ambientes = ambientes;
         this.vidriera = vidriera;
-        this.vendido = vendido;
         this.precio = precio;
     }
 
@@ -37,7 +35,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         estado = null;
         ambientes = 0;
         vidriera = false;
-        vendido = false;
         precio = 0;
     }
 
@@ -59,10 +56,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         return vidriera;
     }
 
-    public boolean isVendido() {
-        return vendido;
-    }
-
     public double getPrecio() {
         return precio;
     }
@@ -75,19 +68,15 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         this.estado = estado;
     }
 
-    public void setAmbientes(short ambientes) {
+    private void setAmbientes(short ambientes) {
         this.ambientes = ambientes;
     }
 
-    public void setVidriera(boolean vidriera) {
+    private void setVidriera(boolean vidriera) {
         this.vidriera = vidriera;
     }
 
-    public void setVendido(boolean vendido) {
-        this.vendido = vendido;
-    }
-
-    public void setPrecio(double precio) {
+    private void setPrecio(double precio) {
         this.precio = precio;
     }
 
@@ -136,7 +125,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
                 ", estado=" + estado +
                 ", ambientes=" + ambientes +
                 ", vidriera=" + vidriera +
-                ", vendido=" + vendido +
                 ", precio=" + precio +
                 '}';
     }
@@ -162,7 +150,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         jsonObject.put("direccion", direccion);
         jsonObject.put("ambientes", ambientes);
         jsonObject.put("vidriera", vidriera);
-        jsonObject.put("vendido", vendido);
         jsonObject.put("precio", precio);
 
         JSONArray jsonArray = new JSONArray();
@@ -187,7 +174,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         setDireccion(obj.getString("direccion"));
         setAmbientes((short) obj.getInt("ambientes"));
         setVidriera(obj.getBoolean("vidriera"));
-        setVendido(obj.getBoolean("vendido"));
         setPrecio(obj.getDouble("precio"));
 
 

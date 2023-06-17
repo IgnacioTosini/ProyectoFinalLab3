@@ -18,21 +18,16 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     private Estado estado;
     private short piso;
     private short posicion;
-    private boolean vendido;
     private String medioDeAcceso;
-    private boolean ascensor;
     private double precio;
 
-
-    public Cochera(String direccion, Estado estado, short piso, short posicion, boolean vendido, String medioDeAcceso, boolean ascensor, double precio) {
+    public Cochera(String direccion, Estado estado, short piso, short posicion, String medioDeAcceso, double precio) {
         disponibilidad = new ArrayList<>();
         this.direccion = direccion;
         this.estado = estado;
         this.piso = piso;
         this.posicion = posicion;
-        this.vendido = vendido;
         this.medioDeAcceso = medioDeAcceso;
-        this.ascensor = ascensor;
         this.precio = precio;
     }
 
@@ -42,9 +37,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         estado = null;
         piso = 0;
         posicion = 0;
-        vendido = false;
         medioDeAcceso = "";
-        ascensor = false;
         precio = 0;
     }
 
@@ -88,9 +81,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
                 ", estado=" + estado +
                 ", piso=" + piso +
                 ", posicion=" + posicion +
-                ", vendido=" + vendido +
                 ", medioDeAcceso='" + medioDeAcceso + '\'' +
-                ", ascensor=" + ascensor +
                 '}';
     }
 
@@ -110,17 +101,13 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         return posicion;
     }
 
-    public boolean isVendido() {
-        return vendido;
-    }
-
     public String getMedioDeAcceso() {
         return medioDeAcceso;
     }
-
-    public boolean isAscensor() {
-        return ascensor;
+    public double getPrecio() {
+        return precio;
     }
+
     public void agregarDisponibilidad(Fecha fecha){
         disponibilidad.add(fecha);
     }
@@ -145,16 +132,8 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         this.posicion = posicion;
     }
 
-    private void setVendido(boolean vendido) {
-        this.vendido = vendido;
-    }
-
     private void setMedioDeAcceso(String medioDeAcceso) {
         this.medioDeAcceso = medioDeAcceso;
-    }
-
-    private void setAscensor(boolean ascensor) {
-        this.ascensor = ascensor;
     }
 
 
@@ -179,9 +158,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         jsonObject.put("direccion", direccion);
         jsonObject.put("piso", piso);
         jsonObject.put("posicion", posicion);
-        jsonObject.put("vendido", vendido);
         jsonObject.put("mediosDeAcceso", medioDeAcceso);
-        jsonObject.put("ascensor", ascensor);
 
 
         JSONArray jsonArray = new JSONArray();
@@ -205,9 +182,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         setDireccion(obj.getString("direccion"));
         setPiso((short) obj.getInt("piso"));
         setPosicion((short) obj.getInt("posicion"));
-        setVendido(obj.getBoolean("vendido"));
         setMedioDeAcceso(obj.getString("medioDeAcceso"));
-        setAscensor(obj.getBoolean("ascensor"));
 
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 

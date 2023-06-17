@@ -1,12 +1,14 @@
 package Empresa;
 
 import Interfaces.IBuscar;
+import Interfaces.IJson;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class Abm<T extends IBuscar> {
-
+public class Abm<T extends IBuscar & IJson> {
     private TreeSet<T> miTreeSet;
     private TreeSet<T> bajas;
 
@@ -75,11 +77,40 @@ public class Abm<T extends IBuscar> {
         String listado = "";
 
         while (iterator.hasNext()) {
-            if (nombreClase.equalsIgnoreCase(iterator.getClass().getName())){
+            if (nombreClase.equalsIgnoreCase(iterator.getClass().getName())) {
                 listado = listado.concat(iterator.toString());
             }
             iterator.next();
         }
         return listado;
+    }
+
+    public int cantTotal() {
+        return miTreeSet.size();
+    }
+
+    public T get() {
+        Iterator iterator = miTreeSet.iterator();
+        T objeto = null;
+
+        while (iterator.hasNext()) {
+            objeto = (T) iterator;
+            iterator.next();
+        }
+
+        return objeto;
+    }
+
+    public JSONArray JsonGenerico() throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        Iterator it = miTreeSet.iterator();
+
+        while (it.hasNext()) {
+
+            T aux = (T) it.next();
+            jsonArray.put(aux.toJsonObj());
+
+        }
+        return jsonArray;
     }
 }

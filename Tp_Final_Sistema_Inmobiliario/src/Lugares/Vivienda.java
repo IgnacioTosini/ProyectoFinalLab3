@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  */
 
-public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable, IBuscar {
+public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable, IBuscar, IJson {
     private ArrayList<Fecha> disponibilidad;
     private Estado estado;
     private String direccion;

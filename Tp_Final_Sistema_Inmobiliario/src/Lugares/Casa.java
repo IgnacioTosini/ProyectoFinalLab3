@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class Casa extends Vivienda implements IJson {
+public class Casa extends Vivienda {
     private boolean patio;
     private short pisos;
 

@@ -19,14 +19,17 @@ public class Usuario implements IJson, Serializable, Comparable {
     private int edad;
     private ArrayList<String> historial;
     private HashMap<Integer, Factura> facturas;
+    private boolean estado;
 
-    public Usuario(String nombreYApellido, Contraseña contraseña, String dni, Mail mail, int edad) {
+
+    public Usuario(String nombreYApellido, Contraseña contraseña, String dni, Mail mail, int edad, boolean estado) {
         this.nombreYApellido = nombreYApellido;
         this.contraseña = contraseña;
         this.dni = dni;
         this.mail = mail;
         this.edad = edad;
         historial = new ArrayList<>();
+        this.estado = estado;
     }
 
     public Usuario() {
@@ -36,6 +39,7 @@ public class Usuario implements IJson, Serializable, Comparable {
         this.mail = new Mail();
         this.edad = 0;
         this.historial = new ArrayList<>();
+        this.estado = false;
     }
 
     public boolean encontrarPorNombre(String nombre) {
@@ -87,6 +91,14 @@ public class Usuario implements IJson, Serializable, Comparable {
                 '}';
     }
 
+    public static boolean comprobarAdmin(Usuario usuario) {
+        boolean validacion = false;
+        if (usuario.getMail().getMail().equals("admin@gmail.com") && usuario.getContraseña().equals("Admin123")) {
+            validacion = true;
+        }
+        return validacion;
+    }
+
     @Override
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
@@ -96,6 +108,7 @@ public class Usuario implements IJson, Serializable, Comparable {
         jsonObject.put("dni", dni);
         jsonObject.put("mail", mail.toJsonObj());
         jsonObject.put("edad", edad);
+        jsonObject.put("estado", estado);
 
         JSONArray array = new JSONArray();
         for (int i = 0; i <= historial.size(); i++) {
@@ -104,10 +117,8 @@ public class Usuario implements IJson, Serializable, Comparable {
 
         jsonObject.put("historial", array);
 
-
         return null;
     }
-
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
@@ -116,6 +127,7 @@ public class Usuario implements IJson, Serializable, Comparable {
         dni = obj.getString("dni");
         mail.fromJsonObj(obj.getJSONObject("mail"));
         edad = obj.getInt("edad");
+        estado = obj.getBoolean("estado");
         JSONArray array = obj.getJSONArray("historial");
 
         for (int i = 0; i < array.length(); i++) {
@@ -141,6 +153,10 @@ public class Usuario implements IJson, Serializable, Comparable {
 
     public int getEdad() {
         return edad;
+    }
+
+    public boolean isEstado() {
+        return estado;
     }
 
     public void agregar(String dato) {

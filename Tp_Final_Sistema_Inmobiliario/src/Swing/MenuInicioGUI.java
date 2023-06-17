@@ -41,7 +41,7 @@ public class MenuInicioGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "El DNI esta mal", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (NombreYApellidoIncorrectoException ex) {
                 JOptionPane.showMessageDialog(this, "El nombre y apellido esta mal", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (EdadInvalidadException | PuntoComException | ArrobaException ex) {
+            } catch (EdadInvalidadException ex) {
                 JOptionPane.showMessageDialog(this, "La edad es invalida", "Error", JOptionPane.ERROR_MESSAGE);
             }
             inmobiliaria.agregarUsuario(usuario);

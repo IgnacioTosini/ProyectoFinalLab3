@@ -7,11 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Departamento extends Vivienda implements IJson, Comparable {
+public class Departamento extends Vivienda implements Comparable {
     private String nroPiso;
     private String disposicion;
 
-    public Departamento(Estado estado, String direccion, boolean vendido , short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, int precio, String nroPiso, String disposicion) {
+    public Departamento(Estado estado, String direccion , short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, double precio, String nroPiso, String disposicion) {
         super(estado, direccion, ambientes, cantBanios, metrosCuadrados, amueblado, cochera, precio);
         this.nroPiso = nroPiso;
         this.disposicion = disposicion;
