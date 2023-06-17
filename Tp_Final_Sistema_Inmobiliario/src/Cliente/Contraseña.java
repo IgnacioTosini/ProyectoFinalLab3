@@ -1,10 +1,9 @@
 package Cliente;
 
-import Excepciones.CantMayusException;
-import Excepciones.CantNumException;
-import Excepciones.TotalDigitosException;
+import Excepciones.Contraseña.CantMayusException;
+import Excepciones.Contraseña.CantNumException;
+import Excepciones.Contraseña.TotalDigitosException;
 import Interfaces.IJson;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

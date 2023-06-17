@@ -2,6 +2,7 @@ package Lugares;
 
 import Controladores.ControladoraInmobiliaria;
 import Excepciones.EleccionIncorrectaException;
+import Interfaces.IBuscar;
 import Interfaces.IComprobarFecha;
 import Interfaces.IJson;
 import Interfaces.IMetodoDePago;
@@ -11,7 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePago {
+public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePago, IBuscar {
     private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
@@ -194,10 +195,8 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
-        String estado = obj.getString("estado");
-        if(estado.equals("Vendido")){
-            setEstado(Estado.Vendido);
-        } else if (estado.equals("EnVenta")) {
+       String estado = obj.getString("estado");
+        if (estado.equals("EnVenta")) {
             setEstado(Estado.EnVenta);
         }else if(estado.equals("EnAlquiler")){
             setEstado(Estado.EnAlquiler);
@@ -265,5 +264,14 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         }
 
         return valorFinal;
+    }
+
+    @Override
+    public boolean buscar(String direccion) {
+        boolean encontrado = false;
+        if (direccion.equalsIgnoreCase(direccion)){
+            encontrado = true;
+        }
+        return encontrado;
     }
 }

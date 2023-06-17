@@ -1,4 +1,4 @@
-package Excepciones;
+package Excepciones.ControladoraUsuario;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package Excepciones;
+package Excepciones.Contraseña;
 
 public class CantNumException extends Exception{
 

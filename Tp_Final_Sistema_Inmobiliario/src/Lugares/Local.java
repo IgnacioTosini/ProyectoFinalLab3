@@ -2,6 +2,7 @@ package Lugares;
 
 import Controladores.ControladoraInmobiliaria;
 import Excepciones.EleccionIncorrectaException;
+import Interfaces.IBuscar;
 import Interfaces.IComprobarFecha;
 import Interfaces.IJson;
 import Interfaces.IMetodoDePago;
@@ -11,7 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago {
+public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago, IBuscar {
     private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
@@ -176,9 +177,7 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
         String estado = obj.getString("estado");
-        if(estado.equals("Vendido")){
-            setEstado(Estado.Vendido);
-        } else if (estado.equals("EnVenta")) {
+        if (estado.equals("EnVenta")) {
             setEstado(Estado.EnVenta);
         }else if(estado.equals("EnAlquiler")){
             setEstado(Estado.EnAlquiler);
@@ -223,7 +222,7 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago 
 
     @Override
     public double pagoEfectivo() {
-       double valorFinal = precio- precio*0.1;
+        double valorFinal = precio- precio*0.1;
 
         return valorFinal;
     }
@@ -236,9 +235,9 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago 
 
     @Override
     public double pagoCredito() {
-       boolean seguir = true;
-       double valorFinal = 0;
-       while(seguir){
+        boolean seguir = true;
+        double valorFinal = 0;
+        while(seguir){
             try {
                 int cantCuotas = ControladoraInmobiliaria.cantCuotas();
                 valorFinal = precio + (precio*0.02)*cantCuotas;
@@ -249,5 +248,14 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago 
         }
 
         return valorFinal;
+    }
+
+    @Override
+    public boolean buscar(String direccion) {
+        boolean encontrado = false;
+        if (direccion.equalsIgnoreCase(direccion)){
+            encontrado = true;
+        }
+        return encontrado;
     }
 }

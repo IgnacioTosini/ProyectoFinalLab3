@@ -12,7 +12,7 @@ public class ControladoraInmobiliaria {
         System.out.println("¿Cómo desea Pagar?"+ '\n' + "1. Efectivo" +
                 "2. Targeta Debito \n" +
                 "3. Targeta Credito");
-            int eleccion = teclado.nextInt();
+        int eleccion = teclado.nextInt();
         if(eleccion >4 && eleccion<1){
             throw new EleccionIncorrectaException("La opción elegida es incorrecta");
         }
@@ -45,4 +45,6 @@ public class ControladoraInmobiliaria {
 
         return cantCuotas;
     }
+
+
 }

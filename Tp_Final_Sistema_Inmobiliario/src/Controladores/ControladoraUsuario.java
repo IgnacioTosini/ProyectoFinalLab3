@@ -4,12 +4,25 @@ import Cliente.Contraseña;
 import Cliente.Mail;
 import Cliente.TiposMail;
 import Cliente.Usuario;
-import Excepciones.*;
+import Empresa.Inmobiliaria;
+import Excepciones.Contraseña.CantMayusException;
+import Excepciones.Contraseña.CantNumException;
+import Excepciones.Contraseña.MalContraseñaException;
+import Excepciones.Contraseña.TotalDigitosException;
+import Excepciones.ControladoraUsuario.DniInvalidoException;
+import Excepciones.ControladoraUsuario.EdadInvalidadException;
+import Excepciones.ControladoraUsuario.NombreYApellidoIncorrectoException;
+import Excepciones.ControladoraUsuario.UsuarioNoEncontradoException;
+import Excepciones.Mail.ArrobaException;
+import Excepciones.Mail.PuntoComException;
+import Swing.MenuInicioGUI;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class ControladoraUsuario {
+public class ControladoraUsuario extends Component {
     Scanner teclado = new Scanner(System.in);
 
     /**
@@ -20,13 +33,14 @@ public class ControladoraUsuario {
      */
     public Usuario menu(Inmobiliaria inmobiliaria) {
         Usuario usuario = new Usuario();
-        System.out.println("Buen día ¿Qué le gustaría realizar?");
-        int opcion = 0;
-        System.out.println("1. Loguearse \n2. Registrarse");
-        opcion = teclado.nextInt();
+        //new MenuInicioGUI(inmobiliaria);
         String respuesta = "si";
-
         do {
+            System.out.println("Buen día ¿Qué le gustaría realizar?");
+            int opcion = 0;
+            System.out.println("1. Loguearse \n2. Registrarse");
+            opcion = teclado.nextInt();
+
             switch (opcion) {
                 case 1:
                     while (respuesta.equalsIgnoreCase("si")) {
@@ -59,9 +73,9 @@ public class ControladoraUsuario {
                     System.out.println("Valor ingresado no valido");
                     break;
             }
-            System.out.println("Quiero volver al menu?, presione s");
+            System.out.println("Quiero volver al menu?, presione si");
             respuesta = teclado.nextLine();
-        } while (respuesta.equals("s"));
+        } while (respuesta.equals("si"));
         return usuario;
     }
 
@@ -75,6 +89,7 @@ public class ControladoraUsuario {
      */
     public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
         System.out.println("Ingrese su nombre");
+        teclado.nextLine();
         String nombre = teclado.nextLine();
 
         Usuario usuario = inmobiliaria.buscarUsuario(nombre);
@@ -83,13 +98,49 @@ public class ControladoraUsuario {
 
         }
         System.out.println("Ingrese su contraseña");
-        teclado.nextLine();
         String contraseña = teclado.nextLine();
         if (!usuario.getContraseña().equals(contraseña)) {
             throw new MalContraseñaException("Contraseña incorrecta");
         }
+        System.out.println(usuario);
         return usuario;
     }
+
+    /*public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
+        JFrame frame = new JFrame("Inicio de sesión");
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2));
+
+        JLabel usuarioLabel = new JLabel("Usuario:");
+        JTextField usuarioField = new JTextField(20);
+        panel.add(usuarioLabel);
+        panel.add(usuarioField);
+
+        JLabel contraseñaLabel = new JLabel("Contraseña:");
+        JPasswordField contraseñaField = new JPasswordField(20);
+        panel.add(contraseñaLabel);
+        panel.add(contraseñaField);
+
+        int opcion = JOptionPane.showConfirmDialog(null, panel, "Ingrese su información de inicio de sesión", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (opcion == JOptionPane.CANCEL_OPTION || opcion == JOptionPane.CLOSED_OPTION) {
+            throw new RuntimeException("Inicio de sesión cancelado por el usuario");
+        }
+
+        String mail = usuarioField.getText();
+        Usuario usuario = inmobiliaria.buscarUsuario(mail);
+        if (usuario == null) {
+            throw new UsuarioNoEncontradoException("Usuario no encontrado");
+        }
+
+        String contraseña = new String(contraseñaField.getPassword());
+        if (!usuario.getContraseña().equals(contraseña)) {
+            throw new MalContraseñaException("Contraseña incorrecta");
+        }
+
+        return usuario;
+    }*/
+
 
     /**
      * Creacion de usuario
@@ -178,6 +229,104 @@ public class ControladoraUsuario {
         return usuario;
     }
 
+    /*public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, PuntoComException, ArrobaException {
+        JFrame frame = new JFrame("Registro");
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(7, 2));
+
+        JLabel nombreLabel = new JLabel("Nombre y apellido:");
+        JTextField nombreField = new JTextField(20);
+        panel.add(nombreLabel);
+        panel.add(nombreField);
+
+        JLabel contraseñaLabel = new JLabel("Contraseña (Una mayúscula, un número y 8 dígitos como mínimo):");
+        JPasswordField contraseñaField = new JPasswordField(20);
+        panel.add(contraseñaLabel);
+        panel.add(contraseñaField);
+
+        JLabel dniLabel = new JLabel("DNI (8 dígitos):");
+        JTextField dniField = new JTextField(8);
+        panel.add(dniLabel);
+        panel.add(dniField);
+
+        JLabel edadLabel = new JLabel("Edad:");
+        JTextField edadField = new JTextField(3);
+        panel.add(edadLabel);
+        panel.add(edadField);
+
+        JLabel tipoMailLabel = new JLabel("Tipo de mail:");
+        JComboBox<String> tipoMailCombo = new JComboBox<>(new String[]{"Gmail", "Hotmail", "Yahoo", "Otros"});
+        panel.add(tipoMailLabel);
+        panel.add(tipoMailCombo);
+
+        JLabel parteDelanteraMailLabel = new JLabel("Parte delantera del mail (antes de @):");
+        JTextField parteDelanteraMailField = new JTextField(20);
+        panel.add(parteDelanteraMailLabel);
+        panel.add(parteDelanteraMailField);
+
+        int opcion = JOptionPane.showConfirmDialog(null, panel, "Ingrese su información de registro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (opcion == JOptionPane.CANCEL_OPTION || opcion == JOptionPane.CLOSED_OPTION) {
+            throw new RuntimeException("Registro cancelado por el usuario");
+        }
+
+        String nombre = nombreField.getText();
+        if (!nombre.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+            throw new NombreYApellidoIncorrectoException("Nombre inválido. No debe contener números.");
+        }
+
+        String contraseña = new String(contraseñaField.getPassword());
+        Contraseña contra = null;
+        try {
+            Contraseña.verificacion(contraseña);
+            contra = new Contraseña(contraseña);
+        } catch (TotalDigitosException | CantNumException | CantMayusException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        String dni = dniField.getText();
+        if (!dni.matches("\\d{8}")) { // Verificar que el DNI tenga 8 dígitos
+            JOptionPane.showMessageDialog(null, "DNI inválido. Debe tener 8 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        int edad = Integer.parseInt(edadField.getText());
+        if (edad < 0 || edad > 120) { // Verificar que la edad esté en un rango razonable
+            JOptionPane.showMessageDialog(null, "Edad inválida. Debe estar entre 0 y 120.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        String mail = "";
+        int tipoMail = tipoMailCombo.getSelectedIndex() + 1;
+        switch (tipoMail) {
+            case 1:
+                mail = TiposMail.Gmail.getTipomail();
+                break;
+            case 2:
+                mail = TiposMail.Hotmail.getTipomail();
+                break;
+            case 3:
+                mail = TiposMail.Yahoo.getTipomail();
+                break;
+            case 4:
+                String parteDelanteraMail = parteDelanteraMailField.getText();
+                while (!Mail.validarMail(parteDelanteraMail + "@" + mail)) {
+                    JOptionPane.showMessageDialog(null, "Mail ingresado inválido. Inténtelo de nuevo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    parteDelanteraMail = JOptionPane.showInputDialog(null, "Ingrese la parte delantera del mail (antes de @):", "Registro", JOptionPane.PLAIN_MESSAGE);
+                    if (parteDelanteraMail == null) {
+                        JOptionPane.showMessageDialog(null, "Registro cancelado por el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                mail = parteDelanteraMail + "@" + menuTipoMail(tipoMail);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "La opcion ingresada es invalida", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        Mail correo = new Mail(mail);
+
+        Usuario usuario = new Usuario(nombre, contra, dni, correo, edad);
+        return usuario;
+    }*/
+
     /**
      * Función el cual te crea un mail de distintos tipos.
      *
@@ -220,6 +369,39 @@ public class ControladoraUsuario {
         }
         return mail;
     }
+
+    /*public String menuTipoMail(int eleccion) {
+        JFrame frame = new JFrame("Tipo de mail");
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+
+        JLabel mensajeLabel = new JLabel("Ingrese su mail completo:");
+        JTextField mensajeField = new JTextField(20);
+        panel.add(mensajeLabel);
+        panel.add(mensajeField);
+
+        int opcion = JOptionPane.showConfirmDialog(null, panel, "Ingrese su información de registro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (opcion == JOptionPane.CANCEL_OPTION || opcion == JOptionPane.CLOSED_OPTION) {
+            JOptionPane.showMessageDialog(null, "Registro cancelado por el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        String mail = mensajeField.getText();
+        switch (eleccion) {
+            case 1:
+                mail += TiposMail.Gmail.getTipomail();
+                break;
+            case 2:
+                mail += TiposMail.Hotmail.getTipomail();
+                break;
+            case 3:
+                mail += TiposMail.Yahoo.getTipomail();
+                break;
+            default:
+                break;
+        }
+
+        return mail;
+    }*/
 }
 
 
