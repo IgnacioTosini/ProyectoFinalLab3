@@ -108,14 +108,10 @@ public class Casa extends Vivienda implements IJson {
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
         String estado = obj.getString("estado");
-        if(estado.equals("Vendido")){
-            setEstado(Estado.Vendido);
-        } else if (estado.equals("EnVenta")) {
-            setEstado(Estado.EnVenta);
-        }else if(estado.equals("EnAlquiler")){
-            setEstado(Estado.EnAlquiler);
-        }else if(estado.equals("Baja")){
-            setEstado(Estado.Baja);
+        switch (estado) {
+            case "EnVenta" -> setEstado(Estado.EnVenta);
+            case "EnAlquiler" -> setEstado(Estado.EnAlquiler);
+            case "Baja" -> setEstado(Estado.Baja);
         }
 
 
