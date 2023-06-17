@@ -195,13 +195,11 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
-       String estado = obj.getString("estado");
-        if (estado.equals("EnVenta")) {
-            setEstado(Estado.EnVenta);
-        }else if(estado.equals("EnAlquiler")){
-            setEstado(Estado.EnAlquiler);
-        }else if(estado.equals("Baja")){
-            setEstado(Estado.Baja);
+        String estado = obj.getString("estado");
+        switch (estado) {
+            case "EnVenta" -> setEstado(Estado.EnVenta);
+            case "EnAlquiler" -> setEstado(Estado.EnAlquiler);
+            case "Baja" -> setEstado(Estado.Baja);
         }
 
         setDireccion(obj.getString("direccion"));
@@ -269,7 +267,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     @Override
     public boolean buscar(String direccion) {
         boolean encontrado = false;
-        if (direccion.equalsIgnoreCase(direccion)){
+        if (this.direccion.equalsIgnoreCase(direccion)){
             encontrado = true;
         }
         return encontrado;

@@ -177,12 +177,10 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
         String estado = obj.getString("estado");
-        if (estado.equals("EnVenta")) {
-            setEstado(Estado.EnVenta);
-        }else if(estado.equals("EnAlquiler")){
-            setEstado(Estado.EnAlquiler);
-        }else if(estado.equals("Baja")){
-            setEstado(Estado.Baja);
+        switch (estado) {
+            case "EnVenta" -> setEstado(Estado.EnVenta);
+            case "EnAlquiler" -> setEstado(Estado.EnAlquiler);
+            case "Baja" -> setEstado(Estado.Baja);
         }
 
 
@@ -253,7 +251,7 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     @Override
     public boolean buscar(String direccion) {
         boolean encontrado = false;
-        if (direccion.equalsIgnoreCase(direccion)){
+        if (this.direccion.equalsIgnoreCase(direccion)){
             encontrado = true;
         }
         return encontrado;

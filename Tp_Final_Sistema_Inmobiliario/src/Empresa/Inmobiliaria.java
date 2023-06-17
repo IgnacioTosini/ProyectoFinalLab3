@@ -53,7 +53,7 @@ public class Inmobiliaria implements IJson {
 
     public void agregarUsuario(Usuario usuario) {
         if (usuario != null) {
-            usuarios.put(usuario.getNombreYApellido(), usuario);
+            usuarios.put(usuario.getMail().getMail(), usuario);
         }
     }
 
@@ -91,7 +91,7 @@ public class Inmobiliaria implements IJson {
     public void alquilar(Usuario usuario, String direccion, String tipo, Fecha fecha) throws NoDisponibleException, LugarExistenteException, EleccionIncorrectaException {  //Tipo es el tipo de inmueble al alquilar.
         double precioFinal = 0;
         switch (tipo.toLowerCase()) {
-            case "casa":
+            case "casa" -> {
                 Casa casa = buscarCasa(direccion); //Excepcion en todos por si no se encuentra, si casa es null.
                 if (casa != null) {
                     if (casa.validarFecha(fecha)) {
@@ -99,7 +99,7 @@ public class Inmobiliaria implements IJson {
                         precioFinal = casa.metodoDePago(eleccion);
                         usuario.agregar(casa.getDireccion() + " " + fecha.toString());
                         casa.agregarDisponibilidad(fecha);
-                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(),precioFinal, fecha, direccion, casa.getDireccion(), estadoString(casa.getEstado()) );
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, casa.getDireccion(), estadoString(casa.getEstado()));
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
 
@@ -109,17 +109,16 @@ public class Inmobiliaria implements IJson {
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
                 }
-                break;
-            case "departamento":
+            }
+            case "departamento" -> {
                 Departamento departamento = buscarDepartamento(direccion);
-
                 if (departamento != null) {
                     if (departamento.validarFecha(fecha)) {
                         int eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
                         precioFinal = departamento.metodoDePago(eleccion);
                         usuario.agregar(departamento.getDireccion() + " " + fecha.toString());
                         departamento.agregarDisponibilidad(fecha);
-                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(),precioFinal, fecha, direccion, departamento.getDireccion(), estadoString(departamento.getEstado()) );
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, departamento.getDireccion(), estadoString(departamento.getEstado()));
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
@@ -128,9 +127,8 @@ public class Inmobiliaria implements IJson {
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
                 }
-
-                break;
-            case "local":
+            }
+            case "local" -> {
                 Local local = buscarLocal(direccion);
                 if (local != null) {
                     if (local.validarFecha(fecha)) {
@@ -138,7 +136,7 @@ public class Inmobiliaria implements IJson {
                         precioFinal = local.metodoDePago(eleccion);
                         usuario.agregar(local.getDireccion() + " " + fecha.toString());
                         local.agregarDisponibilidad(fecha);
-                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(),precioFinal, fecha, direccion, local.getDireccion(), estadoString(local.getEstado()) );
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, local.getDireccion(), estadoString(local.getEstado()));
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
@@ -147,8 +145,8 @@ public class Inmobiliaria implements IJson {
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
                 }
-                break;
-            case "cochera":
+            }
+            case "cochera" -> {
                 Cochera cochera = buscarCochera(direccion);
                 if (cochera != null) {
                     if (cochera.validarFecha(fecha)) {
@@ -156,7 +154,7 @@ public class Inmobiliaria implements IJson {
                         precioFinal = cochera.metodoDePago(eleccion);
                         usuario.agregar(cochera.getDireccion() + " " + fecha.toString());
                         cochera.agregarDisponibilidad(fecha);
-                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(),precioFinal, fecha, direccion, cochera.getDireccion(), estadoString(cochera.getEstado()) );
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, cochera.getDireccion(), estadoString(cochera.getEstado()));
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
@@ -165,10 +163,8 @@ public class Inmobiliaria implements IJson {
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
                 }
-                break;
-            default:
-                throw new EleccionIncorrectaException("Elección Invalida");
-
+            }
+            default -> throw new EleccionIncorrectaException("Elección Invalida");
         }
     }
 
