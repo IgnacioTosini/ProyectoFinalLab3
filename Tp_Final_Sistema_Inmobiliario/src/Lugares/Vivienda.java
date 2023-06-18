@@ -9,9 +9,8 @@ import java.util.ArrayList;
 
 /**
  * @author
- * @since
  * @see Departamento#isAmueblado()
- *
+ * @since
  */
 
 public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable, IBuscar, IJson {
@@ -95,13 +94,15 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
         return precio;
     }
 
-    public void agregarDisponibilidad(Fecha fecha){
+    public void agregarDisponibilidad(Fecha fecha) {
         disponibilidad.add(fecha);
     }
-    public Fecha buscarFecha(int pos){
+
+    public Fecha buscarFecha(int pos) {
         return disponibilidad.get(pos);
     }
-    public int cantDeFechas(){
+
+    public int cantDeFechas() {
         return disponibilidad.size();
     }
 
@@ -141,10 +142,14 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
     public boolean validarFecha(Fecha fecha) {
         Fecha aux = new Fecha();
         boolean validacion = false;
-        for(int i = 0; i<disponibilidad.size(); i++){
-            aux = disponibilidad.get(i);
-            if(aux.comprobarFecha(fecha)){
-                validacion = true;
+        if (disponibilidad.size() == 0) {
+            validacion = true;
+        } else {
+            for (int i = 0; i < disponibilidad.size(); i++) {
+                aux = disponibilidad.get(i);
+                if (aux.comprobarFecha(fecha)) {
+                    validacion = true;
+                }
             }
         }
 
@@ -154,7 +159,7 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
     @Override
     public boolean buscar(String direccion) {
         boolean encontrado = false;
-        if (this.direccion.equalsIgnoreCase(direccion)){
+        if (this.direccion.equalsIgnoreCase(direccion)) {
             encontrado = true;
         }
         return encontrado;

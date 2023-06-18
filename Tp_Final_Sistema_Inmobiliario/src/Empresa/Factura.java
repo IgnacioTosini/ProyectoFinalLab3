@@ -121,14 +121,68 @@ public class Factura implements IJson, Comparable {
         return estadoActual;
     }
 
+    private void setDirInmobiliaria(String dirInmobiliaria) {
+        this.dirInmobiliaria = dirInmobiliaria;
+    }
+
+    private void setDirInmueble(String dirInmueble) {
+        this.dirInmueble = dirInmueble;
+    }
+
+    private void setId(int id) {
+        this.id = id;
+    }
+
+    private void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    private void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    private void setMail(Mail mail) {
+        this.mail = mail;
+    }
+
+    private void setPrecioFinal(double precioFinal) {
+        this.precioFinal = precioFinal;
+    }
+
+    private void setFecha(Fecha fecha) {
+        this.fecha = fecha;
+    }
+
+    private void setEstadoActual(String estadoActual) {
+        this.estadoActual = estadoActual;
+    }
+
     @Override
     public JSONObject toJsonObj() throws JSONException {
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("nombre", nombre);
+        jsonObject.put("dni", dni);
+        jsonObject.put("mail", mail.toJsonObj());
+        jsonObject.put("precioFinal", precioFinal);
+        jsonObject.put("dirInmobiliaria", dirInmobiliaria);
+        jsonObject.put("dirInmueble", dirInmueble);
+        jsonObject.put("estadoActual", estadoActual);
+
+        return jsonObject;
     }
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
-
+        setId(obj.getInt("id"));
+        setNombre(obj.getString("nombre"));
+        setDni(obj.getString("dni"));
+        mail.fromJsonObj(obj.getJSONObject("mail"));
+        setPrecioFinal(obj.getDouble("precioFinal"));
+        fecha.fromJsonObj(obj.getJSONObject("fecha"));
+        setDirInmobiliaria(obj.getString("dirInmobiliaria"));
+        setDirInmueble(obj.getString("dirInmueble"));
+        setEstadoActual(obj.getString("estadoActual"));
     }
 }
 

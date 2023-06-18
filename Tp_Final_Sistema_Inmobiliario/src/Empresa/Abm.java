@@ -4,113 +4,154 @@ import Interfaces.IBuscar;
 import Interfaces.IJson;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 public class Abm<T extends IBuscar & IJson> {
-    private TreeSet<T> miTreeSet;
-    private TreeSet<T> bajas;
+    private HashSet<T> miHashSet;
+    private HashSet<T> bajas;
 
     public Abm() {
-        miTreeSet = new TreeSet<>();
-        bajas = new TreeSet<>();
+        miHashSet = new HashSet<>();
+        bajas = new HashSet<>();
     }
 
     public void agregar(T elemento) {
         if (bajas.contains(elemento)) {
-            miTreeSet.add(elemento);
+            miHashSet.add(elemento);
             bajas.remove(elemento);
         } else {
-            miTreeSet.add(elemento);
+            miHashSet.add(elemento);
         }
     }
 
     public boolean baja(T elemento) {
         boolean validacion = false;
-        Iterator iterator = miTreeSet.iterator();
+        Iterator iterator = miHashSet.iterator();
+        T aux = null;
 
         while (iterator.hasNext() && validacion == false) {
-            if (elemento.equals((T) iterator)) {
+            aux =(T) iterator.next();
+            if (elemento.equals(aux)) {
                 bajas.add(elemento);
-                miTreeSet.remove(elemento);
+                miHashSet.remove(elemento);
                 validacion = true;
             }
-            iterator.next();
         }
         return validacion;
     }
 
     public boolean modificar(T elemento) {
         boolean validacion = false;
-        Iterator iterator = miTreeSet.iterator();
+        Iterator iterator = miHashSet.iterator();
+        T aux = null;
 
         while (iterator.hasNext() && validacion == false) {
-            if (elemento.equals((T) iterator)) {
-                miTreeSet.remove((T) iterator);
-                miTreeSet.add(elemento);
+            aux = (T)iterator.next();
+            if (elemento.equals(aux)) {
+                miHashSet.remove(aux);
+                miHashSet.add(elemento);
                 validacion = true;
             }
-            iterator.next();
         }
         return validacion;
     }
 
     public T buscador(String direccion) {
         boolean validacion = false;
-        Iterator iterator = miTreeSet.iterator();
+        Iterator iterator = miHashSet.iterator();
         T buscado = null;
 
         while (iterator.hasNext() && validacion == false) {
-            if (((T) iterator).buscar(direccion)) {
-                buscado = (T) iterator;
+            T aux = (T) iterator.next();
+            if (aux.buscar(direccion)) {
+                buscado = aux;
                 validacion = true;
             }
-            iterator.next();
         }
+
         return buscado;
     }
 
     public String listado(String nombreClase) {
         boolean validacion = false;
-        Iterator iterator = miTreeSet.iterator();
+        Iterator iterator = miHashSet.iterator();
         String listado = "";
-
+        String aux = "Lugares.";
+        aux = aux.concat(nombreClase);
+        
+        T itAux = null;
         while (iterator.hasNext()) {
-            if (nombreClase.equalsIgnoreCase(iterator.getClass().getName())) {
-                listado = listado.concat(iterator.toString());
+            itAux =(T) iterator.next();
+            if (aux.equalsIgnoreCase(itAux.getClass().getName())) {
+                listado = listado.concat(itAux.toString());
             }
-            iterator.next();
         }
         return listado;
     }
 
     public int cantTotal() {
-        return miTreeSet.size();
+        return miHashSet.size();
     }
 
     public T get() {
-        Iterator iterator = miTreeSet.iterator();
+        Iterator iterator = miHashSet.iterator();
         T objeto = null;
 
         while (iterator.hasNext()) {
             objeto = (T) iterator;
             iterator.next();
         }
-
         return objeto;
     }
 
-    public JSONArray JsonGenerico() throws JSONException {
+    public JSONObject toJsonGenerico() throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        Iterator it = miTreeSet.iterator();
+        JSONArray jsonArray1 = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        Iterator it = miHashSet.iterator();
+        Iterator itBajas = bajas.iterator();
 
         while (it.hasNext()) {
-
             T aux = (T) it.next();
             jsonArray.put(aux.toJsonObj());
-
         }
-        return jsonArray;
+
+        while (itBajas.hasNext()) {
+            T auxx = (T) itBajas.next();
+            jsonArray1.put(auxx.toJsonObj());
+        }
+
+        jsonObject.put("inmueble", jsonArray);
+        jsonObject.put("bajas", jsonArray1);
+
+        return jsonObject;
+    }
+
+    public void fromJsonGenerico(JSONObject obj) throws JSONException {
+        JSONArray jsonArray = obj.getJSONArray("inmueble");
+        JSONArray jsonArrayBajas = obj.getJSONArray("bajas");
+
+        JSONObject aux = new JSONObject();
+        T valor = null;
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            aux = (JSONObject) jsonArray.get(i);
+            valor.fromJsonObj(aux);
+
+            miHashSet.add(valor);
+        }
+
+        for (int i = 0; i < jsonArrayBajas.length(); i++) {
+            aux = (JSONObject) jsonArrayBajas.get(i);
+            valor.fromJsonObj(aux);
+
+            miHashSet.add(valor);
+        }
+
     }
 }

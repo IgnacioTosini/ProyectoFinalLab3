@@ -14,18 +14,23 @@ import Excepciones.ControladoraUsuario.EdadInvalidadException;
 import Excepciones.ControladoraUsuario.NombreYApellidoIncorrectoException;
 import Excepciones.ControladoraUsuario.UsuarioNoEncontradoException;
 import Excepciones.EleccionIncorrectaException;
+import Excepciones.LugarExistenteException;
 import Excepciones.Mail.ArrobaException;
 import Excepciones.Mail.PuntoComException;
+import Excepciones.NoDisponibleException;
 import Lugares.*;
 import Swing.MenuInicioGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class ControladoraUsuario extends Component {
-    Scanner teclado = new Scanner(System.in);
+    static Scanner teclado = new Scanner(System.in);
 
     /**
      * Esta es una funcion donde se gestiona el menu principal de usuario al inicio para loguear y registrarse
@@ -33,7 +38,7 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      * @return retorna el usuario que se quiso registrar/logear
      */
-    public Usuario menu(Inmobiliaria inmobiliaria) {
+    public static Usuario menu(Inmobiliaria inmobiliaria) {
         Usuario usuario = new Usuario();
         //new MenuInicioGUI(inmobiliaria);
         String respuesta = "si";
@@ -41,7 +46,7 @@ public class ControladoraUsuario extends Component {
             System.out.println("Buen día ¿Qué le gustaría realizar?");
             int opcion = 0;
             System.out.println("1. Loguearse \n2. Registrarse");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
 
             switch (opcion) {
                 case 1:
@@ -52,45 +57,50 @@ public class ControladoraUsuario extends Component {
                                 do {
                                     System.out.println("¿Qué le gustaría realizar?");
                                     opcion = 0;
-                                    System.out.println("1. Agregar inmueble \n2. Remover inmueble \n3. Modificar inmueble \n4. Listar inmueble \n5. Mostrar inmueble \n6. Dar de baja usuario  \n 7. Mostrar usuario");
-                                    opcion = teclado.nextInt();
+                                    System.out.println("1. Agregar inmueble \n2. Remover inmueble \n3. Modificar inmueble \n4. Listar inmueble \n5. Mostrar inmueble \n6. Dar de baja usuario  \n7. Mostrar usuario");
+                                    opcion = Integer.parseInt(teclado.nextLine());
                                     String continuar = "si";
                                     switch (opcion) {
                                         case 1:
                                             agregarInmuebles(inmobiliaria);
                                             break;
-
                                         case 2:
-                                            darDeBajaInmueble(inmobiliaria);
+                                            try {
+                                                darDeBajaInmueble(inmobiliaria);
+                                            } catch (EleccionIncorrectaException e) {
+                                                System.err.println(e.getMessage());
+                                            }
                                             break;
-
                                         case 3:
                                             modificarInmueble(inmobiliaria);
                                             break;
-
                                         case 4:
-
-                                            listarInmueble(inmobiliaria);
+                                            try {
+                                                listarInmueble(inmobiliaria);
+                                            } catch (EleccionIncorrectaException e) {
+                                                System.err.println(e.getMessage());
+                                            }
                                             break;
-
                                         case 5:
-                                            buscarInmueble(inmobiliaria);
+                                            try {
+                                                buscarInmueble(inmobiliaria);
+                                            } catch (EleccionIncorrectaException e) {
+                                                System.err.println(e.getMessage());
+                                            }
                                             break;
-
                                         case 6:
                                             darDeBajaUsuario(inmobiliaria);
                                             break;
-
                                         case 7:
                                             mostrarUsuario(inmobiliaria);
                                             break;
-
                                         default:
                                             System.out.println("Valor ingresado no valido");
                                             break;
                                     }
-
                                 } while (respuesta.equalsIgnoreCase("si"));
+                            } else {
+                                menuUsuario(inmobiliaria, usuario);
                             }
                             respuesta = "no";
                         } catch (UsuarioNoEncontradoException | MalContraseñaException e) {
@@ -99,7 +109,6 @@ public class ControladoraUsuario extends Component {
                             respuesta = teclado.nextLine();
                         }
                     }
-
                     break;
 
                 case 2:
@@ -132,17 +141,15 @@ public class ControladoraUsuario extends Component {
      * @throws UsuarioNoEncontradoException
      * @throws MalContraseñaException
      */
-    public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
-        System.out.println("Ingrese su nombre");
-        teclado.nextLine();
+    public static Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
+        System.out.println("Ingrese su Mail: ");
         String nombre = teclado.nextLine();
 
         Usuario usuario = inmobiliaria.buscarUsuario(nombre);
         if (usuario == null) {
             throw new UsuarioNoEncontradoException("Usuario no encontrado");
-
         }
-        System.out.println("Ingrese su contraseña");
+        System.out.println("Ingrese su contraseña: ");
         String contraseña = teclado.nextLine();
         if (!usuario.getContraseña().equals(contraseña)) {
             throw new MalContraseñaException("Contraseña incorrecta");
@@ -188,11 +195,14 @@ public class ControladoraUsuario extends Component {
 
 
     /**
-     * Creacion de usuario
+     * Función que permite crear un usuario
      *
-     * @return retorna el usuario que se registro
+     * @return
+     * @throws DniInvalidoException
+     * @throws NombreYApellidoIncorrectoException
+     * @throws EdadInvalidadException
      */
-    public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
+    public static Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
         String nombre = "";
         String contraseña = "";
         String dni = "";
@@ -203,9 +213,8 @@ public class ControladoraUsuario extends Component {
         int tipoMail = 0;
 
         boolean nombreValido = false;
-        while (!nombreValido) {
+        while (nombreValido == false) {
             System.out.println("Ingrese su nombre y apellido");
-            teclado.nextLine();
             nombre = teclado.nextLine();
             if (nombre.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
                 nombreValido = true;
@@ -254,7 +263,7 @@ public class ControladoraUsuario extends Component {
 
         while (Objects.equals(auxMail, "")) {
             System.out.println("Ingrese que tipo de mail usa.\n1.Gmail\n2.Hotmail\n3.Yahoo\n4.Otros");
-            tipoMail = teclado.nextInt();
+            tipoMail = Integer.parseInt(teclado.nextLine());
             auxMail = menuTipoMail(tipoMail);
         }
         if (tipoMail == 4) {
@@ -262,14 +271,11 @@ public class ControladoraUsuario extends Component {
 
         } else if (tipoMail == 1 || tipoMail == 2 || tipoMail == 3) {
             System.out.println("Ingrese la parte delantera del mail (Antes de @)");
-            teclado.nextLine();
             String aux = teclado.nextLine();
             mail = aux.concat(auxMail);
         }
         Mail correo = new Mail(mail);
-
         Usuario usuario = new Usuario(nombre, contra, dni, correo, edad, true);
-        System.out.println("termine y usuario: " + usuario);
 
         return usuario;
     }
@@ -373,12 +379,12 @@ public class ControladoraUsuario extends Component {
     }*/
 
     /**
-     * Función el cual te crea un mail de distintos tipos.
+     * Función el cual te crea un mail de distintos tipos, en elección si se la pase 1 es gmail, 2 hotmail, 3 yahoo y 4 uno puede crear uno distinto.
      *
      * @param eleccion
      * @return Retorna un String en formato de mail
      */
-    public String menuTipoMail(int eleccion) {
+    public static String menuTipoMail(int eleccion) {
         String mail = "";
         boolean valido = false;
         switch (eleccion) {
@@ -397,7 +403,6 @@ public class ControladoraUsuario extends Component {
             case 4:
                 while (valido == false) {
                     System.out.println("Ingrese el mail completo por favor.");
-                    teclado.nextLine();
                     mail = teclado.nextLine();
                     try {
                         valido = Mail.validarMail(mail);
@@ -405,7 +410,7 @@ public class ControladoraUsuario extends Component {
                         System.err.println(e.getMessage());
                     }
                     if (valido == false) {
-                        System.err.println("EL mail ingresado es incorrecto");
+                        System.err.println("El mail ingresado es incorrecto");
                     }
                 }
                 break;
@@ -448,7 +453,122 @@ public class ControladoraUsuario extends Component {
         return mail;
     }*/
 
-    public void mostrarUsuario(Inmobiliaria inmobiliaria) {
+    public static void menuUsuario(Inmobiliaria inmobiliaria, Usuario usuario) {
+        String continuar = "si";
+        String direccion = "";
+        String tipoInmueble = "";
+        do {
+            System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un Inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble"); // listar inmbuebles, busca inmueble, comprar, alquilar
+            int opcion = Integer.parseInt(teclado.nextLine());
+            switch (opcion) {
+                case 1:
+                    try {
+                        listarInmueble(inmobiliaria);
+                    } catch (EleccionIncorrectaException e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+
+                case 2:
+
+                    try {
+                        buscarInmueble(inmobiliaria);
+                    } catch (EleccionIncorrectaException e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+
+                case 3:
+                        
+                    break;
+
+                case 4:
+                    boolean valido = true;
+                    do {
+                        System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
+                        tipoInmueble = teclado.nextLine();
+                        if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
+                            valido = false;
+                        } else {
+                            valido = true;
+                        }
+                    } while (valido == false);
+
+                    do {
+                        System.out.println("Ingrese la direeción del inmueble que desea alquilar");
+                        direccion = teclado.nextLine();
+
+                        LocalDate fechaIngreso = null;
+                        LocalDate fechaSalida = null;
+                        do {
+                            try {
+                                System.out.println("Ingrese la fecha de ingreso:\n");
+                                fechaIngreso = crearFechaAlquiler();
+
+                                System.out.println("Ingrese cuantos dias desea estar: \n");
+                                int cantDias = Integer.parseInt(teclado.nextLine());
+                                fechaSalida = fechaIngreso.plusDays(cantDias);
+                                continuar = "no";
+                            } catch (EleccionIncorrectaException e) {
+                                System.err.println(e.getMessage());
+                                System.out.println("¿Quiere intentar otra vez?");
+                                continuar = teclado.nextLine();
+                            }
+                        } while (continuar.equalsIgnoreCase("si"));
+                        Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
+                        try {
+                            inmobiliaria.alquilar(usuario, direccion, tipoInmueble, fecha);
+                        } catch (NoDisponibleException | LugarExistenteException e) {
+                            System.err.println(e.getMessage());
+                            System.out.println("¿Quiere intentar otra vez?");
+                            continuar = teclado.nextLine();
+                        }
+                    } while (continuar.equalsIgnoreCase("si"));
+                    break;
+
+                default:
+                    System.err.println("Opción invalida");
+                    break;
+            }
+            System.out.println("¿Desea hacer otra acción? Si es así ingrese si");
+            continuar = teclado.nextLine();
+
+        } while (continuar.equalsIgnoreCase("si"));
+    }
+
+    public static LocalDate crearFechaAlquiler() throws EleccionIncorrectaException {
+        int dia = 0;
+        int mes = 0;
+        int año = 0;
+        boolean valido = false;
+        System.out.println("Ingrese el dia: ");
+        dia = Integer.parseInt(teclado.nextLine());
+
+        System.out.println("Ingrese el mes: ");
+        mes = Integer.parseInt(teclado.nextLine());
+
+        System.out.println("Ingrese el año: ");
+        año = Integer.parseInt(teclado.nextLine());
+
+        LocalDate fecha = LocalDate.of(año, mes, dia);
+        valido = Fecha.validarFecha(fecha);
+
+        if (valido == false) {
+            throw new EleccionIncorrectaException("La fecha no es valida");
+        }
+
+        return fecha;
+    }
+
+
+    /**
+     * Función que te solicitara el mail del usuario de la imobiliaria para posteriormente poder mostrar todos los datos del usuario.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+    public static void mostrarUsuario(Inmobiliaria inmobiliaria) {
         String continuar = "";
         do {
             System.out.println("Mail del usuario: ");
@@ -461,7 +581,15 @@ public class ControladoraUsuario extends Component {
 
     }
 
-    public void darDeBajaUsuario(Inmobiliaria inmobiliaria) {
+    /**
+     * Función que te solicitara el mail del usuario de la inmobiliaria para posteriormente darlo de baja.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+
+    public static void darDeBajaUsuario(Inmobiliaria inmobiliaria) {
         String continuar = "no";
         do {
             System.out.println("Que usuario desea dar de baja? (Mail del Usuario)");
@@ -474,12 +602,20 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void darDeBajaInmueble(Inmobiliaria inmobiliaria) {
+    /**
+     * Función que te solicita el tipo de inmueble y su dirección y si se encuentra dentro de la inmobiliaria este lo da de baja.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+
+    public static void darDeBajaInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
         String continuar = "no";
         do {
             System.out.println("Que tipo de inmueble desea dar de baja? (Casa/Departamento/Local/Cochera)");
             String tipoInmueble = teclado.nextLine();
-            if (!(tipoInmueble.equalsIgnoreCase("Casa") && tipoInmueble.equalsIgnoreCase("Departamento") && tipoInmueble.equalsIgnoreCase("Local") && tipoInmueble.equalsIgnoreCase("Cochera"))) {
+            if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "si";
                 System.out.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
@@ -489,7 +625,7 @@ public class ControladoraUsuario extends Component {
                 if (casa != null) {
                     inmobiliaria.baja(casa);
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
@@ -498,7 +634,7 @@ public class ControladoraUsuario extends Component {
                 if (departamento != null) {
                     inmobiliaria.baja(departamento);
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
@@ -507,7 +643,7 @@ public class ControladoraUsuario extends Component {
                 if (local != null) {
                     inmobiliaria.baja(local);
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
@@ -516,7 +652,7 @@ public class ControladoraUsuario extends Component {
                 if (cochera != null) {
                     inmobiliaria.baja(cochera);
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             }
             System.out.println("Desea dar de baja otro inmueble?");
@@ -524,45 +660,61 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void modificarInmueble(Inmobiliaria inmobiliaria) {
+    /**
+     * Función que permite buscar y modificar el dato de un inmueble perteneciente a la inmobiliaria, solicitara tipo de inmueble y su respectiva dirección.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+
+    public static void modificarInmueble(Inmobiliaria inmobiliaria) {
         System.out.println("Que inmueble desea modificar? (Casa/Departamento/Local/Cochera)");
         String tipoInmueble = teclado.nextLine();
         String continuar = "no";
         do {
-            if (!(tipoInmueble.equalsIgnoreCase("Casa") && tipoInmueble.equalsIgnoreCase("Departamento") && tipoInmueble.equalsIgnoreCase("Local") && tipoInmueble.equalsIgnoreCase("Cochera"))) {
+            if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "si";
                 System.out.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 try {
                     modificarCasa(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
-                    //Comportamiento
+                    System.err.println(e.getMessage());
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 try {
                     modificarDepartamento(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
-                    //Comportamiento
+                    System.err.println(e.getMessage());
                 }
 
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 try {
                     modificarLocal(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
-                    //Comportamiento
+                    System.err.println(e.getMessage());
                 }
 
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 try {
                     modificarCochera(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
-                    //Comportamiento
+                    System.err.println(e.getMessage());
                 }
             }
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void modificarCasa(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+
+    /**
+     * Función que te permite modificar un dato una casa, la función te solicitara que ingreses la dirección.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+    public static void modificarCasa(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
         Casa casaEncontrada = inmobiliaria.buscarCasa(direccion);
@@ -571,13 +723,13 @@ public class ControladoraUsuario extends Component {
         do {
             if (casaEncontrada != null) {
                 System.out.println("Que atributo desea modificar? (1-estado, 2-ambientes, 3-cantBaños, 4-metrosCuadrados, 5-amueblado, 6-cochera, 7-precio, 8-patio, 9-pisos)");
-                int opcion = teclado.nextInt();
+                int opcion = Integer.parseInt(teclado.nextLine());
                 switch (opcion) {
                     case 1:
                         Estado estado = null;
                         do {
                             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 estado = Estado.EnAlquiler;
                             } else if (opcion == 2) {
@@ -593,7 +745,7 @@ public class ControladoraUsuario extends Component {
 
                     case 2:
                         System.out.println("Cantidad de ambientes?");
-                        short ambientes = teclado.nextShort();
+                        short ambientes = Short.parseShort(teclado.nextLine());
 
                         casa = new Casa(casaEncontrada.getEstado(), casaEncontrada.getDireccion(), ambientes, casaEncontrada.getCantBanios(), casaEncontrada.getMetrosCuadrados(), casaEncontrada.isAmueblado(), casaEncontrada.isCochera(), casaEncontrada.getPrecio(), casaEncontrada.isPatio(), casaEncontrada.getPisos());
                         inmobiliaria.modificar(casa);
@@ -601,7 +753,7 @@ public class ControladoraUsuario extends Component {
 
                     case 3:
                         System.out.println("Cantidad de baños?");
-                        short cantBaños = teclado.nextShort();
+                        short cantBaños = Short.parseShort(teclado.nextLine());
 
                         casa = new Casa(casaEncontrada.getEstado(), casaEncontrada.getDireccion(), casaEncontrada.getAmbientes(), cantBaños, casaEncontrada.getMetrosCuadrados(), casaEncontrada.isAmueblado(), casaEncontrada.isCochera(), casaEncontrada.getPrecio(), casaEncontrada.isPatio(), casaEncontrada.getPisos());
                         inmobiliaria.modificar(casa);
@@ -609,7 +761,7 @@ public class ControladoraUsuario extends Component {
 
                     case 4:
                         System.out.println("Metros cuadrados?");
-                        int metrosCuadrados = teclado.nextInt();
+                        int metrosCuadrados = Integer.parseInt(teclado.nextLine());
 
                         casa = new Casa(casaEncontrada.getEstado(), casaEncontrada.getDireccion(), casaEncontrada.getAmbientes(), casaEncontrada.getCantBanios(), metrosCuadrados, casaEncontrada.isAmueblado(), casaEncontrada.isCochera(), casaEncontrada.getPrecio(), casaEncontrada.isPatio(), casaEncontrada.getPisos());
                         inmobiliaria.modificar(casa);
@@ -619,7 +771,7 @@ public class ControladoraUsuario extends Component {
                         boolean amueblado = false;
                         do {
                             System.out.println("Esta amueblado? (1 -Si/ 2 -No)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 amueblado = true;
                             } else if (opcion == 2) {
@@ -637,7 +789,7 @@ public class ControladoraUsuario extends Component {
                         boolean cochera = false;
                         do {
                             System.out.println("Tiene cochera? (1 -Si/ 2 -No)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 cochera = true;
                             } else if (opcion == 2) {
@@ -653,7 +805,7 @@ public class ControladoraUsuario extends Component {
 
                     case 7:
                         System.out.println("Precio del inmueble?");
-                        double precio = teclado.nextDouble();
+                        double precio = Double.parseDouble(teclado.nextLine());
 
                         casa = new Casa(casaEncontrada.getEstado(), casaEncontrada.getDireccion(), casaEncontrada.getAmbientes(), casaEncontrada.getCantBanios(), casaEncontrada.getMetrosCuadrados(), casaEncontrada.isAmueblado(), casaEncontrada.isCochera(), precio, casaEncontrada.isPatio(), casaEncontrada.getPisos());
                         inmobiliaria.modificar(casa);
@@ -663,7 +815,7 @@ public class ControladoraUsuario extends Component {
                         boolean patio = false;
                         do {
                             System.out.println("Tiene patio? (1 -Si/ 2 -No)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 patio = true;
                             } else if (opcion == 2) {
@@ -679,7 +831,7 @@ public class ControladoraUsuario extends Component {
 
                     case 9:
                         System.out.println("Cantidad de pisos?");
-                        short pisos = teclado.nextShort();
+                        short pisos = Short.parseShort(teclado.nextLine());
 
                         casa = new Casa(casaEncontrada.getEstado(), casaEncontrada.getDireccion(), casaEncontrada.getAmbientes(), casaEncontrada.getCantBanios(), casaEncontrada.getMetrosCuadrados(), casaEncontrada.isAmueblado(), casaEncontrada.isCochera(), casaEncontrada.getPrecio(), casaEncontrada.isPatio(), pisos);
                         inmobiliaria.modificar(casa);
@@ -694,7 +846,15 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void modificarDepartamento(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+
+    /**
+     * Función que te permite modificar un dato de un departamento, la función te solicitara que ingreses la dirección.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+    public static void modificarDepartamento(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
         Departamento departamentoEncontrado = inmobiliaria.buscarDepartamento(direccion);
@@ -703,13 +863,13 @@ public class ControladoraUsuario extends Component {
         do {
             if (departamentoEncontrado != null) {
                 System.out.println("Que atributo desea modificar? (1-estado, 2-ambientes, 3-cantBaños, 4-metrosCuadrados, 5-amueblado, 6-cochera, 7-precio, 8-nroPiso, 9-disposicion)");
-                int opcion = teclado.nextInt();
+                int opcion = Integer.parseInt(teclado.nextLine());
                 switch (opcion) {
                     case 1:
                         Estado estado = null;
                         do {
                             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 estado = Estado.EnAlquiler;
                             } else if (opcion == 2) {
@@ -725,7 +885,7 @@ public class ControladoraUsuario extends Component {
 
                     case 2:
                         System.out.println("Cantidad de ambientes?");
-                        short ambientes = teclado.nextShort();
+                        short ambientes = Short.parseShort(teclado.nextLine());
 
                         departamento = new Departamento(departamentoEncontrado.getEstado(), departamentoEncontrado.getDireccion(), ambientes, departamentoEncontrado.getCantBanios(), departamentoEncontrado.getMetrosCuadrados(), departamentoEncontrado.isAmueblado(), departamentoEncontrado.isCochera(), departamentoEncontrado.getPrecio(), departamentoEncontrado.getNroPiso(), departamentoEncontrado.getDisposicion());
                         inmobiliaria.modificar(departamento);
@@ -733,7 +893,7 @@ public class ControladoraUsuario extends Component {
 
                     case 3:
                         System.out.println("Cantidad de baños?");
-                        short cantBaños = teclado.nextShort();
+                        short cantBaños = Short.parseShort(teclado.nextLine());
 
                         departamento = new Departamento(departamentoEncontrado.getEstado(), departamentoEncontrado.getDireccion(), departamentoEncontrado.getAmbientes(), cantBaños, departamentoEncontrado.getMetrosCuadrados(), departamentoEncontrado.isAmueblado(), departamentoEncontrado.isCochera(), departamentoEncontrado.getPrecio(), departamentoEncontrado.getNroPiso(), departamentoEncontrado.getDisposicion());
                         inmobiliaria.modificar(departamento);
@@ -741,7 +901,7 @@ public class ControladoraUsuario extends Component {
 
                     case 4:
                         System.out.println("Metros cuadrados?");
-                        int metrosCuadrados = teclado.nextInt();
+                        int metrosCuadrados = Integer.parseInt(teclado.nextLine());
 
                         departamento = new Departamento(departamentoEncontrado.getEstado(), departamentoEncontrado.getDireccion(), departamentoEncontrado.getAmbientes(), departamentoEncontrado.getCantBanios(), metrosCuadrados, departamentoEncontrado.isAmueblado(), departamentoEncontrado.isCochera(), departamentoEncontrado.getPrecio(), departamentoEncontrado.getNroPiso(), departamentoEncontrado.getDisposicion());
                         inmobiliaria.modificar(departamento);
@@ -751,7 +911,7 @@ public class ControladoraUsuario extends Component {
                         boolean amueblado = false;
                         do {
                             System.out.println("Esta amueblado? (1 -Si/ 2 -No)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 amueblado = true;
                             } else if (opcion == 2) {
@@ -769,7 +929,7 @@ public class ControladoraUsuario extends Component {
                         boolean cochera = false;
                         do {
                             System.out.println("Tiene cochera? (1 -Si/ 2 -No)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 cochera = true;
                             } else if (opcion == 2) {
@@ -785,7 +945,7 @@ public class ControladoraUsuario extends Component {
 
                     case 7:
                         System.out.println("Precio del inmueble?");
-                        double precio = teclado.nextDouble();
+                        double precio = Double.parseDouble(teclado.nextLine());
 
                         departamento = new Departamento(departamentoEncontrado.getEstado(), departamentoEncontrado.getDireccion(), departamentoEncontrado.getAmbientes(), departamentoEncontrado.getCantBanios(), departamentoEncontrado.getMetrosCuadrados(), departamentoEncontrado.isAmueblado(), departamentoEncontrado.isCochera(), precio, departamentoEncontrado.getNroPiso(), departamentoEncontrado.getDisposicion());
                         inmobiliaria.modificar(departamento);
@@ -803,7 +963,7 @@ public class ControladoraUsuario extends Component {
                         String disposicion = "";
                         do {
                             System.out.println("Cual es la disposicion? (1 -A la calle/ 2 - Interno)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 disposicion = "Calle";
                             } else if (opcion == 2) {
@@ -826,7 +986,15 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void modificarCochera(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    /**
+     * Función que te permite modificar un dato una cochera, la función te solicitara que ingreses la dirección.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+
+    public static void modificarCochera(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
         Cochera cocheraEncontrada = inmobiliaria.buscarCochera(direccion);
@@ -835,14 +1003,14 @@ public class ControladoraUsuario extends Component {
         do {
             if (cocheraEncontrada != null) {
                 System.out.println("Que atributo desea modificar? (1-estado, 2-piso, 3-posicion, 4-medio de acceso,5-precio)");
-                int opcion = teclado.nextInt();
+                int opcion = Integer.parseInt(teclado.nextLine());
                 switch (opcion) {
 
                     case 1:
                         Estado estado = null;
                         do {
                             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 estado = Estado.EnAlquiler;
                             } else if (opcion == 2) {
@@ -858,7 +1026,7 @@ public class ControladoraUsuario extends Component {
                         break;
                     case 2:
                         System.out.println("Numero de piso?");
-                        short piso = teclado.nextShort();
+                        short piso = Short.parseShort(teclado.nextLine());
 
                         cochera = new Cochera(cocheraEncontrada.getDireccion(), cocheraEncontrada.getEstado(), piso, cocheraEncontrada.getPosicion(), cocheraEncontrada.getMedioDeAcceso(), cocheraEncontrada.getPrecio());
                         inmobiliaria.modificar(cochera);
@@ -866,7 +1034,7 @@ public class ControladoraUsuario extends Component {
                         break;
                     case 3:
                         System.out.println("Posicion en el piso?");
-                        short posicion = teclado.nextShort();
+                        short posicion = Short.parseShort(teclado.nextLine());
 
                         cochera = new Cochera(cocheraEncontrada.getDireccion(), cocheraEncontrada.getEstado(), cocheraEncontrada.getPiso(), posicion, cocheraEncontrada.getMedioDeAcceso(), cocheraEncontrada.getPrecio());
                         inmobiliaria.modificar(cochera);
@@ -876,7 +1044,7 @@ public class ControladoraUsuario extends Component {
                         String medioDeAcceso = "";
                         do {
                             System.out.println("Medio de acceso (1 -Ascensor/ 2 -Rampa)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 medioDeAcceso = "Ascensor";
                             } else if (opcion == 2) {
@@ -892,7 +1060,7 @@ public class ControladoraUsuario extends Component {
                         break;
                     case 5:
                         System.out.println("Precio del inmueble?");
-                        double precio = teclado.nextDouble();
+                        double precio = Double.parseDouble(teclado.nextLine());
 
                         cochera = new Cochera(cocheraEncontrada.getDireccion(), cocheraEncontrada.getEstado(), cocheraEncontrada.getPiso(), cocheraEncontrada.getPosicion(), cocheraEncontrada.getMedioDeAcceso(), precio);
                         inmobiliaria.modificar(cochera);
@@ -907,7 +1075,16 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void modificarLocal(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+
+    /**
+     * Función que te permite modificar un dato del local, la función te solicitara que ingreses la dirección.
+     * En caso de no encontrase el local, lanzara una EleccionIncorrectaException.
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+    public static void modificarLocal(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
         Local localEncontrado = inmobiliaria.buscarLocal(direccion);
@@ -916,13 +1093,13 @@ public class ControladoraUsuario extends Component {
         do {
             if (localEncontrado != null) {
                 System.out.println("Que atributo desea modificar? (1-estado, 2-piso, 3-posicion, 4-medio de acceso,5-precio)");
-                int opcion = teclado.nextInt();
+                int opcion = Integer.parseInt(teclado.nextLine());
                 switch (opcion) {
                     case 1:
                         Estado estado = null;
                         do {
                             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 estado = Estado.EnAlquiler;
                             } else if (opcion == 2) {
@@ -938,7 +1115,7 @@ public class ControladoraUsuario extends Component {
                         break;
                     case 2:
                         System.out.println("Cantidad de ambientes?");
-                        short ambientes = teclado.nextShort();
+                        short ambientes = Short.parseShort(teclado.nextLine());
 
                         local = new Local(localEncontrado.getDireccion(), localEncontrado.getEstado(), ambientes, localEncontrado.isVidriera(), localEncontrado.getPrecio());
                         inmobiliaria.modificar(local);
@@ -949,7 +1126,7 @@ public class ControladoraUsuario extends Component {
                         boolean vidrieras = false;
                         do {
                             System.out.println("Tiene vidrieras? (1 -Si/ 2 -No)");
-                            opcion = teclado.nextInt();
+                            opcion = Integer.parseInt(teclado.nextLine());
                             if (opcion == 1) {
                                 vidrieras = true;
                             } else if (opcion == 2) {
@@ -966,7 +1143,7 @@ public class ControladoraUsuario extends Component {
                     case 4:
 
                         System.out.println("Precio del inmueble?");
-                        double precio = teclado.nextDouble();
+                        double precio = Double.parseDouble(teclado.nextLine());
 
                         local = new Local(localEncontrado.getDireccion(), localEncontrado.getEstado(), localEncontrado.getAmbientes(), localEncontrado.isVidriera(), precio);
                         inmobiliaria.modificar(local);
@@ -981,28 +1158,43 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void listarInmueble(Inmobiliaria inmobiliaria) {
+    /**
+     * Función que mostrara un listado de todos los inmuebles pertenecientes a una categoría de la inmobiliaria. (Casa, Departamento, Local o Cochera).
+     * Return void.
+     *
+     * @param inmobiliaria
+     * @throws EleccionIncorrectaException
+     */
+    public static void listarInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+        String listado = "";
         System.out.println("Que inmueble desea listar? (Casa/Departamento/Local/Cochera)");
         String tipoInmueble = teclado.nextLine();
-        if (!(tipoInmueble.equalsIgnoreCase("Casa") && tipoInmueble.equalsIgnoreCase("Departamento") && tipoInmueble.equalsIgnoreCase("Local") && tipoInmueble.equalsIgnoreCase("Cochera"))) {
-            //Excepcion
-        } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
-            inmobiliaria.listarViviendad(tipoInmueble);
-        } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
-            inmobiliaria.listarViviendad(tipoInmueble);
+        if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
+            throw new EleccionIncorrectaException("Ese tipo de inmueble no existente");
+        } else if (tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento")) {
+            listado = inmobiliaria.listarViviendad(tipoInmueble);
         } else if (tipoInmueble.equalsIgnoreCase("Local")) {
-            inmobiliaria.listarLocales();
+            listado = inmobiliaria.listarLocales();
         } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
-            inmobiliaria.listarCocheras();
+            listado = inmobiliaria.listarCocheras();
         }
+        System.out.println(listado);
     }
 
-    public void buscarInmueble(Inmobiliaria inmobiliaria) {
+    /**
+     * Función que va a solicitar una direeción de un inmueble perteneciente a la inmobiliaria y lo imprimira por pantalla.
+     * En caso de no existir la dirección solicitada arrojara una EleccionIncorrectaException.
+     * Return void;
+     *
+     * @param inmobiliaria
+     */
+
+    public static void buscarInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
         String continuar = "no";
         do {
             System.out.println("Que tipo de inmueble desea buscar? (Casa/Departamento/Local/Cochera)");
             String tipoInmueble = teclado.nextLine();
-            if (!(tipoInmueble.equalsIgnoreCase("Casa") && tipoInmueble.equalsIgnoreCase("Departamento") && tipoInmueble.equalsIgnoreCase("Local") && tipoInmueble.equalsIgnoreCase("Cochera"))) {
+            if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "si";
                 System.out.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
@@ -1012,7 +1204,7 @@ public class ControladoraUsuario extends Component {
                 if (casa != null) {
                     System.out.println(casa.toString());
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
@@ -1021,7 +1213,7 @@ public class ControladoraUsuario extends Component {
                 if (departamento != null) {
                     System.out.println(departamento.toString());
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
@@ -1030,7 +1222,7 @@ public class ControladoraUsuario extends Component {
                 if (local != null) {
                     System.out.println(local.toString());
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
@@ -1039,7 +1231,7 @@ public class ControladoraUsuario extends Component {
                 if (cochera != null) {
                     System.out.println(cochera.toString());
                 } else {
-                    //Excepcion
+                    throw new EleccionIncorrectaException("Dirección no existente");
                 }
             }
             System.out.println("Desea mostrar otro inmueble?");
@@ -1047,13 +1239,13 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void agregarInmuebles(Inmobiliaria inmobiliaria) {
+    public static void agregarInmuebles(Inmobiliaria inmobiliaria) {
         String continuar = "si";
         int opcion = 0;
         do {
             System.out.println("Que tipo de inmueble desea agregar? (Casa/Departamento/Local/Cochera)");
             String tipoInmueble = teclado.nextLine();
-            if (!(tipoInmueble.equalsIgnoreCase("Casa") && tipoInmueble.equalsIgnoreCase("Departamento") && tipoInmueble.equalsIgnoreCase("Local") && tipoInmueble.equalsIgnoreCase("Cochera"))) {
+            if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "no";
                 System.out.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
@@ -1065,30 +1257,36 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 agregarCochera(inmobiliaria);
             }
-
-            System.out.println("Desea agregar otro inmueble? (1 - Si/ 2 - No)");
+            System.out.println("Desea agregar otro inmueble?  Si es asi ingrese Si");
             continuar = teclado.nextLine();
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public void agregarCasa(Inmobiliaria inmobiliaria) {
+    /**
+     * Función utilizada para agregar una nueva casa al set generico de vivienda perteneciente a la inmobiliaria, solicitando datos a completar.
+     * Return void;
+     *
+     * @param inmobiliaria
+     */
+
+    public static void agregarCasa(Inmobiliaria inmobiliaria) {
         int opcion = 0;
         System.out.println("Direccion de la casa: ");
         String direccion = teclado.nextLine();
 
         System.out.println("Cantidad de ambientes?");
-        short ambientes = teclado.nextShort();
+        short ambientes = Short.parseShort(teclado.nextLine());
 
         System.out.println("Cantidad de baños?");
-        short cantBaños = teclado.nextShort();
+        short cantBaños = Short.parseShort(teclado.nextLine());
 
         System.out.println("Metros cuadrados?");
-        int metrosCuadrados = teclado.nextInt();
+        int metrosCuadrados = Integer.parseInt(teclado.nextLine());
 
         boolean amueblado = false;
         do {
             System.out.println("Esta amueblado? (1 -Si/ 2 -No)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 amueblado = true;
             } else if (opcion == 2) {
@@ -1101,7 +1299,7 @@ public class ControladoraUsuario extends Component {
         boolean cochera = false;
         do {
             System.out.println("Tiene cochera? (1 -Si/ 2 -No)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 cochera = true;
             } else if (opcion == 2) {
@@ -1112,12 +1310,12 @@ public class ControladoraUsuario extends Component {
         } while (opcion != 1 && opcion != 2);
 
         System.out.println("Precio del inmueble?");
-        double precio = teclado.nextDouble();
+        double precio = Double.parseDouble(teclado.nextLine());
 
         boolean patio = false;
         do {
             System.out.println("Tiene patio? (1 -Si/ 2 -No)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 patio = true;
             } else if (opcion == 2) {
@@ -1128,12 +1326,12 @@ public class ControladoraUsuario extends Component {
         } while (opcion != 1 && opcion != 2);
 
         System.out.println("Cantidad de pisos?");
-        short pisos = teclado.nextShort();
+        short pisos = Short.parseShort(teclado.nextLine());
 
         Estado estado = null;
         do {
             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 estado = Estado.EnAlquiler;
             } else if (opcion == 2) {
@@ -1148,24 +1346,31 @@ public class ControladoraUsuario extends Component {
         inmobiliaria.agregar(casa);
     }
 
-    public void agregarDepartamento(Inmobiliaria inmobiliaria) {
+    /**
+     * Función utilizada para agregar un nuevo departamento al set generico de vivienda perteneciente a la inmobiliaria, solicitando datos a completar.
+     * Return void;
+     *
+     * @param inmobiliaria
+     */
+
+    public static void agregarDepartamento(Inmobiliaria inmobiliaria) {
         int opcion = 0;
         System.out.println("Direccion del departamento: ");
         String direccion = teclado.nextLine();
 
         System.out.println("Cantidad de ambientes?");
-        short ambientes = teclado.nextShort();
+        short ambientes = Short.parseShort(teclado.nextLine());
 
         System.out.println("Cantidad de baños?");
-        short cantBaños = teclado.nextShort();
+        short cantBaños = Short.parseShort(teclado.nextLine());
 
         System.out.println("Metros cuadrados?");
-        int metrosCuadrados = teclado.nextInt();
+        int metrosCuadrados = Integer.parseInt(teclado.nextLine());
 
         boolean amueblado = false;
         do {
             System.out.println("Esta amueblado? (1 -Si/ 2 -No)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 amueblado = true;
             } else if (opcion == 2) {
@@ -1178,7 +1383,7 @@ public class ControladoraUsuario extends Component {
         boolean cochera = false;
         do {
             System.out.println("Tiene cochera? (1 -Si/ 2 -No)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 cochera = true;
             } else if (opcion == 2) {
@@ -1189,12 +1394,12 @@ public class ControladoraUsuario extends Component {
         } while (opcion != 1 && opcion != 2);
 
         System.out.println("Precio del inmueble?");
-        double precio = teclado.nextDouble();
+        double precio = Double.parseDouble(teclado.nextLine());
 
         String disposicion = "";
         do {
             System.out.println("Cual es la disposicion? (1 -A la calle/ 2 - Interno)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 disposicion = "Calle";
             } else if (opcion == 2) {
@@ -1210,7 +1415,7 @@ public class ControladoraUsuario extends Component {
         Estado estado = null;
         do {
             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 estado = Estado.EnAlquiler;
             } else if (opcion == 2) {
@@ -1225,18 +1430,25 @@ public class ControladoraUsuario extends Component {
         inmobiliaria.agregar(departamento);
     }
 
-    public void agregarLocal(Inmobiliaria inmobiliaria) {
+    /**
+     * Función utilizada para agregar un nuevo local al set generico de locales perteneciente a la inmobiliaria, solicitando datos a completar.
+     * Return void;
+     *
+     * @param inmobiliaria
+     */
+
+    public static void agregarLocal(Inmobiliaria inmobiliaria) {
         int opcion = 0;
         System.out.println("Direccion del local: ");
         String direccion = teclado.nextLine();
 
         System.out.println("Cantidad de ambientes?");
-        short ambientes = teclado.nextShort();
+        short ambientes = Short.parseShort(teclado.nextLine());
 
         boolean vidrieras = false;
         do {
             System.out.println("Tiene vidrieras? (1 -Si/ 2 -No)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 vidrieras = true;
             } else if (opcion == 2) {
@@ -1247,12 +1459,12 @@ public class ControladoraUsuario extends Component {
         } while (opcion != 1 && opcion != 2);
 
         System.out.println("Precio del inmueble?");
-        double precio = teclado.nextDouble();
+        double precio = Double.parseDouble(teclado.nextLine());
 
         Estado estado = null;
         do {
             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 estado = Estado.EnAlquiler;
             } else if (opcion == 2) {
@@ -1267,21 +1479,28 @@ public class ControladoraUsuario extends Component {
         inmobiliaria.agregar(local);
     }
 
-    public void agregarCochera(Inmobiliaria inmobiliaria) {
+    /**
+     * Función utilizada para agregar una nueva cochera al set generico de cocheras perteneciente a la inmobiliaria, solicitando datos a completar.
+     * Return void;
+     *
+     * @param inmobiliaria
+     */
+
+    public static void agregarCochera(Inmobiliaria inmobiliaria) {
         int opcion = 0;
         System.out.println("Direccion de la cochera: ");
         String direccion = teclado.nextLine();
 
         System.out.println("Numero de piso?");
-        short piso = teclado.nextShort();
+        short piso = Short.parseShort(teclado.nextLine());
 
         System.out.println("Posicion en el piso?");
-        short posicion = teclado.nextShort();
+        short posicion = Short.parseShort(teclado.nextLine());
 
         String medioDeAcceso = "";
         do {
             System.out.println("Medio de acceso (1 -Ascensor/ 2 -Rampa)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 medioDeAcceso = "Ascensor";
             } else if (opcion == 2) {
@@ -1292,12 +1511,12 @@ public class ControladoraUsuario extends Component {
         } while (opcion != 1 && opcion != 2);
 
         System.out.println("Precio del inmueble?");
-        double precio = teclado.nextDouble();
+        double precio = Double.parseDouble(teclado.nextLine());
 
         Estado estado = null;
         do {
             System.out.println("Desea alquilar o vender? (1 -Alquiler/ 2 -Venta)");
-            opcion = teclado.nextInt();
+            opcion = Integer.parseInt(teclado.nextLine());
             if (opcion == 1) {
                 estado = Estado.EnAlquiler;
             } else if (opcion == 2) {

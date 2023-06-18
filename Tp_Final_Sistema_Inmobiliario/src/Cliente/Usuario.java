@@ -21,7 +21,6 @@ public class Usuario implements IJson, Serializable, Comparable {
     private HashMap<Integer, Factura> facturas;
     private boolean estado;
 
-
     public Usuario(String nombreYApellido, Contraseña contraseña, String dni, Mail mail, int edad, boolean estado) {
         this.nombreYApellido = nombreYApellido;
         this.contraseña = contraseña;
@@ -29,17 +28,19 @@ public class Usuario implements IJson, Serializable, Comparable {
         this.mail = mail;
         this.edad = edad;
         historial = new ArrayList<>();
+        facturas = new HashMap<>();
         this.estado = estado;
     }
 
     public Usuario() {
-        this.nombreYApellido = "";
-        this.contraseña = new Contraseña();
-        this.dni = "";
-        this.mail = new Mail();
-        this.edad = 0;
-        this.historial = new ArrayList<>();
-        this.estado = false;
+        nombreYApellido = "";
+        contraseña = new Contraseña();
+        dni = "";
+        mail = new Mail();
+        edad = 0;
+        historial = new ArrayList<>();
+        facturas = new HashMap<>();
+        estado = false;
     }
 
     public boolean encontrarPorNombre(String nombre) {

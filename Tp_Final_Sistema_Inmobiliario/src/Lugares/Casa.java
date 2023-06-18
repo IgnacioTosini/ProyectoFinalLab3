@@ -114,7 +114,6 @@ public class Casa extends Vivienda {
             case "Baja" -> setEstado(Estado.Baja);
         }
 
-
         setDireccion(obj.getString("direccion"));
         setAmbientes((short) obj.getInt("ambientes"));
         setCantBanios((short) obj.getInt("cantBanios"));
@@ -132,8 +131,6 @@ public class Casa extends Vivienda {
             fecha.fromJsonObj((JSONObject) jsonArray.get(i));
             agregarDisponibilidad(fecha);
         }
-
-
     }
 
     @Override
