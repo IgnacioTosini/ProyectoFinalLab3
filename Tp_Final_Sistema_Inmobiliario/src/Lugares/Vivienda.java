@@ -56,7 +56,8 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
                 ", Metros Cuadrados: " + metrosCuadrados +
                 ", Amueblado: " + amueblado +
                 ", Cochera: " + cochera +
-                ", Precio: " + precio;
+                ", Precio: " + precio +
+                ", Fechas: " + mostrarFechas();
     }
 
     public Estado getEstado() {
@@ -160,6 +161,14 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
             encontrado = true;
         }
         return encontrado;
+    }
+
+    public String mostrarFechas(){
+        String listado = "";
+        for(Fecha fecha: disponibilidad){
+            listado = listado.concat(fecha.toString()) + '\n';
+        }
+        return listado;
     }
 
     public void baja(){

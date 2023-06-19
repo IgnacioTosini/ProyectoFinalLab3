@@ -5,10 +5,7 @@ import Cliente.Usuario;
 import Controladores.ControladoraUsuario;
 import Empresa.Inmobiliaria;
 import Excepciones.Contraseña.MalContraseñaException;
-import Excepciones.ControladoraUsuario.DniInvalidoException;
-import Excepciones.ControladoraUsuario.EdadInvalidadException;
-import Excepciones.ControladoraUsuario.NombreYApellidoIncorrectoException;
-import Excepciones.ControladoraUsuario.UsuarioNoEncontradoException;
+import Excepciones.ControladoraUsuario.*;
 import Excepciones.Mail.ArrobaException;
 import Excepciones.Mail.PuntoComException;
 
@@ -29,6 +26,8 @@ public class MenuInicioGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "El usuario no fue encontrado", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (MalContraseñaException ex) {
                 JOptionPane.showMessageDialog(this, "La contraseña es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (UsuarioDadoDeBajaException ex) {
+                JOptionPane.showMessageDialog(this, "El usuario no fue encontrado", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 

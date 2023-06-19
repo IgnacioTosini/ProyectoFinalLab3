@@ -240,6 +240,14 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         return encontrado;
     }
 
+    public String mostrarFechas(){
+        String listado = "";
+        for(Fecha fecha: disponibilidad){
+            listado = listado.concat(fecha.toString()) + '\n';
+        }
+        return listado;
+    }
+
     public void baja(){
         estado = Estado.Baja;
     }

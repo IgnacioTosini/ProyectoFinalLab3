@@ -224,8 +224,8 @@ public class Usuario implements IJson, Serializable, Comparable {
     public String mostrarFacturas(){
         String listado = "";
 
-        for(int i = 0; i< facturas.size(); i++){
-            listado.concat(facturas.get(i).toString());
+        for(int i = 1; i<= facturas.size(); i++){
+            listado = listado.concat(facturas.get(i).toString());
         }
 
         return listado;

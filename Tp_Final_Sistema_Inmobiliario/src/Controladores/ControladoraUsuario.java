@@ -9,10 +9,7 @@ import Excepciones.Contraseña.CantMayusException;
 import Excepciones.Contraseña.CantNumException;
 import Excepciones.Contraseña.MalContraseñaException;
 import Excepciones.Contraseña.TotalDigitosException;
-import Excepciones.ControladoraUsuario.DniInvalidoException;
-import Excepciones.ControladoraUsuario.EdadInvalidadException;
-import Excepciones.ControladoraUsuario.NombreYApellidoIncorrectoException;
-import Excepciones.ControladoraUsuario.UsuarioNoEncontradoException;
+import Excepciones.ControladoraUsuario.*;
 import Excepciones.EleccionIncorrectaException;
 import Excepciones.LugarExistenteException;
 import Excepciones.Mail.ArrobaException;
@@ -110,6 +107,10 @@ public class ControladoraUsuario extends Component {
                             System.err.println(e.getMessage());
                             System.out.println("¿Desea volver a intentar?");
                             respuesta = teclado.nextLine();
+                        } catch (UsuarioDadoDeBajaException e) {
+                            System.err.println(e.getMessage());
+                            System.out.println("¿Desea volver a intentar?");
+                            respuesta = teclado.nextLine();
                         }
                     }
                     break;
@@ -145,7 +146,7 @@ public class ControladoraUsuario extends Component {
      * @throws UsuarioNoEncontradoException
      * @throws MalContraseñaException
      */
-    public static Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
+    public static Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException, UsuarioDadoDeBajaException {
         System.out.println("Ingrese su Mail: ");
         String nombre = teclado.nextLine();
 
@@ -153,12 +154,14 @@ public class ControladoraUsuario extends Component {
         if (usuario == null) {
             throw new UsuarioNoEncontradoException("Usuario no encontrado");
         }
+        if(usuario.isEstado()){
+            throw new UsuarioDadoDeBajaException("El usuario fue dado de baja");
+        }
         System.out.println("Ingrese su contraseña: ");
         String contraseña = teclado.nextLine();
         if (!usuario.getContraseña().equals(contraseña)) {
             throw new MalContraseñaException("Contraseña incorrecta");
         }
-        System.out.println(usuario);
         return usuario;
     }
 
@@ -469,7 +472,7 @@ public class ControladoraUsuario extends Component {
         String tipoInmueble = "";
         boolean valido = true;
         do {
-            System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un Inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble"); // listar inmbuebles, busca inmueble, comprar, alquilar
+            System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble \n 5- Mostrar Facturas"); // listar inmbuebles, busca inmueble, comprar, alquilar
             int opcion = Integer.parseInt(teclado.nextLine());
             switch (opcion) {
                 case 1:
@@ -544,7 +547,7 @@ public class ControladoraUsuario extends Component {
                                 System.out.println("Ingrese la fecha de ingreso:\n");
                                 fechaIngreso = crearFechaAlquiler();
 
-                                System.out.println("Ingrese cuantos dias desea estar: \n");
+                                System.out.println("Ingrese cuantos dias desea estar: ");
                                 int cantDias = Integer.parseInt(teclado.nextLine());
                                 fechaSalida = fechaIngreso.plusDays(cantDias);
                                 continuar = "no";
@@ -557,7 +560,12 @@ public class ControladoraUsuario extends Component {
                         Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
                         try {
                             inmobiliaria.alquilar(usuario, direccion, tipoInmueble, fecha);
-                        } catch (NoDisponibleException | LugarExistenteException e) {
+                        } catch (NoDisponibleException e) {
+                            System.err.println(e.getMessage());
+                            System.out.println("Fechas ocupadas: "+ e.getDisponibilidad());
+                            System.out.println("¿Quiere intentar otra vez?");
+                            continuar = teclado.nextLine();
+                        }catch (LugarExistenteException e){
                             System.err.println(e.getMessage());
                             System.out.println("¿Quiere intentar otra vez?");
                             continuar = teclado.nextLine();
@@ -565,6 +573,9 @@ public class ControladoraUsuario extends Component {
                     } while (continuar.equalsIgnoreCase("si"));
                     break;
 
+                case 5:
+                    System.out.println(usuario.mostrarFacturas());
+                    break;
                 default:
                     System.err.println("Opción invalida");
                     break;
@@ -589,10 +600,11 @@ public class ControladoraUsuario extends Component {
         System.out.println("Ingrese el año: ");
         año = Integer.parseInt(teclado.nextLine());
 
-        LocalDate fecha = LocalDate.of(año, mes, dia);
-        valido = Fecha.validarFecha(fecha);
+        LocalDate fecha = null;
 
-        if (valido == false) {
+        if(Fecha.validarFecha(año, mes, dia)){
+            fecha = LocalDate.of(año, mes, dia);
+        }else {
             throw new EleccionIncorrectaException("La fecha no es valida");
         }
 

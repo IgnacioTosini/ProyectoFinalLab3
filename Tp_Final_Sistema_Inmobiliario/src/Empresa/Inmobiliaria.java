@@ -379,7 +379,7 @@ public class Inmobiliaria implements IJson {
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
-                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible", casa.mostrarFechas()); //agregar a la exception una lista de fechas demandadas
                     }
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
@@ -406,7 +406,7 @@ public class Inmobiliaria implements IJson {
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
-                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible", departamento.mostrarFechas()); //agregar a la exception una lista de fechas demandadas
                     }
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
@@ -434,7 +434,7 @@ public class Inmobiliaria implements IJson {
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
-                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible", local.mostrarFechas()); //agregar a la exception una lista de fechas demandadas
                     }
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");
@@ -461,7 +461,7 @@ public class Inmobiliaria implements IJson {
                         facturas.put(factura.getId(), factura);
                         usuario.agregar(factura);
                     } else {
-                        throw new NoDisponibleException("Esa fecha no se encuentra disponible"); //agregar a la exception una lista de fechas demandadas
+                        throw new NoDisponibleException("Esa fecha no se encuentra disponible", cochera.mostrarFechas()); //agregar a la exception una lista de fechas demandadas
                     }
                 } else {
                     throw new LugarExistenteException("La dirección ingresada no existe");

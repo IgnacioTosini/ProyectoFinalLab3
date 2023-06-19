@@ -245,6 +245,14 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         return encontrado;
     }
 
+    public String mostrarFechas(){
+        String listado = "";
+        for(Fecha fecha: disponibilidad){
+            listado = listado.concat(fecha.toString()) + '\n';
+        }
+        return listado;
+    }
+
     public void baja(){
         estado = Estado.Baja;
     }

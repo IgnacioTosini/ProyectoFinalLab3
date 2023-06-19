@@ -1,7 +1,6 @@
 package Controladores;
 
 import Excepciones.EleccionIncorrectaException;
-import Excepciones.NoDisponibleException;
 
 import java.util.Scanner;
 

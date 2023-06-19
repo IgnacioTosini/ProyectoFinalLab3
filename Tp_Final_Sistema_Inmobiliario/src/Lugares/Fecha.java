@@ -40,34 +40,46 @@ public class Fecha implements IJson {
         return validacion;
     }
 
-    public static boolean validarFecha(LocalDate fecha) {
+    public static boolean validarFecha(int año, int mes, int dia) {
         boolean validacion = false;
         LocalDate localDate = LocalDate.now();
-
-        if (fecha.isAfter(localDate)) {
-            if (fecha.getMonthValue() == 1 || fecha.getMonthValue() == 3 || fecha.getMonthValue() == 5 || fecha.getMonthValue() == 7 || fecha.getMonthValue() == 8 || fecha.getMonthValue() == 10 || fecha.getMonthValue() == 12) {
-                if (fecha.getDayOfMonth() >= 1 && fecha.getDayOfMonth() <= 31) {
-                    validacion = true;
-                }
-            } else if (fecha.getMonthValue() == 2) {
-                if (fecha.isLeapYear()) {
-                    if (fecha.getDayOfMonth() >= 1 && fecha.getDayOfMonth() <= 29) {
-                        validacion = true;
-                    }
-                } else {
-                    if (fecha.getDayOfMonth() >= 1 && fecha.getDayOfMonth() <= 28) {
+        if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
+            if (dia >= 1 && dia <= 31) {
+                if (año >= localDate.getYear()) {
+                    LocalDate fecha = LocalDate.of(año, mes, dia);
+                    if (fecha.isAfter(localDate)) {
                         validacion = true;
                     }
                 }
-                if (fecha.getDayOfMonth() >= 1 && fecha.getDayOfMonth() <= 28) {
-                    validacion = true;
+            }
+        } else if (mes == 2) {
+            if (año >= localDate.getYear()) {
+                LocalDate aux = LocalDate.of(año, 1, 1);
+                if (aux.isLeapYear()) {
+                    if (dia >= 1 && dia <= 29) {
+                        LocalDate fecha = LocalDate.of(año, mes, dia);
+                        if (fecha.isAfter(localDate)) {
+                            validacion = true;
+                        }
+                    }
+                } else if (dia >= 1 && dia <= 28) {
+                    LocalDate fecha = LocalDate.of(año, mes, dia);
+                    if (fecha.isAfter(localDate)) {
+                        validacion = true;
+                    }
                 }
-            } else if (fecha.getMonthValue() > 1 && fecha.getMonthValue() < 13) {
-                if (fecha.getDayOfMonth() >= 1 && fecha.getDayOfMonth() <= 30) {
-                    validacion = true;
+            }
+        } else if (mes > 1 && mes < 13) {
+            if (dia >= 1 && dia <= 30) {
+                if (año >= localDate.getYear()) {
+                    LocalDate fecha = LocalDate.of(año, mes, dia);
+                    if (fecha.isAfter(localDate)) {
+                        validacion = true;
+                    }
                 }
             }
         }
+
 
         return validacion;
     }

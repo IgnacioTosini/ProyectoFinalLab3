@@ -76,9 +76,9 @@ public class Factura implements IJson, Comparable {
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", dni=" + dni +
-                ", mail=" + mail +
+                ", mail=" + mail.toString() +
                 ", precioFinal=" + precioFinal +
-                ", fecha=" + fecha +
+                ", fecha=" + fecha.toString() +
                 ", dirInmobiliaria='" + dirInmobiliaria + '\'' +
                 ", dirInmueble='" + dirInmueble + '\'' +
                 ", estadoActual='" + estadoActual + '\'' +
