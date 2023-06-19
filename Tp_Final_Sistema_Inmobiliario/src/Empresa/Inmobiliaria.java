@@ -470,6 +470,31 @@ public class Inmobiliaria implements IJson {
         }
     }
 
+    public static boolean validarDireccion(String direccion) {
+        boolean validacion = true;
+        int contadorNumeros = 0;
+        int espacio = direccion.indexOf(' ');
+
+        if (espacio <= 0) {
+            validacion = false;
+        }else {
+            for (int i = espacio + 1; i < direccion.length(); i++) {
+                if (!Character.isDigit(direccion.charAt(i)) && contadorNumeros > 4) {
+                    validacion = false;
+                }
+                contadorNumeros++;
+            }
+            if(validacion){
+                for (int i = 0; i < espacio; i++) {
+                    if (!Character.isLetter(direccion.charAt(i))) {
+                        validacion = false;
+                    }
+                }
+            }
+        }
+        return validacion;
+    }
+
     public Casa buscarCasa(String direccion) {
         Casa casa = null;
         if (viviendas != null) {

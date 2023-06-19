@@ -11,6 +11,7 @@ import Excepciones.Contraseña.MalContraseñaException;
 import Excepciones.Contraseña.TotalDigitosException;
 import Excepciones.ControladoraUsuario.*;
 import Excepciones.EleccionIncorrectaException;
+import Excepciones.Inmuebles.DireccionInvalidaException;
 import Excepciones.LugarExistenteException;
 import Excepciones.Mail.ArrobaException;
 import Excepciones.Mail.PuntoComException;
@@ -66,6 +67,8 @@ public class ControladoraUsuario extends Component {
                                                 darDeBajaInmueble(inmobiliaria);
                                             } catch (EleccionIncorrectaException e) {
                                                 System.err.println(e.getMessage());
+                                            } catch (DireccionInvalidaException e) {
+                                                System.err.println(e.getMessage());
                                             }
                                             break;
                                         case 3:
@@ -82,6 +85,8 @@ public class ControladoraUsuario extends Component {
                                             try {
                                                 buscarInmueble(inmobiliaria);
                                             } catch (EleccionIncorrectaException e) {
+                                                System.err.println(e.getMessage());
+                                            }catch (DireccionInvalidaException e) {
                                                 System.err.println(e.getMessage());
                                             }
                                             break;
@@ -111,6 +116,8 @@ public class ControladoraUsuario extends Component {
                             System.err.println(e.getMessage());
                             System.out.println("¿Desea volver a intentar?");
                             respuesta = teclado.nextLine();
+                        } catch (DireccionInvalidaException e) {
+                            System.err.println(e.getMessage());
                         }
                     }
                     break;
@@ -122,6 +129,10 @@ public class ControladoraUsuario extends Component {
                             usuario = registrarse(inmobiliaria);
                             respuesta = "no";
                         } catch (DniInvalidoException | NombreYApellidoIncorrectoException | EdadInvalidadException e) {
+                            System.err.println(e.getMessage());
+                        } catch (UsuarioDadoDeBajaException e) {
+                            System.err.println(e.getMessage());
+                        } catch (UsuarioYaExiste e) {
                             System.err.println(e.getMessage());
                         }
                     }
@@ -209,7 +220,7 @@ public class ControladoraUsuario extends Component {
      * @throws NombreYApellidoIncorrectoException
      * @throws EdadInvalidadException
      */
-    public static Usuario registrarse(Inmobiliaria inmobiliaria) throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
+    public static Usuario registrarse(Inmobiliaria inmobiliaria) throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, UsuarioDadoDeBajaException, UsuarioYaExiste {
         String nombre = "";
         String contraseña = "";
         String dni = "";
@@ -284,11 +295,18 @@ public class ControladoraUsuario extends Component {
                 mail = aux.concat(auxMail);
             }
              usuario = inmobiliaria.buscarUsuario(mail);
+            if(usuario != null){
+                if(usuario.isEstado()){
+                    throw new UsuarioYaExiste("Este mail ya esta en uso");
+                }else {
+                    throw new UsuarioDadoDeBajaException("Este usuario fue dado de baja");
+                }
+            }
 
             correo = new Mail(mail);
         }while(usuario != null);
 
-        Usuario registrado = new Usuario(nombre, contra, dni, correo, edad, true);
+        Usuario registrado = new Usuario(nombre, contra, dni, correo, edad, false);
 
         return registrado;
     }
@@ -466,7 +484,7 @@ public class ControladoraUsuario extends Component {
         return mail;
     }*/
 
-    public static void menuUsuario(Inmobiliaria inmobiliaria, Usuario usuario) {
+    public static void menuUsuario(Inmobiliaria inmobiliaria, Usuario usuario) throws DireccionInvalidaException {
         String continuar = "si";
         String direccion = "";
         String tipoInmueble = "";
@@ -494,7 +512,7 @@ public class ControladoraUsuario extends Component {
 
                 case 3:
                     do {
-                        System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
+                        System.out.println("Ingrese el tipo de inmueble que desea comprar. (Casa, Departamento, Local, Cochera)");
                         tipoInmueble = teclado.nextLine();
                         if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
                             valido = false;
@@ -504,8 +522,12 @@ public class ControladoraUsuario extends Component {
                     } while (valido == false);
 
                     do {
-                        System.out.println("Ingrese la direeción del inmueble que desea alquilar");
+                        System.out.println("Ingrese la direeción del inmueble que desea comprar");
                         direccion = teclado.nextLine();
+
+                        if(!Inmobiliaria.validarDireccion(direccion)){
+                            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                        }
 
                         LocalDate fechaIngreso = LocalDate.now();
                         LocalDate fechaSalida = LocalDate.now();
@@ -539,6 +561,10 @@ public class ControladoraUsuario extends Component {
                     do {
                         System.out.println("Ingrese la direeción del inmueble que desea alquilar");
                         direccion = teclado.nextLine();
+
+                        if(!Inmobiliaria.validarDireccion(direccion)){
+                            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                        }
 
                         LocalDate fechaIngreso = null;
                         LocalDate fechaSalida = null;
@@ -661,7 +687,7 @@ public class ControladoraUsuario extends Component {
      * @throws EleccionIncorrectaException
      */
 
-    public static void darDeBajaInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    public static void darDeBajaInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         String continuar = "no";
         do {
             System.out.println("Que tipo de inmueble desea dar de baja? (Casa/Departamento/Local/Cochera)");
@@ -672,6 +698,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Casa casa = inmobiliaria.buscarCasa(direccion);
                 if (casa != null) {
                     inmobiliaria.baja(casa);
@@ -681,6 +710,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Departamento departamento = inmobiliaria.buscarDepartamento(direccion);
                 if (departamento != null) {
                     inmobiliaria.baja(departamento);
@@ -690,6 +722,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Local local = inmobiliaria.buscarLocal(direccion);
                 if (local != null) {
                     inmobiliaria.baja(local);
@@ -699,6 +734,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Cochera cochera = inmobiliaria.buscarCochera(direccion);
                 if (cochera != null) {
                     inmobiliaria.baja(cochera);
@@ -732,11 +770,15 @@ public class ControladoraUsuario extends Component {
                     modificarCasa(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
                     System.err.println(e.getMessage());
+                }catch (DireccionInvalidaException e) {
+                    System.err.println(e.getMessage());
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 try {
                     modificarDepartamento(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
+                    System.err.println(e.getMessage());
+                }catch (DireccionInvalidaException e) {
                     System.err.println(e.getMessage());
                 }
 
@@ -745,12 +787,16 @@ public class ControladoraUsuario extends Component {
                     modificarLocal(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
                     System.err.println(e.getMessage());
+                }catch (DireccionInvalidaException e) {
+                    System.err.println(e.getMessage());
                 }
 
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 try {
                     modificarCochera(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
+                    System.err.println(e.getMessage());
+                }catch (DireccionInvalidaException e) {
                     System.err.println(e.getMessage());
                 }
             }
@@ -765,9 +811,12 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      * @throws EleccionIncorrectaException
      */
-    public static void modificarCasa(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    public static void modificarCasa(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
         Casa casaEncontrada = inmobiliaria.buscarCasa(direccion);
         Casa casa = null;
         String continuar = "";
@@ -905,9 +954,12 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      * @throws EleccionIncorrectaException
      */
-    public static void modificarDepartamento(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    public static void modificarDepartamento(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
         Departamento departamentoEncontrado = inmobiliaria.buscarDepartamento(direccion);
         Departamento departamento = null;
         String continuar = "";
@@ -1045,9 +1097,12 @@ public class ControladoraUsuario extends Component {
      * @throws EleccionIncorrectaException
      */
 
-    public static void modificarCochera(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    public static void modificarCochera(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
         Cochera cocheraEncontrada = inmobiliaria.buscarCochera(direccion);
         Cochera cochera = null;
         String continuar = "";
@@ -1135,9 +1190,12 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      * @throws EleccionIncorrectaException
      */
-    public static void modificarLocal(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    public static void modificarLocal(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
         Local localEncontrado = inmobiliaria.buscarLocal(direccion);
         Local local = null;
         String continuar = "";
@@ -1240,7 +1298,7 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      */
 
-    public static void buscarInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
+    public static void buscarInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         String continuar = "no";
         do {
             System.out.println("Que tipo de inmueble desea buscar? (Casa/Departamento/Local/Cochera)");
@@ -1251,6 +1309,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Casa casa = inmobiliaria.buscarCasa(direccion);
                 if (casa != null) {
                     System.out.println(casa.toString());
@@ -1260,6 +1321,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Departamento departamento = inmobiliaria.buscarDepartamento(direccion);
                 if (departamento != null) {
                     System.out.println(departamento.toString());
@@ -1269,6 +1333,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Local local = inmobiliaria.buscarLocal(direccion);
                 if (local != null) {
                     System.out.println(local.toString());
@@ -1278,6 +1345,9 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
+                if(!Inmobiliaria.validarDireccion(direccion)){
+                    throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                }
                 Cochera cochera = inmobiliaria.buscarCochera(direccion);
                 if (cochera != null) {
                     System.out.println(cochera.toString());
@@ -1300,13 +1370,29 @@ public class ControladoraUsuario extends Component {
                 continuar = "no";
                 System.out.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
-                agregarCasa(inmobiliaria);
+                try {
+                    agregarCasa(inmobiliaria);
+                } catch (DireccionInvalidaException e) {
+                    System.err.println(e.getMessage());
+                }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
-                agregarDepartamento(inmobiliaria);
+                try {
+                    agregarDepartamento(inmobiliaria);
+                } catch (DireccionInvalidaException e) {
+                    System.err.println(e.getMessage());
+                }
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
-                agregarLocal(inmobiliaria);
+                try {
+                    agregarLocal(inmobiliaria);
+                } catch (DireccionInvalidaException e) {
+                    System.err.println(e.getMessage());
+                }
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
-                agregarCochera(inmobiliaria);
+                try {
+                    agregarCochera(inmobiliaria);
+                } catch (DireccionInvalidaException e) {
+                    System.err.println(e.getMessage());
+                }
             }
             System.out.println("Desea agregar otro inmueble?  Si es asi ingrese Si");
             continuar = teclado.nextLine();
@@ -1320,10 +1406,13 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      */
 
-    public static void agregarCasa(Inmobiliaria inmobiliaria) {
+    public static void agregarCasa(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion de la casa: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
 
         System.out.println("Cantidad de ambientes?");
         short ambientes = Short.parseShort(teclado.nextLine());
@@ -1404,10 +1493,13 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      */
 
-    public static void agregarDepartamento(Inmobiliaria inmobiliaria) {
+    public static void agregarDepartamento(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion del departamento: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
 
         System.out.println("Cantidad de ambientes?");
         short ambientes = Short.parseShort(teclado.nextLine());
@@ -1488,10 +1580,13 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      */
 
-    public static void agregarLocal(Inmobiliaria inmobiliaria) {
+    public static void agregarLocal(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion del local: ");
         String direccion = teclado.nextLine();
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
 
         System.out.println("Cantidad de ambientes?");
         short ambientes = Short.parseShort(teclado.nextLine());
@@ -1537,10 +1632,14 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      */
 
-    public static void agregarCochera(Inmobiliaria inmobiliaria) {
+    public static void agregarCochera(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion de la cochera: ");
         String direccion = teclado.nextLine();
+
+        if(!Inmobiliaria.validarDireccion(direccion)){
+            throw new DireccionInvalidaException("Direccion ingresada es invalida");
+        }
 
         System.out.println("Numero de piso?");
         short piso = Short.parseShort(teclado.nextLine());

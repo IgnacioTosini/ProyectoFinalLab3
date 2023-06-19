@@ -42,6 +42,10 @@ public class MenuInicioGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "El nombre y apellido esta mal", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (EdadInvalidadException ex) {
                 JOptionPane.showMessageDialog(this, "La edad es invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            }catch (UsuarioDadoDeBajaException ex) {
+                JOptionPane.showMessageDialog(this, "Este usuario fue dado de baja", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (UsuarioYaExiste ex) {
+                JOptionPane.showMessageDialog(this, "Este mail ya esta en uso", "Error", JOptionPane.ERROR_MESSAGE);
             }
             inmobiliaria.agregarUsuario(usuario);
             // Realizar acción después de registrar exitosamente

@@ -171,6 +171,8 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
         return listado;
     }
 
+
+
     public void baja(){
         estado = Estado.Baja;
     }
