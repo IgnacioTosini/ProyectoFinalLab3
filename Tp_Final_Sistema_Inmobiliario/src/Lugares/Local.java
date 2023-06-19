@@ -2,17 +2,14 @@ package Lugares;
 
 import Controladores.ControladoraInmobiliaria;
 import Excepciones.EleccionIncorrectaException;
-import Interfaces.IBuscar;
-import Interfaces.IComprobarFecha;
-import Interfaces.IJson;
-import Interfaces.IMetodoDePago;
+import Interfaces.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago, IBuscar {
+public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago, IBuscar, IBaja {
     private ArrayList<Fecha> disponibilidad;
     private String direccion;
     private Estado estado;
@@ -241,5 +238,9 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
             encontrado = true;
         }
         return encontrado;
+    }
+
+    public void baja(){
+        estado = Estado.Baja;
     }
 }

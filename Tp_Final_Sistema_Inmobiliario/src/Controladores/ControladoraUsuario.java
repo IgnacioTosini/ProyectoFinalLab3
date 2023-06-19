@@ -97,7 +97,10 @@ public class ControladoraUsuario extends Component {
                                         default:
                                             System.out.println("Valor ingresado no valido");
                                             break;
+
                                     }
+                                    System.out.println("¿Desea realizar otra accion?");
+                                    respuesta = teclado.toString();
                                 } while (respuesta.equalsIgnoreCase("si"));
                             } else {
                                 menuUsuario(inmobiliaria, usuario);
@@ -113,8 +116,9 @@ public class ControladoraUsuario extends Component {
 
                 case 2:
                     while (respuesta.equalsIgnoreCase("si")) {
+
                         try {
-                            usuario = registrarse();
+                            usuario = registrarse(inmobiliaria);
                             respuesta = "no";
                         } catch (DniInvalidoException | NombreYApellidoIncorrectoException | EdadInvalidadException e) {
                             System.err.println(e.getMessage());
@@ -202,7 +206,7 @@ public class ControladoraUsuario extends Component {
      * @throws NombreYApellidoIncorrectoException
      * @throws EdadInvalidadException
      */
-    public static Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
+    public static Usuario registrarse(Inmobiliaria inmobiliaria) throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException {
         String nombre = "";
         String contraseña = "";
         String dni = "";
@@ -260,24 +264,30 @@ public class ControladoraUsuario extends Component {
                 throw new EdadInvalidadException("Edad inválida. Debe estar entre 0 y 120 o ingreso una letra.");
             }
         }
+        Usuario usuario = null;
+        Mail correo = null;
+        do{
+            while (Objects.equals(auxMail, "")) {
+                System.out.println("Ingrese que tipo de mail usa.\n1.Gmail\n2.Hotmail\n3.Yahoo\n4.Otros");
+                tipoMail = Integer.parseInt(teclado.nextLine());
+                auxMail = menuTipoMail(tipoMail);
+            }
+            if (tipoMail == 4) {
+                mail = auxMail;
 
-        while (Objects.equals(auxMail, "")) {
-            System.out.println("Ingrese que tipo de mail usa.\n1.Gmail\n2.Hotmail\n3.Yahoo\n4.Otros");
-            tipoMail = Integer.parseInt(teclado.nextLine());
-            auxMail = menuTipoMail(tipoMail);
-        }
-        if (tipoMail == 4) {
-            mail = auxMail;
+            } else if (tipoMail == 1 || tipoMail == 2 || tipoMail == 3) {
+                System.out.println("Ingrese la parte delantera del mail (Antes de @)");
+                String aux = teclado.nextLine();
+                mail = aux.concat(auxMail);
+            }
+             usuario = inmobiliaria.buscarUsuario(mail);
 
-        } else if (tipoMail == 1 || tipoMail == 2 || tipoMail == 3) {
-            System.out.println("Ingrese la parte delantera del mail (Antes de @)");
-            String aux = teclado.nextLine();
-            mail = aux.concat(auxMail);
-        }
-        Mail correo = new Mail(mail);
-        Usuario usuario = new Usuario(nombre, contra, dni, correo, edad, true);
+            correo = new Mail(mail);
+        }while(usuario != null);
 
-        return usuario;
+        Usuario registrado = new Usuario(nombre, contra, dni, correo, edad, true);
+
+        return registrado;
     }
 
     /*public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, PuntoComException, ArrobaException {
@@ -457,6 +467,7 @@ public class ControladoraUsuario extends Component {
         String continuar = "si";
         String direccion = "";
         String tipoInmueble = "";
+        boolean valido = true;
         do {
             System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un Inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble"); // listar inmbuebles, busca inmueble, comprar, alquilar
             int opcion = Integer.parseInt(teclado.nextLine());
@@ -479,11 +490,39 @@ public class ControladoraUsuario extends Component {
                     break;
 
                 case 3:
-                        
+                    do {
+                        System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
+                        tipoInmueble = teclado.nextLine();
+                        if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
+                            valido = false;
+                        } else {
+                            valido = true;
+                        }
+                    } while (valido == false);
+
+                    do {
+                        System.out.println("Ingrese la direeción del inmueble que desea alquilar");
+                        direccion = teclado.nextLine();
+
+                        LocalDate fechaIngreso = LocalDate.now();
+                        LocalDate fechaSalida = LocalDate.now();
+
+                        Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
+                        try {
+                            inmobiliaria.venta(usuario,direccion,tipoInmueble, fecha);
+                        } catch (LugarExistenteException e) {
+                            System.err.println(e.getMessage());
+                            System.out.println("¿Quiere intentar otra vez?");
+                            continuar = teclado.nextLine();
+                        }
+                    } while (continuar.equalsIgnoreCase("si"));
+
+
+
                     break;
 
                 case 4:
-                    boolean valido = true;
+
                     do {
                         System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
                         tipoInmueble = teclado.nextLine();

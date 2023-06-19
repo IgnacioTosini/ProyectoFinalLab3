@@ -36,7 +36,7 @@ public class MenuInicioGUI extends JFrame {
         registerButton.addActionListener(e -> {
             Usuario usuario = null;
             try {
-                usuario = controladoraUsuario.registrarse();
+                usuario = controladoraUsuario.registrarse(inmobiliaria);
             } catch (DniInvalidoException ex) {
                 JOptionPane.showMessageDialog(this, "El DNI esta mal", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (NombreYApellidoIncorrectoException ex) {

@@ -169,12 +169,127 @@ public class Inmobiliaria implements IJson {
         return listado;
     }
 
-    public void alquilar(Usuario usuario, String direccion, String tipo, Fecha fecha) throws NoDisponibleException, LugarExistenteException {  //Tipo es el tipo de inmueble al alquilar.
+    public void venta(Usuario usuario, String direccion, String tipo, Fecha fecha) throws LugarExistenteException {
         double precioFinal = 0;
         switch (tipo.toLowerCase()) {
             case "casa" -> {
                 Casa casa = buscarCasa(direccion); //Excepcion en todos por si no se encuentra, si casa es null.
-                if (casa != null) {
+                if (casa != null && casa.getEstado() == Estado.EnVenta) {
+                        int eleccion = 0;
+                        try {
+                            eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        try {
+                            precioFinal = casa.metodoDePago(eleccion);
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        usuario.agregar(casa.getDireccion() + " " + fecha.toString());
+                        casa.agregarDisponibilidad(fecha);
+                        Factura factura = null;
+                        if (facturas.size() == 0) {
+                            factura = new Factura(1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, casa.getDireccion(), estadoString(casa.getEstado()));
+                        }else{
+                            factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, casa.getDireccion(), estadoString(casa.getEstado()));
+                        }
+                        facturas.put(factura.getId(), factura);
+                        usuario.agregar(factura);
+                        casa.baja();
+                        viviendas.baja(casa);
+
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
+                }
+            }
+            case "departamento" -> {
+                Departamento departamento = buscarDepartamento(direccion);
+                if (departamento != null && departamento.getEstado() == Estado.EnVenta) {
+
+                        int eleccion = 0;
+                        try {
+                            eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        try {
+                            precioFinal = departamento.metodoDePago(eleccion);
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        usuario.agregar(departamento.getDireccion() + " " + fecha.toString());
+                        departamento.agregarDisponibilidad(fecha);
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, departamento.getDireccion(), estadoString(departamento.getEstado()));
+                        facturas.put(factura.getId(), factura);
+                        usuario.agregar(factura);
+                        departamento.baja();
+                        viviendas.baja(departamento);
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
+                }
+            }
+            case "local" -> {
+                Local local = buscarLocal(direccion);
+                if (local != null && local.getEstado() == Estado.EnVenta) {
+                        int eleccion = 0;
+                        try {
+                            eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        try {
+                            precioFinal = local.metodoDePago(eleccion);
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+
+                        }
+                        usuario.agregar(local.getDireccion() + " " + fecha.toString());
+                        local.agregarDisponibilidad(fecha);
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, local.getDireccion(), estadoString(local.getEstado()));
+                        facturas.put(factura.getId(), factura);
+                        usuario.agregar(factura);
+                        local.baja();
+                        locales.baja(local);
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
+                }
+            }
+            case "cochera" -> {
+                Cochera cochera = buscarCochera(direccion);
+                if (cochera != null && cochera.getEstado() == Estado.EnVenta) {
+
+                        int eleccion = 0;
+                        try {
+                            eleccion = ControladoraInmobiliaria.eleccionMetodoDePago();
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        try {
+                            precioFinal = cochera.metodoDePago(eleccion);
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        usuario.agregar(cochera.getDireccion() + " " + fecha.toString());
+                        cochera.agregarDisponibilidad(fecha);
+                        Factura factura = new Factura(facturas.size() + 1, usuario.getNombreYApellido(), usuario.getDni(), usuario.getMail(), precioFinal, fecha, direccion, cochera.getDireccion(), estadoString(cochera.getEstado()));
+                        facturas.put(factura.getId(), factura);
+                        usuario.agregar(factura);
+                        cochera.baja();
+                        cocheras.baja(cochera);
+                } else {
+                    throw new LugarExistenteException("La dirección ingresada no existe");
+                }
+            }
+        }
+    }
+
+    public void alquilar(Usuario usuario, String direccion, String tipo, Fecha fecha) throws NoDisponibleException, LugarExistenteException {  //Tipo es el tipo de inmueble al alquilar.
+        double precioFinal = 0;
+        switch (tipo.toLowerCase() ) {
+            case "casa" -> {
+                Casa casa = buscarCasa(direccion); //Excepcion en todos por si no se encuentra, si casa es null.
+                if (casa != null && casa.getEstado() == Estado.EnAlquiler) {
                     if (casa.validarFecha(fecha)) {
                         int eleccion = 0;
                         try {
@@ -206,7 +321,7 @@ public class Inmobiliaria implements IJson {
             }
             case "departamento" -> {
                 Departamento departamento = buscarDepartamento(direccion);
-                if (departamento != null) {
+                if (departamento != null && departamento.getEstado() == Estado.EnAlquiler) {
                     if (departamento.validarFecha(fecha)) {
                         int eleccion = 0;
                         try {
@@ -233,7 +348,7 @@ public class Inmobiliaria implements IJson {
             }
             case "local" -> {
                 Local local = buscarLocal(direccion);
-                if (local != null) {
+                if (local != null && local.getEstado() == Estado.EnAlquiler) {
                     if (local.validarFecha(fecha)) {
                         int eleccion = 0;
                         try {
@@ -261,7 +376,7 @@ public class Inmobiliaria implements IJson {
             }
             case "cochera" -> {
                 Cochera cochera = buscarCochera(direccion);
-                if (cochera != null) {
+                if (cochera != null && cochera.getEstado() == Estado.EnAlquiler) {
                     if (cochera.validarFecha(fecha)) {
                         int eleccion = 0;
                         try {
