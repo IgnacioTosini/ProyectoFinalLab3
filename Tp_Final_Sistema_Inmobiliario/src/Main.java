@@ -16,7 +16,7 @@ public class Main {
             JSONObject jsonObject = new JSONObject(arch);
             Inmobiliaria inmobiliaria = new Inmobiliaria();
             inmobiliaria.fromJsonObj(jsonObject);
-           /* Mail mail = new Mail("admin@gmail.com");
+            /*Mail mail = new Mail("admin@gmail.com");
             Contraseña contraseña = new Contraseña("Admin123");
             Mail mail2 = new Mail("joaquin@gmail.com");
             Contraseña contraseña2 = new Contraseña("Joaco123");

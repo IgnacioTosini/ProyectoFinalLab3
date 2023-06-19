@@ -7,9 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class Usuario implements IJson, Serializable, Comparable {
     private String nombreYApellido;
@@ -110,14 +108,21 @@ public class Usuario implements IJson, Serializable, Comparable {
         jsonObject.put("mail", mail.toJsonObj());
         jsonObject.put("edad", edad);
         jsonObject.put("estado", estado);
+        Iterator itF = facturas.entrySet().iterator();
 
         JSONArray array = new JSONArray();
         for (int i = 0; i < historial.size(); i++) {
             array.put(historial.get(i));
         }
 
-        jsonObject.put("historial", array);
+        JSONArray jsonArrayF = new JSONArray();
+        while (itF.hasNext()) {
+            Map.Entry<Integer,Factura> factura = (Map.Entry<Integer, Factura>)itF.next();
+            jsonArrayF.put(factura.getValue().toJsonObj());
+        }
 
+        jsonObject.put("historial", array);
+        jsonObject.put("facturas", jsonArrayF);
         return jsonObject;
     }
 
@@ -137,6 +142,13 @@ public class Usuario implements IJson, Serializable, Comparable {
 
         for (int i = 0; i < array.length(); i++) {
             historial.add(array.getString(i));
+        }
+        JSONArray jsonArrayFacturas = obj.getJSONArray("facturas");
+
+        for (int i = 0; i < jsonArrayFacturas.length(); i++) {
+            Factura factura = new Factura();
+            factura.fromJsonObj(jsonArrayFacturas.getJSONObject(i));
+            facturas.put(factura.getId(), factura);
         }
     }
 

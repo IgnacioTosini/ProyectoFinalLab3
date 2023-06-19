@@ -82,14 +82,12 @@ public class Inmobiliaria implements IJson {
 
         while (itF.hasNext()) {
             Map.Entry<Integer,Factura> factura = (Map.Entry<Integer, Factura>)itF.next();
-
-            //Factura factura = (Factura) itF.next();
             jsonArrayF.put(factura.getValue().toJsonObj());
         }
 
         while (itU.hasNext()) {
             Map.Entry<String, Usuario> usuario = (Map.Entry<String, Usuario>)itU.next();
-            //Usuario usuario = (Usuario) itU.next();
+
             jsonArrayU.put(usuario.getValue().toJsonObj());
         }
 
@@ -109,6 +107,7 @@ public class Inmobiliaria implements IJson {
         JSONObject jsonObjectViviendas = obj.getJSONObject("viviendas");
         JSONObject jsonObjectCocheras = obj.getJSONObject("cocheras");
         JSONObject jsonObjectLocales = obj.getJSONObject("locales");
+
         JSONArray jsonArrayFacturas = obj.getJSONArray("facturas");
         JSONArray jsonArrayUsuarios = obj.getJSONArray("usuarios");
 
@@ -117,14 +116,14 @@ public class Inmobiliaria implements IJson {
 
         JSONArray jsonArrayCasas = jsonObjectViviendas.getJSONArray("casa");
         JSONArray jsonArrayDepartamento = jsonObjectViviendas.getJSONArray("departamento");
-        JSONArray jsonArrayCochera = jsonObjectCocheras.getJSONArray("otros");
-        JSONArray jsonArrayLocal = jsonObjectLocales.getJSONArray("otros");
-
-        JSONArray jsonArrayCasasBaja = jsonObjectViviendas.getJSONArray("casaBaja");
         JSONArray jsonArrayDepartamentoBaja = jsonObjectViviendas.getJSONArray("departamentoBajas");
-        JSONArray jsonArrayLocalBaja = jsonObjectLocales.getJSONArray("otrosBajas");
+        JSONArray jsonArrayCasasBaja = jsonObjectViviendas.getJSONArray("casaBaja");
+
+        JSONArray jsonArrayCochera = jsonObjectCocheras.getJSONArray("otros");
         JSONArray jsonArrayCocheraBaja = jsonObjectCocheras.getJSONArray("otrosBajas");
 
+        JSONArray jsonArrayLocal = jsonObjectLocales.getJSONArray("otros");
+        JSONArray jsonArrayLocalBaja = jsonObjectLocales.getJSONArray("otrosBajas");
 
 
 
@@ -160,7 +159,7 @@ public class Inmobiliaria implements IJson {
             departamento.fromJsonObj(jsonArrayDepartamentoBaja.getJSONObject(i));
             viviendas.ponerEnBaja(departamento);
         }
-        for(int i = 0; i<jsonArrayLocal.length(); i++){
+        for(int i = 0; i<jsonArrayLocalBaja.length(); i++){
             local.fromJsonObj(jsonArrayLocalBaja.getJSONObject(i));
             locales.ponerEnBaja(local);
         }

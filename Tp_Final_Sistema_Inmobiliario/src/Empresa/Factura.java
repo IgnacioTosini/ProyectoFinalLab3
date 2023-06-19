@@ -168,6 +168,7 @@ public class Factura implements IJson, Comparable {
         jsonObject.put("dirInmobiliaria", dirInmobiliaria);
         jsonObject.put("dirInmueble", dirInmueble);
         jsonObject.put("estadoActual", estadoActual);
+        jsonObject.put("fecha", fecha.toJsonObj());
 
         return jsonObject;
     }
