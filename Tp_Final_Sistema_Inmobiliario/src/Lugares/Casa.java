@@ -116,7 +116,7 @@ public class Casa extends Vivienda {
 
         setDireccion(obj.getString("direccion"));
         setAmbientes((short) obj.getInt("ambientes"));
-        setCantBanios((short) obj.getInt("cantBanios"));
+        setCantBanios((short) obj.getInt("canBanios"));
         setMetrosCuadrados(obj.getInt("metrosCuadrados"));
         setAmueblado(obj.getBoolean("amueblado"));
         setCochera(obj.getBoolean("cochera"));
@@ -128,7 +128,7 @@ public class Casa extends Vivienda {
 
         Fecha fecha = new Fecha();
         for(int i = 0; i<jsonArray.length();i++){
-            fecha.fromJsonObj((JSONObject) jsonArray.get(i));
+            fecha.fromJsonObj( jsonArray.getJSONObject(i));
             agregarDisponibilidad(fecha);
         }
     }

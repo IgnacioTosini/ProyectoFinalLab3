@@ -179,7 +179,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         setDireccion(obj.getString("direccion"));
         setPiso((short) obj.getInt("piso"));
         setPosicion((short) obj.getInt("posicion"));
-        setMedioDeAcceso(obj.getString("medioDeAcceso"));
+        setMedioDeAcceso(obj.getString("mediosDeAcceso"));
 
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 

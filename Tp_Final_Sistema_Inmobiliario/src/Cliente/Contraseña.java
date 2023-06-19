@@ -103,12 +103,12 @@ public class Contraseña implements IJson, Comparable {
     public void fromJsonObj(JSONObject obj) throws JSONException {
 
 
-            contraseña = obj.getString("contraseña");
+            setContraseña(obj.getString("contraseña"));
 
 
     }
 
-
-
-
+    private void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
+    }
 }

@@ -94,7 +94,11 @@ public class Mail implements IJson, Comparable {
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
-        mail = obj.getString("mail");
+        setMail(obj.getString("mail"));
+    }
+
+    private void setMail(String mail) {
+        this.mail = mail;
     }
 
     @Override

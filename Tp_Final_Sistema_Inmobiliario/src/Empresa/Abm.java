@@ -2,6 +2,8 @@ package Empresa;
 
 import Interfaces.IBuscar;
 import Interfaces.IJson;
+import Lugares.Casa;
+import Lugares.Departamento;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import java.util.TreeSet;
 public class Abm<T extends IBuscar & IJson> {
     private HashSet<T> miHashSet;
     private HashSet<T> bajas;
+    
 
     public Abm() {
         miHashSet = new HashSet<>();
@@ -43,6 +46,10 @@ public class Abm<T extends IBuscar & IJson> {
             }
         }
         return validacion;
+    }
+
+    public void ponerEnBaja(T elemento){
+        bajas.add(elemento);
     }
 
     public boolean modificar(T elemento) {
@@ -111,23 +118,46 @@ public class Abm<T extends IBuscar & IJson> {
 
     public JSONObject toJsonGenerico() throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        JSONArray jsonArray1 = new JSONArray();
+        JSONArray jsonArrayCasa = new JSONArray();
+        JSONArray jsonArrayDepartamento = new JSONArray();
+
+        JSONArray jsonArrayBajasCasa = new JSONArray();
+        JSONArray jsonArrayBajasDepartamento = new JSONArray();
+        JSONArray jsonArrayBajas = new JSONArray();
         JSONObject jsonObject = new JSONObject();
         Iterator it = miHashSet.iterator();
         Iterator itBajas = bajas.iterator();
 
         while (it.hasNext()) {
             T aux = (T) it.next();
-            jsonArray.put(aux.toJsonObj());
+
+            if( aux instanceof Casa){
+                jsonArrayCasa.put(aux.toJsonObj());
+            }else if(aux instanceof Departamento){
+                jsonArrayDepartamento.put(aux.toJsonObj());
+            }else{
+                jsonArray.put(aux.toJsonObj());
+            }
         }
 
         while (itBajas.hasNext()) {
             T auxx = (T) itBajas.next();
-            jsonArray1.put(auxx.toJsonObj());
+            if( auxx instanceof Casa){
+                jsonArrayBajasCasa.put(auxx.toJsonObj());
+            }else if(auxx instanceof Departamento){
+                jsonArrayBajasDepartamento.put(auxx.toJsonObj());
+            }else{
+                jsonArrayBajas.put(auxx.toJsonObj());
+            }
         }
 
-        jsonObject.put("inmueble", jsonArray);
-        jsonObject.put("bajas", jsonArray1);
+        jsonObject.put("casa", jsonArrayCasa);
+        jsonObject.put("departamento", jsonArrayDepartamento);
+        jsonObject.put("otros", jsonArray);
+        jsonObject.put("casaBaja", jsonArrayBajasCasa);
+        jsonObject.put("departamentoBajas", jsonArrayBajasDepartamento);
+        jsonObject.put("otrosBajas", jsonArrayBajas);
+
 
         return jsonObject;
     }
@@ -138,7 +168,6 @@ public class Abm<T extends IBuscar & IJson> {
 
         JSONObject aux = new JSONObject();
         T valor = null;
-
         for (int i = 0; i < jsonArray.length(); i++) {
             aux = (JSONObject) jsonArray.get(i);
             valor.fromJsonObj(aux);

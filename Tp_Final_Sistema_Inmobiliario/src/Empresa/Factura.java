@@ -177,9 +177,13 @@ public class Factura implements IJson, Comparable {
         setId(obj.getInt("id"));
         setNombre(obj.getString("nombre"));
         setDni(obj.getString("dni"));
-        mail.fromJsonObj(obj.getJSONObject("mail"));
+        Mail mailAux = new Mail();
+        mailAux.fromJsonObj(obj.getJSONObject("mail"));
+        setMail(mailAux);
         setPrecioFinal(obj.getDouble("precioFinal"));
-        fecha.fromJsonObj(obj.getJSONObject("fecha"));
+        Fecha fechaAux = new Fecha();
+        fechaAux.fromJsonObj(obj.getJSONObject("fecha"));
+        setFecha(fechaAux);
         setDirInmobiliaria(obj.getString("dirInmobiliaria"));
         setDirInmueble(obj.getString("dirInmueble"));
         setEstadoActual(obj.getString("estadoActual"));

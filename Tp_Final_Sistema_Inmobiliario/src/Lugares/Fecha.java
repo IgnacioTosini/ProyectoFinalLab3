@@ -134,7 +134,7 @@ public class Fecha implements IJson {
         int diaSalida = obj.getInt("diaSalida");
         int mesSalida = obj.getInt("mesSalida");
         int añoSalida = obj.getInt("añoSalida");
-        LocalDate fechaSalidaAux = LocalDate.of(añoSalida, mesSalida, añoSalida);
+        LocalDate fechaSalidaAux = LocalDate.of(añoSalida, mesSalida, diaSalida);
         setFechaSalida(fechaSalidaAux);
 
     }

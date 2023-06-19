@@ -117,7 +117,7 @@ public class Departamento extends Vivienda implements Comparable {
 
         setDireccion(obj.getString("direccion"));
         setAmbientes((short) obj.getInt("ambientes"));
-        setCantBanios((short) obj.getInt("cantBanios"));
+        setCantBanios((short) obj.getInt("canBanios"));
         setMetrosCuadrados(obj.getInt("metrosCuadrados"));
         setAmueblado(obj.getBoolean("amueblado"));
         setCochera(obj.getBoolean("cochera"));

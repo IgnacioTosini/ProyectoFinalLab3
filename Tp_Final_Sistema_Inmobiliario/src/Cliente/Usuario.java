@@ -112,23 +112,27 @@ public class Usuario implements IJson, Serializable, Comparable {
         jsonObject.put("estado", estado);
 
         JSONArray array = new JSONArray();
-        for (int i = 0; i <= historial.size(); i++) {
+        for (int i = 0; i < historial.size(); i++) {
             array.put(historial.get(i));
         }
 
         jsonObject.put("historial", array);
 
-        return null;
+        return jsonObject;
     }
 
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
-        nombreYApellido = obj.getString("nombreYApellido");
-        contraseña.fromJsonObj(obj.getJSONObject("contraseña"));
-        dni = obj.getString("dni");
-        mail.fromJsonObj(obj.getJSONObject("mail"));
-        edad = obj.getInt("edad");
-        estado = obj.getBoolean("estado");
+        setNombreYApellido(obj.getString("nombreYApellido"));
+        Contraseña contra = new Contraseña();
+        contra.fromJsonObj(obj.getJSONObject("contraseña"));
+        setContraseña(contra);
+        setDni(obj.getString("dni"));
+        Mail mailAux = new Mail();
+        mailAux.fromJsonObj(obj.getJSONObject("mail"));
+        setMail(mailAux);
+        setEdad(obj.getInt("edad"));
+        setEstado(obj.getBoolean("estado"));
         JSONArray array = obj.getJSONArray("historial");
 
         for (int i = 0; i < array.length(); i++) {
@@ -142,6 +146,31 @@ public class Usuario implements IJson, Serializable, Comparable {
 
     public Contraseña getContraseña() {
         return contraseña;
+    }
+
+
+    private void setNombreYApellido(String nombreYApellido) {
+        this.nombreYApellido = nombreYApellido;
+    }
+
+    private void setContraseña(Contraseña contraseña) {
+        this.contraseña = contraseña;
+    }
+
+    private void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    private void setMail(Mail mail) {
+        this.mail = mail;
+    }
+
+    private void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    private void setEstado(boolean estado) {
+        this.estado = estado;
     }
 
     public String getDni() {
@@ -178,5 +207,15 @@ public class Usuario implements IJson, Serializable, Comparable {
             }
         }
         return valor;
+    }
+
+    public String mostrarFacturas(){
+        String listado = "";
+
+        for(int i = 0; i< facturas.size(); i++){
+            listado.concat(facturas.get(i).toString());
+        }
+
+        return listado;
     }
 }

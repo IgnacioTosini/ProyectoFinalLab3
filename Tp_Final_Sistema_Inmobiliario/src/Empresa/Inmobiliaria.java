@@ -11,10 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Inmobiliaria implements IJson {
     private Abm<Vivienda> viviendas; //(Ord por precio)
@@ -36,6 +33,18 @@ public class Inmobiliaria implements IJson {
         this.direccion = direccion;
         this.telefono = telefono;
         this.correo = correo;
+        facturas = new HashMap<>();
+    }
+
+    public Inmobiliaria() {
+        this.viviendas = new Abm<>();
+        this.cocheras = new Abm<>();
+        this.locales = new Abm<>();
+        this.usuarios = new HashMap<>();
+        this.nombre = "";
+        this.direccion = "";
+        this.telefono = "";
+        this.correo  = "";
         facturas = new HashMap<>();
     }
 
@@ -72,13 +81,16 @@ public class Inmobiliaria implements IJson {
         jsonObject.put("locales", locales.toJsonGenerico());
 
         while (itF.hasNext()) {
-            jsonArrayF.put(itF);
-            itF.next();
+            Map.Entry<Integer,Factura> factura = (Map.Entry<Integer, Factura>)itF.next();
+
+            //Factura factura = (Factura) itF.next();
+            jsonArrayF.put(factura.getValue().toJsonObj());
         }
 
         while (itU.hasNext()) {
-            jsonArrayU.put(itU);
-            itU.next();
+            Map.Entry<String, Usuario> usuario = (Map.Entry<String, Usuario>)itU.next();
+            //Usuario usuario = (Usuario) itU.next();
+            jsonArrayU.put(usuario.getValue().toJsonObj());
         }
 
         jsonObject.put("facturas", jsonArrayF);
@@ -94,15 +106,70 @@ public class Inmobiliaria implements IJson {
         setDireccion(obj.getString("direccion"));
         setTelefono(obj.getString("telefono"));
 
-        JSONObject jsonArrayViviendas = obj.getJSONObject("viviendas");
-        JSONObject jsonArrayCocheras = obj.getJSONObject("cocheras");
-        JSONObject jsonArrayLocales = obj.getJSONObject("locales");
+        JSONObject jsonObjectViviendas = obj.getJSONObject("viviendas");
+        JSONObject jsonObjectCocheras = obj.getJSONObject("cocheras");
+        JSONObject jsonObjectLocales = obj.getJSONObject("locales");
         JSONArray jsonArrayFacturas = obj.getJSONArray("facturas");
         JSONArray jsonArrayUsuarios = obj.getJSONArray("usuarios");
 
-        viviendas.fromJsonGenerico(jsonArrayViviendas);
-        cocheras.fromJsonGenerico(jsonArrayCocheras);
-        locales.fromJsonGenerico(jsonArrayLocales);
+
+
+
+        JSONArray jsonArrayCasas = jsonObjectViviendas.getJSONArray("casa");
+        JSONArray jsonArrayDepartamento = jsonObjectViviendas.getJSONArray("departamento");
+        JSONArray jsonArrayCochera = jsonObjectCocheras.getJSONArray("otros");
+        JSONArray jsonArrayLocal = jsonObjectLocales.getJSONArray("otros");
+
+        JSONArray jsonArrayCasasBaja = jsonObjectViviendas.getJSONArray("casaBaja");
+        JSONArray jsonArrayDepartamentoBaja = jsonObjectViviendas.getJSONArray("departamentoBajas");
+        JSONArray jsonArrayLocalBaja = jsonObjectLocales.getJSONArray("otrosBajas");
+        JSONArray jsonArrayCocheraBaja = jsonObjectCocheras.getJSONArray("otrosBajas");
+
+
+
+
+        Casa casa = new Casa();
+        Departamento departamento = new Departamento();
+        Local local = new Local();
+        Cochera cochera = new Cochera();
+        for(int i = 0; i<jsonArrayCasas.length(); i++){
+            casa.fromJsonObj(jsonArrayCasas.getJSONObject(i));
+            viviendas.agregar(casa);
+        }
+
+        for(int i = 0; i<jsonArrayDepartamento.length(); i++){
+            departamento.fromJsonObj(jsonArrayDepartamento.getJSONObject(i));
+            viviendas.agregar(departamento);
+        }
+
+        for(int i = 0; i<jsonArrayLocal.length(); i++){
+            local.fromJsonObj(jsonArrayLocal.getJSONObject(i));
+            locales.agregar(local);
+        }
+
+        for(int i = 0; i<jsonArrayCochera.length(); i++){
+            cochera.fromJsonObj(jsonArrayCochera.getJSONObject(i));
+            cocheras.agregar(cochera);
+        }
+
+        for(int i = 0; i<jsonArrayCasasBaja.length(); i++){
+            casa.fromJsonObj(jsonArrayCasasBaja.getJSONObject(i));
+            viviendas.ponerEnBaja(casa);
+        }
+        for(int i = 0; i<jsonArrayDepartamentoBaja.length(); i++){
+            departamento.fromJsonObj(jsonArrayDepartamentoBaja.getJSONObject(i));
+            viviendas.ponerEnBaja(departamento);
+        }
+        for(int i = 0; i<jsonArrayLocal.length(); i++){
+            local.fromJsonObj(jsonArrayLocalBaja.getJSONObject(i));
+            locales.ponerEnBaja(local);
+        }
+
+        for(int i = 0; i<jsonArrayCocheraBaja.length(); i++){
+            cochera.fromJsonObj(jsonArrayCocheraBaja.getJSONObject(i));
+            cocheras.ponerEnBaja(cochera);
+        }
+
 
         for (int i = 0; i < jsonArrayFacturas.length(); i++) {
             Factura factura = new Factura();
@@ -408,7 +475,6 @@ public class Inmobiliaria implements IJson {
         Casa casa = null;
         if (viviendas != null) {
             casa = (Casa) viviendas.buscador(direccion);
-            System.out.println(casa.toString());
         }
         return casa;
     }
@@ -482,5 +548,6 @@ public class Inmobiliaria implements IJson {
     public boolean modificar(Cochera cochera) {
         return cocheras.modificar(cochera);
     }
+
 
 }
