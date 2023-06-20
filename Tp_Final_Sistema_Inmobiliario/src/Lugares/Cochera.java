@@ -223,15 +223,9 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     public double pagoCredito() {
         boolean seguir = true;
         double valorFinal = 0;
-        while(seguir){
-            try {
-                int cantCuotas = ControladoraInmobiliaria.cantCuotas();
-                valorFinal = precio + (precio*0.1)*cantCuotas;
-                seguir = false;
-            } catch (EleccionIncorrectaException e) {
-                seguir = true;
-            }
-        }
+
+                valorFinal = precio + (precio*0.1);
+
 
         return valorFinal;
     }

@@ -166,17 +166,8 @@ public class Departamento extends Vivienda implements Comparable {
 
     @Override
     public double pagoCredito() {
-        boolean seguir = true;
         double valorFinal = 0;
-        while(seguir){
-            try {
-                int cantCuotas = ControladoraInmobiliaria.cantCuotas();
-                valorFinal = getPrecio() + (getPrecio()*0.03)*cantCuotas;
-                seguir = false;
-            } catch (EleccionIncorrectaException e) {
-                throw new RuntimeException(e);
-            }
-        }
+                valorFinal = getPrecio() + (getPrecio()*0.03);
 
         return valorFinal;
     }

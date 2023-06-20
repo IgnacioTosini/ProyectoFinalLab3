@@ -1,4 +1,4 @@
-package Swing;
+/*package Swing;
 import javax.swing.*;
 
 import Cliente.Usuario;
@@ -60,4 +60,4 @@ public class MenuInicioGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
-}
+}*/

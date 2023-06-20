@@ -230,4 +230,5 @@ public class Usuario implements IJson, Serializable, Comparable {
 
         return listado;
     }
+    
 }

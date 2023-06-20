@@ -1,11 +1,13 @@
 package Excepciones;
 
-import Lugares.Fecha;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 public class NoDisponibleException extends Exception{
+    
+    /**
+        * Excepcion que se lanza cuando las fechas de un inmueble estan tomadas
+        * @param message Mensaje que se mostrara por pantalla
+        * @param disponibilidad String con las fechas ya reservadas del inmueble
+        */
+        
 
     String disponibilidad;
 

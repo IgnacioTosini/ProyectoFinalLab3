@@ -19,30 +19,4 @@ public class ControladoraInmobiliaria {
         return eleccion;
     }
 
-    public static int cantCuotas() throws EleccionIncorrectaException { //Preguntar si el metodo de pago sin controlar ingresos de momento esta bien, ya que solo se hace la facturacion
-        int eleccion = 0;
-        boolean seguir = true;
-        int cantCuotas = 1; //Es uno cosa que la cantidad de cuotas por defecto es 1(valor del inmueble).
-        while (seguir) {
-            System.out.println("¿Cuantas cuotas lo desea hacer? \n" +
-                    "1. 6 cuotas\n" +
-                    "2. 12 cuotas\n" +
-                    "3. 24 cuotas");
-            eleccion = Integer.parseInt(teclado.nextLine());
-            if (eleccion == 1) {
-                cantCuotas = 6;
-                seguir = false;
-            } else if (eleccion == 2) {
-                cantCuotas = 12;
-                seguir = false;
-            } else if (eleccion == 3) {
-                cantCuotas = 24;
-                seguir = false;
-            } else {
-                System.out.println("La elección es incorrecta");
-            }
-        }
-
-        return cantCuotas;
-    }
 }

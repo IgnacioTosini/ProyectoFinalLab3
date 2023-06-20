@@ -40,6 +40,13 @@ public class Fecha implements IJson {
         return validacion;
     }
 
+    /**
+     * Método que comprueba que si los datos perteneciente a una fecha pasada por 3 enteros es una fecha posible y posterior a la fecha actual.
+     * @param año
+     * @param mes
+     * @param dia
+     * @return
+     */
     public static boolean validarFecha(int año, int mes, int dia) {
         boolean validacion = false;
         LocalDate localDate = LocalDate.now();

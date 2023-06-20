@@ -2,6 +2,11 @@ package Cliente;
 
 public enum TiposMail {
 
+    /**
+           * Tipos de subfijos de correos electronicos
+           */
+
+
     Gmail("@gmail.com"), Hotmail("@hotmail.com"), Yahoo("@yahoo.com");
     private String tipomail;
     private TiposMail(String tipomail) {

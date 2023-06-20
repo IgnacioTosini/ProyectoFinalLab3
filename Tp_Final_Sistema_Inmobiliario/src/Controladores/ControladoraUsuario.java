@@ -17,7 +17,7 @@ import Excepciones.Mail.ArrobaException;
 import Excepciones.Mail.PuntoComException;
 import Excepciones.NoDisponibleException;
 import Lugares.*;
-import Swing.MenuInicioGUI;
+//import Swing.MenuInicioGUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,108 +45,127 @@ public class ControladoraUsuario extends Component {
             int opcion = 0;
             System.out.println("1. Loguearse \n2. Registrarse");
             opcion = Integer.parseInt(teclado.nextLine());
-
             switch (opcion) {
                 case 1:
                     while (respuesta.equalsIgnoreCase("si")) {
                         try {
                             usuario = login(inmobiliaria);
                             if (Usuario.comprobarAdmin(usuario)) {
-                                do {
-                                    System.out.println("¿Qué le gustaría realizar?");
-                                    opcion = 0;
-                                    System.out.println("1. Agregar inmueble \n2. Remover inmueble \n3. Modificar inmueble \n4. Listar inmueble \n5. Mostrar inmueble \n6. Dar de baja usuario  \n7. Mostrar usuario");
-                                    opcion = Integer.parseInt(teclado.nextLine());
-                                    String continuar = "si";
-                                    switch (opcion) {
-                                        case 1:
-                                            agregarInmuebles(inmobiliaria);
-                                            break;
-                                        case 2:
-                                            try {
-                                                darDeBajaInmueble(inmobiliaria);
-                                            } catch (EleccionIncorrectaException e) {
-                                                System.err.println(e.getMessage());
-                                            } catch (DireccionInvalidaException e) {
-                                                System.err.println(e.getMessage());
-                                            }
-                                            break;
-                                        case 3:
-                                            modificarInmueble(inmobiliaria);
-                                            break;
-                                        case 4:
-                                            try {
-                                                listarInmueble(inmobiliaria);
-                                            } catch (EleccionIncorrectaException e) {
-                                                System.err.println(e.getMessage());
-                                            }
-                                            break;
-                                        case 5:
-                                            try {
-                                                buscarInmueble(inmobiliaria);
-                                            } catch (EleccionIncorrectaException e) {
-                                                System.err.println(e.getMessage());
-                                            }catch (DireccionInvalidaException e) {
-                                                System.err.println(e.getMessage());
-                                            }
-                                            break;
-                                        case 6:
-                                            darDeBajaUsuario(inmobiliaria);
-                                            break;
-                                        case 7:
-                                            mostrarUsuario(inmobiliaria);
-                                            break;
-                                        default:
-                                            System.out.println("Valor ingresado no valido");
-                                            break;
-
-                                    }
-                                    System.out.println("¿Desea realizar otra accion?");
-                                    respuesta = teclado.toString();
-                                } while (respuesta.equalsIgnoreCase("si"));
+                                menuAdmin(inmobiliaria);
                             } else {
                                 menuUsuario(inmobiliaria, usuario);
                             }
                             respuesta = "no";
                         } catch (UsuarioNoEncontradoException | MalContraseñaException e) {
                             System.err.println(e.getMessage());
-                            System.out.println("¿Desea volver a intentar?");
-                            respuesta = teclado.nextLine();
+                            boolean respuestaValida = false;
+                            while (!respuestaValida) {
+                                System.out.println("¿Desea volver a intentar?");
+                                respuesta = teclado.nextLine();
+                                if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                    respuestaValida = true;
+                                } else {
+                                    System.err.println("No debe contener números.");
+                                }
+                            }
                         } catch (UsuarioDadoDeBajaException e) {
                             System.err.println(e.getMessage());
-                            System.out.println("¿Desea volver a intentar?");
-                            respuesta = teclado.nextLine();
+                            boolean respuestaValida = false;
+                            while (!respuestaValida) {
+                                System.out.println("¿Desea volver a intentar?");
+                                respuesta = teclado.nextLine();
+                                if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                    respuestaValida = true;
+                                } else {
+                                    System.out.println("No debe contener números.");
+                                }
+                            }
                         } catch (DireccionInvalidaException e) {
                             System.err.println(e.getMessage());
+                        } catch (EleccionIncorrectaException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                     break;
-
                 case 2:
                     while (respuesta.equalsIgnoreCase("si")) {
-
                         try {
                             usuario = registrarse(inmobiliaria);
                             respuesta = "no";
-                        } catch (DniInvalidoException | NombreYApellidoIncorrectoException | EdadInvalidadException e) {
-                            System.err.println(e.getMessage());
-                        } catch (UsuarioDadoDeBajaException e) {
-                            System.err.println(e.getMessage());
-                        } catch (UsuarioYaExiste e) {
+                        } catch (DniInvalidoException  | EdadInvalidadException |
+                                 UsuarioYaExiste | UsuarioDadoDeBajaException e) {
                             System.err.println(e.getMessage());
                         }
                     }
                     inmobiliaria.agregarUsuario(usuario);
                     break;
-
                 default:
                     System.out.println("Valor ingresado no valido");
                     break;
             }
-            System.out.println("Quiero volver al menu?, presione si");
-            respuesta = teclado.nextLine();
+            boolean respuestaValida = false;
+            while (respuestaValida == false) {
+                System.out.println("¿Quiere volver al menu?, presione si");
+                respuesta = teclado.nextLine();
+                if (respuesta.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                    respuestaValida = true;
+                } else {
+                    System.err.println("No debe contener números.");
+                }
+            }
         } while (respuesta.equals("si"));
         return usuario;
+    }
+
+    public static void menuAdmin(Inmobiliaria inmobiliaria) throws DireccionInvalidaException, EleccionIncorrectaException {
+        int opcion = 0;
+        String respuesta = "si";
+        do {
+            System.out.println("¿Qué le gustaría realizar?");
+            opcion = 0;
+            System.out.println("1. Agregar inmueble \n2. Remover inmueble \n3. Modificar inmueble \n4. Listar inmueble \n5. Mostrar inmueble \n6. Dar de baja usuario  \n7. Mostrar usuario");
+            opcion = Integer.parseInt(teclado.nextLine());
+            switch (opcion) {
+                case 1:
+                    try {
+                        agregarInmuebles(inmobiliaria);
+                    } catch (NombreYApellidoIncorrectoException e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+                case 2:
+                    darDeBajaInmueble(inmobiliaria);
+                    break;
+                case 3:
+                    modificarInmueble(inmobiliaria);
+                    break;
+                case 4:
+                    listarInmueble(inmobiliaria);
+                    break;
+                case 5:
+                    buscarInmueble(inmobiliaria);
+                    break;
+                case 6:
+                    darDeBajaUsuario(inmobiliaria);
+                    break;
+                case 7:
+                    mostrarUsuario(inmobiliaria);
+                    break;
+                default:
+                    System.err.println("Valor ingresado no valido");
+                    break;
+            }
+            boolean respuestaValida = false;
+            while (!respuestaValida) {
+                System.out.println("¿Desea realizar otra accion?");
+                respuesta = teclado.nextLine();
+                if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                    respuestaValida = true;
+                } else {
+                    System.out.println("No debe contener números.");
+                }
+            }
+        } while (respuesta.equalsIgnoreCase("si"));
     }
 
     /**
@@ -156,16 +175,21 @@ public class ControladoraUsuario extends Component {
      * @return Retorna el usuarui buscado, en caso de que no lo encuentre retorna null
      * @throws UsuarioNoEncontradoException
      * @throws MalContraseñaException
+     * @throws UsuarioDadoDeBajaException
+     * @throws NombreYApellidoIncorrectoException
      */
     public static Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException, UsuarioDadoDeBajaException {
+
+        boolean validarNombre = false;
+        String nombre = "";
         System.out.println("Ingrese su Mail: ");
-        String nombre = teclado.nextLine();
+        nombre = teclado.nextLine();
 
         Usuario usuario = inmobiliaria.buscarUsuario(nombre);
         if (usuario == null) {
             throw new UsuarioNoEncontradoException("Usuario no encontrado");
         }
-        if(usuario.isEstado()){
+        if (usuario.isEstado()) {
             throw new UsuarioDadoDeBajaException("El usuario fue dado de baja");
         }
         System.out.println("Ingrese su contraseña: ");
@@ -176,51 +200,19 @@ public class ControladoraUsuario extends Component {
         return usuario;
     }
 
-    /*public Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException {
-        JFrame frame = new JFrame("Inicio de sesión");
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2));
-
-        JLabel usuarioLabel = new JLabel("Usuario:");
-        JTextField usuarioField = new JTextField(20);
-        panel.add(usuarioLabel);
-        panel.add(usuarioField);
-
-        JLabel contraseñaLabel = new JLabel("Contraseña:");
-        JPasswordField contraseñaField = new JPasswordField(20);
-        panel.add(contraseñaLabel);
-        panel.add(contraseñaField);
-
-        int opcion = JOptionPane.showConfirmDialog(null, panel, "Ingrese su información de inicio de sesión", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (opcion == JOptionPane.CANCEL_OPTION || opcion == JOptionPane.CLOSED_OPTION) {
-            throw new RuntimeException("Inicio de sesión cancelado por el usuario");
-        }
-
-        String mail = usuarioField.getText();
-        Usuario usuario = inmobiliaria.buscarUsuario(mail);
-        if (usuario == null) {
-            throw new UsuarioNoEncontradoException("Usuario no encontrado");
-        }
-
-        String contraseña = new String(contraseñaField.getPassword());
-        if (!usuario.getContraseña().equals(contraseña)) {
-            throw new MalContraseñaException("Contraseña incorrecta");
-        }
-
-        return usuario;
-    }*/
-
-
     /**
      * Función que permite crear un usuario
      *
-     * @return
+     * @return retorna el usuario con todos los datos.
+     * @throws DniInvalidoException
+     * @throws NombreYApellidoIncorrectoException
      * @throws DniInvalidoException
      * @throws NombreYApellidoIncorrectoException
      * @throws EdadInvalidadException
+     * @throws UsuarioDadoDeBajaException
+     * @throws UsuarioYaExiste
      */
-    public static Usuario registrarse(Inmobiliaria inmobiliaria) throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, UsuarioDadoDeBajaException, UsuarioYaExiste {
+    public static Usuario registrarse(Inmobiliaria inmobiliaria) throws DniInvalidoException, EdadInvalidadException, UsuarioDadoDeBajaException, UsuarioYaExiste {
         String nombre = "";
         String contraseña = "";
         String dni = "";
@@ -231,13 +223,13 @@ public class ControladoraUsuario extends Component {
         int tipoMail = 0;
 
         boolean nombreValido = false;
-        while (nombreValido == false) {
+        while (!nombreValido) {
             System.out.println("Ingrese su nombre y apellido");
             nombre = teclado.nextLine();
             if (nombre.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
                 nombreValido = true;
             } else {
-                throw new NombreYApellidoIncorrectoException("Nombre inválido. No debe contener números.");
+                System.out.println("Nombre inválido. No debe contener números.");
             }
         }
         Contraseña contra = null;
@@ -280,7 +272,7 @@ public class ControladoraUsuario extends Component {
         }
         Usuario usuario = null;
         Mail correo = null;
-        do{
+        do {
             while (Objects.equals(auxMail, "")) {
                 System.out.println("Ingrese que tipo de mail usa.\n1.Gmail\n2.Hotmail\n3.Yahoo\n4.Otros");
                 tipoMail = Integer.parseInt(teclado.nextLine());
@@ -294,120 +286,22 @@ public class ControladoraUsuario extends Component {
                 String aux = teclado.nextLine();
                 mail = aux.concat(auxMail);
             }
-             usuario = inmobiliaria.buscarUsuario(mail);
-            if(usuario != null){
-                if(usuario.isEstado()){
+            usuario = inmobiliaria.buscarUsuario(mail);
+            if (usuario != null) {
+                if (usuario.isEstado()) {
                     throw new UsuarioYaExiste("Este mail ya esta en uso");
-                }else {
+                } else {
                     throw new UsuarioDadoDeBajaException("Este usuario fue dado de baja");
                 }
             }
 
             correo = new Mail(mail);
-        }while(usuario != null);
+        } while (usuario != null);
 
         Usuario registrado = new Usuario(nombre, contra, dni, correo, edad, false);
 
         return registrado;
     }
-
-    /*public Usuario registrarse() throws DniInvalidoException, NombreYApellidoIncorrectoException, EdadInvalidadException, PuntoComException, ArrobaException {
-        JFrame frame = new JFrame("Registro");
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 2));
-
-        JLabel nombreLabel = new JLabel("Nombre y apellido:");
-        JTextField nombreField = new JTextField(20);
-        panel.add(nombreLabel);
-        panel.add(nombreField);
-
-        JLabel contraseñaLabel = new JLabel("Contraseña (Una mayúscula, un número y 8 dígitos como mínimo):");
-        JPasswordField contraseñaField = new JPasswordField(20);
-        panel.add(contraseñaLabel);
-        panel.add(contraseñaField);
-
-        JLabel dniLabel = new JLabel("DNI (8 dígitos):");
-        JTextField dniField = new JTextField(8);
-        panel.add(dniLabel);
-        panel.add(dniField);
-
-        JLabel edadLabel = new JLabel("Edad:");
-        JTextField edadField = new JTextField(3);
-        panel.add(edadLabel);
-        panel.add(edadField);
-
-        JLabel tipoMailLabel = new JLabel("Tipo de mail:");
-        JComboBox<String> tipoMailCombo = new JComboBox<>(new String[]{"Gmail", "Hotmail", "Yahoo", "Otros"});
-        panel.add(tipoMailLabel);
-        panel.add(tipoMailCombo);
-
-        JLabel parteDelanteraMailLabel = new JLabel("Parte delantera del mail (antes de @):");
-        JTextField parteDelanteraMailField = new JTextField(20);
-        panel.add(parteDelanteraMailLabel);
-        panel.add(parteDelanteraMailField);
-
-        int opcion = JOptionPane.showConfirmDialog(null, panel, "Ingrese su información de registro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (opcion == JOptionPane.CANCEL_OPTION || opcion == JOptionPane.CLOSED_OPTION) {
-            throw new RuntimeException("Registro cancelado por el usuario");
-        }
-
-        String nombre = nombreField.getText();
-        if (!nombre.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
-            throw new NombreYApellidoIncorrectoException("Nombre inválido. No debe contener números.");
-        }
-
-        String contraseña = new String(contraseñaField.getPassword());
-        Contraseña contra = null;
-        try {
-            Contraseña.verificacion(contraseña);
-            contra = new Contraseña(contraseña);
-        } catch (TotalDigitosException | CantNumException | CantMayusException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        String dni = dniField.getText();
-        if (!dni.matches("\\d{8}")) { // Verificar que el DNI tenga 8 dígitos
-            JOptionPane.showMessageDialog(null, "DNI inválido. Debe tener 8 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        int edad = Integer.parseInt(edadField.getText());
-        if (edad < 0 || edad > 120) { // Verificar que la edad esté en un rango razonable
-            JOptionPane.showMessageDialog(null, "Edad inválida. Debe estar entre 0 y 120.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        String mail = "";
-        int tipoMail = tipoMailCombo.getSelectedIndex() + 1;
-        switch (tipoMail) {
-            case 1:
-                mail = TiposMail.Gmail.getTipomail();
-                break;
-            case 2:
-                mail = TiposMail.Hotmail.getTipomail();
-                break;
-            case 3:
-                mail = TiposMail.Yahoo.getTipomail();
-                break;
-            case 4:
-                String parteDelanteraMail = parteDelanteraMailField.getText();
-                while (!Mail.validarMail(parteDelanteraMail + "@" + mail)) {
-                    JOptionPane.showMessageDialog(null, "Mail ingresado inválido. Inténtelo de nuevo.", "Error", JOptionPane.ERROR_MESSAGE);
-                    parteDelanteraMail = JOptionPane.showInputDialog(null, "Ingrese la parte delantera del mail (antes de @):", "Registro", JOptionPane.PLAIN_MESSAGE);
-                    if (parteDelanteraMail == null) {
-                        JOptionPane.showMessageDialog(null, "Registro cancelado por el usuario", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-                mail = parteDelanteraMail + "@" + menuTipoMail(tipoMail);
-                break;
-            default:
-                JOptionPane.showMessageDialog(null, "La opcion ingresada es invalida", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        Mail correo = new Mail(mail);
-
-        Usuario usuario = new Usuario(nombre, contra, dni, correo, edad);
-        return usuario;
-    }*/
 
     /**
      * Función el cual te crea un mail de distintos tipos, en elección si se la pase 1 es gmail, 2 hotmail, 3 yahoo y 4 uno puede crear uno distinto.
@@ -432,7 +326,7 @@ public class ControladoraUsuario extends Component {
                 break;
 
             case 4:
-                while (valido == false) {
+                while (!valido) {
                     System.out.println("Ingrese el mail completo por favor.");
                     mail = teclado.nextLine();
                     try {
@@ -440,7 +334,7 @@ public class ControladoraUsuario extends Component {
                     } catch (ArrobaException | PuntoComException e) {
                         System.err.println(e.getMessage());
                     }
-                    if (valido == false) {
+                    if (!valido) {
                         System.err.println("El mail ingresado es incorrecto");
                     }
                 }
@@ -451,38 +345,15 @@ public class ControladoraUsuario extends Component {
         return mail;
     }
 
-    /*public String menuTipoMail(int eleccion) {
-        JFrame frame = new JFrame("Tipo de mail");
-        JPanel panel = new JPanel(new GridLayout(2, 1));
-
-        JLabel mensajeLabel = new JLabel("Ingrese su mail completo:");
-        JTextField mensajeField = new JTextField(20);
-        panel.add(mensajeLabel);
-        panel.add(mensajeField);
-
-        int opcion = JOptionPane.showConfirmDialog(null, panel, "Ingrese su información de registro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (opcion == JOptionPane.CANCEL_OPTION || opcion == JOptionPane.CLOSED_OPTION) {
-            JOptionPane.showMessageDialog(null, "Registro cancelado por el usuario", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        String mail = mensajeField.getText();
-        switch (eleccion) {
-            case 1:
-                mail += TiposMail.Gmail.getTipomail();
-                break;
-            case 2:
-                mail += TiposMail.Hotmail.getTipomail();
-                break;
-            case 3:
-                mail += TiposMail.Yahoo.getTipomail();
-                break;
-            default:
-                break;
-        }
-
-        return mail;
-    }*/
+    /**
+     * Funcion que se utiliza para manejar todo lo que puede hacer un usuario de la inmobiliaria. 1-Ver lista de inmuebles 2- Buscar un inmueble 3- Comprar un inmueble 4- Alquilar un inmueble 5- Mostrar Facturas
+     *
+     * @param inmobiliaria
+     * @param usuario
+     * @return void
+     * @throws DireccionInvalidaException
+     * @throws NombreYApellidoIncorrectoException
+     */
 
     public static void menuUsuario(Inmobiliaria inmobiliaria, Usuario usuario) throws DireccionInvalidaException {
         String continuar = "si";
@@ -490,7 +361,7 @@ public class ControladoraUsuario extends Component {
         String tipoInmueble = "";
         boolean valido = true;
         do {
-            System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble \n 5- Mostrar Facturas"); // listar inmbuebles, busca inmueble, comprar, alquilar
+            System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble \n 5- Mostrar Facturas");
             int opcion = Integer.parseInt(teclado.nextLine());
             switch (opcion) {
                 case 1:
@@ -502,7 +373,6 @@ public class ControladoraUsuario extends Component {
                     break;
 
                 case 2:
-
                     try {
                         buscarInmueble(inmobiliaria);
                     } catch (EleccionIncorrectaException e) {
@@ -512,8 +382,17 @@ public class ControladoraUsuario extends Component {
 
                 case 3:
                     do {
-                        System.out.println("Ingrese el tipo de inmueble que desea comprar. (Casa, Departamento, Local, Cochera)");
-                        tipoInmueble = teclado.nextLine();
+                        boolean inmuebleValido = false;
+                        while (inmuebleValido == false) {
+                            System.out.println("Ingrese el tipo de inmueble que desea comprar. (Casa, Departamento, Local, Cochera)");
+                            tipoInmueble = teclado.nextLine();
+                            if (tipoInmueble.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                inmuebleValido = true;
+                            } else {
+                                System.out.println("No debe contener números.");
+                            }
+                        }
+
                         if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
                             valido = false;
                         } else {
@@ -525,7 +404,7 @@ public class ControladoraUsuario extends Component {
                         System.out.println("Ingrese la direeción del inmueble que desea comprar");
                         direccion = teclado.nextLine();
 
-                        if(!Inmobiliaria.validarDireccion(direccion)){
+                        if (!Inmobiliaria.validarDireccion(direccion)) {
                             throw new DireccionInvalidaException("Direccion ingresada es invalida");
                         }
 
@@ -534,20 +413,25 @@ public class ControladoraUsuario extends Component {
 
                         Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
                         try {
-                            inmobiliaria.venta(usuario,direccion,tipoInmueble, fecha);
+                            inmobiliaria.venta(usuario, direccion, tipoInmueble, fecha);
                         } catch (LugarExistenteException e) {
                             System.err.println(e.getMessage());
-                            System.out.println("¿Quiere intentar otra vez?");
-                            continuar = teclado.nextLine();
+
+                            boolean continuarValido = false;
+                            while (continuarValido == false) {
+                                System.out.println("¿Quiere intentar otra vez?");
+                                continuar = teclado.nextLine();
+                                if (continuar.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                    continuarValido = true;
+                                } else {
+                                    System.out.println("No debe contener números.");
+                                }
+                            }
                         }
+                        continuar = "no";
                     } while (continuar.equalsIgnoreCase("si"));
-
-
-
                     break;
-
                 case 4:
-
                     do {
                         System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
                         tipoInmueble = teclado.nextLine();
@@ -562,7 +446,7 @@ public class ControladoraUsuario extends Component {
                         System.out.println("Ingrese la direeción del inmueble que desea alquilar");
                         direccion = teclado.nextLine();
 
-                        if(!Inmobiliaria.validarDireccion(direccion)){
+                        if (!Inmobiliaria.validarDireccion(direccion)) {
                             throw new DireccionInvalidaException("Direccion ingresada es invalida");
                         }
 
@@ -588,10 +472,10 @@ public class ControladoraUsuario extends Component {
                             inmobiliaria.alquilar(usuario, direccion, tipoInmueble, fecha);
                         } catch (NoDisponibleException e) {
                             System.err.println(e.getMessage());
-                            System.out.println("Fechas ocupadas: "+ e.getDisponibilidad());
+                            System.out.println("Fechas ocupadas: " + e.getDisponibilidad());
                             System.out.println("¿Quiere intentar otra vez?");
                             continuar = teclado.nextLine();
-                        }catch (LugarExistenteException e){
+                        } catch (LugarExistenteException e) {
                             System.err.println(e.getMessage());
                             System.out.println("¿Quiere intentar otra vez?");
                             continuar = teclado.nextLine();
@@ -612,6 +496,12 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
+    /**
+     * Esta funcion le pide por consola al usuario tanto el dia, mes y año para alquilar un inmueble.
+     *
+     * @return LocalDate
+     * @throws EleccionIncorrectaException
+     */
     public static LocalDate crearFechaAlquiler() throws EleccionIncorrectaException {
         int dia = 0;
         int mes = 0;
@@ -628,22 +518,20 @@ public class ControladoraUsuario extends Component {
 
         LocalDate fecha = null;
 
-        if(Fecha.validarFecha(año, mes, dia)){
+        if (Fecha.validarFecha(año, mes, dia)) {
             fecha = LocalDate.of(año, mes, dia);
-        }else {
+        } else {
             throw new EleccionIncorrectaException("La fecha no es valida");
         }
 
         return fecha;
     }
 
-
     /**
      * Función que te solicitara el mail del usuario de la imobiliaria para posteriormente poder mostrar todos los datos del usuario.
-     * Return void.
      *
      * @param inmobiliaria
-     * @throws EleccionIncorrectaException
+     * @return void.
      */
     public static void mostrarUsuario(Inmobiliaria inmobiliaria) {
         String continuar = "";
@@ -660,10 +548,9 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función que te solicitara el mail del usuario de la inmobiliaria para posteriormente darlo de baja.
-     * Return void.
      *
      * @param inmobiliaria
-     * @throws EleccionIncorrectaException
+     * @return void.
      */
 
     public static void darDeBajaUsuario(Inmobiliaria inmobiliaria) {
@@ -681,10 +568,11 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función que te solicita el tipo de inmueble y su dirección y si se encuentra dentro de la inmobiliaria este lo da de baja.
-     * Return void.
      *
      * @param inmobiliaria
+     * @return void.
      * @throws EleccionIncorrectaException
+     * @throws DireccionInvalidaException
      */
 
     public static void darDeBajaInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
@@ -698,48 +586,52 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Casa casa = inmobiliaria.buscarCasa(direccion);
                 if (casa != null) {
                     inmobiliaria.baja(casa);
+                    System.out.println("Se dio de baja con exito");
                 } else {
                     throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Departamento departamento = inmobiliaria.buscarDepartamento(direccion);
                 if (departamento != null) {
                     inmobiliaria.baja(departamento);
+                    System.out.println("Se dio de baja con exito");
                 } else {
                     throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Local local = inmobiliaria.buscarLocal(direccion);
                 if (local != null) {
                     inmobiliaria.baja(local);
+                    System.out.println("Se dio de baja con exito");
                 } else {
                     throw new EleccionIncorrectaException("Dirección no existente");
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Cochera cochera = inmobiliaria.buscarCochera(direccion);
                 if (cochera != null) {
                     inmobiliaria.baja(cochera);
+                    System.out.println("Se dio de baja con exito");
                 } else {
                     throw new EleccionIncorrectaException("Dirección no existente");
                 }
@@ -751,10 +643,9 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función que permite buscar y modificar el dato de un inmueble perteneciente a la inmobiliaria, solicitara tipo de inmueble y su respectiva dirección.
-     * Return void.
      *
      * @param inmobiliaria
-     * @throws EleccionIncorrectaException
+     * @return void.
      */
 
     public static void modificarInmueble(Inmobiliaria inmobiliaria) {
@@ -770,7 +661,7 @@ public class ControladoraUsuario extends Component {
                     modificarCasa(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
                     System.err.println(e.getMessage());
-                }catch (DireccionInvalidaException e) {
+                } catch (DireccionInvalidaException e) {
                     System.err.println(e.getMessage());
                 }
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
@@ -778,7 +669,7 @@ public class ControladoraUsuario extends Component {
                     modificarDepartamento(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
                     System.err.println(e.getMessage());
-                }catch (DireccionInvalidaException e) {
+                } catch (DireccionInvalidaException e) {
                     System.err.println(e.getMessage());
                 }
 
@@ -787,7 +678,7 @@ public class ControladoraUsuario extends Component {
                     modificarLocal(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
                     System.err.println(e.getMessage());
-                }catch (DireccionInvalidaException e) {
+                } catch (DireccionInvalidaException e) {
                     System.err.println(e.getMessage());
                 }
 
@@ -796,25 +687,25 @@ public class ControladoraUsuario extends Component {
                     modificarCochera(inmobiliaria);
                 } catch (EleccionIncorrectaException e) {
                     System.err.println(e.getMessage());
-                }catch (DireccionInvalidaException e) {
+                } catch (DireccionInvalidaException e) {
                     System.err.println(e.getMessage());
                 }
             }
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-
     /**
      * Función que te permite modificar un dato una casa, la función te solicitara que ingreses la dirección.
-     * Return void.
      *
      * @param inmobiliaria
+     * @return void.
      * @throws EleccionIncorrectaException
+     * @throws DireccionInvalidaException
      */
     public static void modificarCasa(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
         Casa casaEncontrada = inmobiliaria.buscarCasa(direccion);
@@ -946,18 +837,18 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-
     /**
      * Función que te permite modificar un dato de un departamento, la función te solicitara que ingreses la dirección.
-     * Return void.
      *
      * @param inmobiliaria
+     * @return void.
      * @throws EleccionIncorrectaException
+     * @throws DireccionInvalidaException
      */
     public static void modificarDepartamento(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
         Departamento departamentoEncontrado = inmobiliaria.buscarDepartamento(direccion);
@@ -1091,16 +982,17 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función que te permite modificar un dato una cochera, la función te solicitara que ingreses la dirección.
-     * Return void.
      *
      * @param inmobiliaria
+     * @return void.
      * @throws EleccionIncorrectaException
+     * @throws DireccionInvalidaException
      */
 
     public static void modificarCochera(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
         Cochera cocheraEncontrada = inmobiliaria.buscarCochera(direccion);
@@ -1111,7 +1003,6 @@ public class ControladoraUsuario extends Component {
                 System.out.println("Que atributo desea modificar? (1-estado, 2-piso, 3-posicion, 4-medio de acceso,5-precio)");
                 int opcion = Integer.parseInt(teclado.nextLine());
                 switch (opcion) {
-
                     case 1:
                         Estado estado = null;
                         do {
@@ -1181,19 +1072,19 @@ public class ControladoraUsuario extends Component {
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-
     /**
      * Función que te permite modificar un dato del local, la función te solicitara que ingreses la dirección.
      * En caso de no encontrase el local, lanzara una EleccionIncorrectaException.
-     * Return void.
      *
      * @param inmobiliaria
+     * @return void.
      * @throws EleccionIncorrectaException
+     * @throws DireccionInvalidaException
      */
     public static void modificarLocal(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
         System.out.println("Ingrese la direccion del inmueble: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
         Local localEncontrado = inmobiliaria.buscarLocal(direccion);
@@ -1250,7 +1141,6 @@ public class ControladoraUsuario extends Component {
 
                         break;
                     case 4:
-
                         System.out.println("Precio del inmueble?");
                         double precio = Double.parseDouble(teclado.nextLine());
 
@@ -1269,9 +1159,9 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función que mostrara un listado de todos los inmuebles pertenecientes a una categoría de la inmobiliaria. (Casa, Departamento, Local o Cochera).
-     * Return void.
      *
      * @param inmobiliaria
+     * @return void.
      * @throws EleccionIncorrectaException
      */
     public static void listarInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException {
@@ -1291,11 +1181,13 @@ public class ControladoraUsuario extends Component {
     }
 
     /**
-     * Función que va a solicitar una direeción de un inmueble perteneciente a la inmobiliaria y lo imprimira por pantalla.
+     * Función que va a solicitar una dirección de un inmueble perteneciente a la inmobiliaria y lo imprimira por pantalla.
      * En caso de no existir la dirección solicitada arrojara una EleccionIncorrectaException.
-     * Return void;
      *
      * @param inmobiliaria
+     * @return void;
+     * @throws EleccionIncorrectaException
+     * @throws DireccionInvalidaException
      */
 
     public static void buscarInmueble(Inmobiliaria inmobiliaria) throws EleccionIncorrectaException, DireccionInvalidaException {
@@ -1309,7 +1201,7 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Casa casa = inmobiliaria.buscarCasa(direccion);
@@ -1321,7 +1213,7 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Departamento")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Departamento departamento = inmobiliaria.buscarDepartamento(direccion);
@@ -1333,7 +1225,7 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Local")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Local local = inmobiliaria.buscarLocal(direccion);
@@ -1345,7 +1237,7 @@ public class ControladoraUsuario extends Component {
             } else if (tipoInmueble.equalsIgnoreCase("Cochera")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
-                if(!Inmobiliaria.validarDireccion(direccion)){
+                if (!Inmobiliaria.validarDireccion(direccion)) {
                     throw new DireccionInvalidaException("Direccion ingresada es invalida");
                 }
                 Cochera cochera = inmobiliaria.buscarCochera(direccion);
@@ -1355,17 +1247,43 @@ public class ControladoraUsuario extends Component {
                     throw new EleccionIncorrectaException("Dirección no existente");
                 }
             }
-            System.out.println("Desea mostrar otro inmueble?");
-            continuar = teclado.nextLine();
+            boolean continuarValido = false;
+            while (continuarValido == false) {
+                System.out.println("Desea mostrar otro inmueble?");
+                continuar = teclado.nextLine();
+                if (continuar.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                    continuarValido = true;
+                } else {
+                    System.out.println(" No debe contener números.");
+                }
+            }
         } while (continuar.equalsIgnoreCase("si"));
     }
 
-    public static void agregarInmuebles(Inmobiliaria inmobiliaria) {
+    /**
+     * Función que va a solicitar un tipo de inmueble perteneciente a la inmobiliaria y lo agregara a la inmobiliaria.
+     *
+     * @param inmobiliaria
+     * @return void;
+     * @throws NombreYApellidoIncorrectoException
+     */
+
+    public static void agregarInmuebles(Inmobiliaria inmobiliaria) throws NombreYApellidoIncorrectoException {
         String continuar = "si";
+
         int opcion = 0;
         do {
-            System.out.println("Que tipo de inmueble desea agregar? (Casa/Departamento/Local/Cochera)");
-            String tipoInmueble = teclado.nextLine();
+            boolean tipoInmuebleValido = false;
+            String tipoInmueble = "";
+            while (!tipoInmuebleValido) {
+                System.out.println("Que tipo de inmueble desea agregar? (Casa/Departamento/Local/Cochera)");
+                tipoInmueble = teclado.nextLine();
+                if (tipoInmueble.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                    tipoInmuebleValido = true;
+                } else {
+                    throw new NombreYApellidoIncorrectoException("Nombre inválido. No debe contener números.");
+                }
+            }
             if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "no";
                 System.out.println("Opcion ingresada es incorrecta");
@@ -1394,26 +1312,34 @@ public class ControladoraUsuario extends Component {
                     System.err.println(e.getMessage());
                 }
             }
-            System.out.println("Desea agregar otro inmueble?  Si es asi ingrese Si");
-            continuar = teclado.nextLine();
+            boolean continuarValido = false;
+            while (continuarValido == false) {
+                System.out.println("Desea agregar otro inmueble?  Si es asi ingrese Si");
+                continuar = teclado.nextLine();
+                if (continuar.matches("^[a-zA-Z\\s]+$")) {
+                    continuarValido = true;
+                } else {
+                    System.out.println("No debe contener números.");
+                }
+            }
         } while (continuar.equalsIgnoreCase("si"));
     }
 
     /**
      * Función utilizada para agregar una nueva casa al set generico de vivienda perteneciente a la inmobiliaria, solicitando datos a completar.
-     * Return void;
      *
      * @param inmobiliaria
+     * @return void;
+     * @throws DireccionInvalidaException
      */
 
     public static void agregarCasa(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion de la casa: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
-
         System.out.println("Cantidad de ambientes?");
         short ambientes = Short.parseShort(teclado.nextLine());
 
@@ -1488,19 +1414,19 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función utilizada para agregar un nuevo departamento al set generico de vivienda perteneciente a la inmobiliaria, solicitando datos a completar.
-     * Return void;
      *
      * @param inmobiliaria
+     * @return void;
+     * @throws DireccionInvalidaException
      */
 
     public static void agregarDepartamento(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion del departamento: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
-
         System.out.println("Cantidad de ambientes?");
         short ambientes = Short.parseShort(teclado.nextLine());
 
@@ -1575,16 +1501,17 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función utilizada para agregar un nuevo local al set generico de locales perteneciente a la inmobiliaria, solicitando datos a completar.
-     * Return void;
      *
      * @param inmobiliaria
+     * @return void;
+     * @throws DireccionInvalidaException
      */
 
     public static void agregarLocal(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
         int opcion = 0;
         System.out.println("Direccion del local: ");
         String direccion = teclado.nextLine();
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
 
@@ -1627,9 +1554,10 @@ public class ControladoraUsuario extends Component {
 
     /**
      * Función utilizada para agregar una nueva cochera al set generico de cocheras perteneciente a la inmobiliaria, solicitando datos a completar.
-     * Return void;
      *
      * @param inmobiliaria
+     * @return void;
+     * @throws DireccionInvalidaException
      */
 
     public static void agregarCochera(Inmobiliaria inmobiliaria) throws DireccionInvalidaException {
@@ -1637,7 +1565,7 @@ public class ControladoraUsuario extends Component {
         System.out.println("Direccion de la cochera: ");
         String direccion = teclado.nextLine();
 
-        if(!Inmobiliaria.validarDireccion(direccion)){
+        if (!Inmobiliaria.validarDireccion(direccion)) {
             throw new DireccionInvalidaException("Direccion ingresada es invalida");
         }
 

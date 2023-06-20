@@ -3,6 +3,7 @@ import Cliente.Mail;
 import Cliente.Usuario;
 import Controladores.ControladoraUsuario;
 import Empresa.Inmobiliaria;
+import Excepciones.ControladoraUsuario.NombreYApellidoIncorrectoException;
 import Interfaces.JsonUtiles;
 import Lugares.*;
 import org.json.JSONException;
@@ -42,7 +43,5 @@ public class Main {
         } catch (JSONException e) {
             System.out.println(e.getMessage());
         }
-
-
     }
 }

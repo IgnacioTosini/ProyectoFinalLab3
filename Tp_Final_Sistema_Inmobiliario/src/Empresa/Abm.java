@@ -16,13 +16,18 @@ import java.util.TreeSet;
 public class Abm<T extends IBuscar & IJson> {
     private HashSet<T> miHashSet;
     private HashSet<T> bajas;
-    
+
 
     public Abm() {
         miHashSet = new HashSet<>();
         bajas = new HashSet<>();
     }
 
+    /**
+     * Agrega elementos a la clase generica y si ese elemnto ya existe en bajas, lo da de alta.
+     *
+     * @param elemento
+     */
     public void agregar(T elemento) {
         if (bajas.contains(elemento)) {
             miHashSet.add(elemento);
@@ -32,13 +37,19 @@ public class Abm<T extends IBuscar & IJson> {
         }
     }
 
+    /**
+     * Pasa a baja el elemto ingresado.
+     *
+     * @param elemento
+     * @return
+     */
     public boolean baja(T elemento) {
         boolean validacion = false;
         Iterator iterator = miHashSet.iterator();
         T aux = null;
 
         while (iterator.hasNext() && validacion == false) {
-            aux =(T) iterator.next();
+            aux = (T) iterator.next();
             if (elemento.equals(aux)) {
                 bajas.add(elemento);
                 miHashSet.remove(elemento);
@@ -48,17 +59,22 @@ public class Abm<T extends IBuscar & IJson> {
         return validacion;
     }
 
-    public void ponerEnBaja(T elemento){
+    public void ponerEnBaja(T elemento) {
         bajas.add(elemento);
     }
 
+    /**
+     * Modifica reemplazando el elemto ingresado.
+     * @param elemento
+     * @return
+     */
     public boolean modificar(T elemento) {
         boolean validacion = false;
         Iterator iterator = miHashSet.iterator();
         T aux = null;
 
         while (iterator.hasNext() && validacion == false) {
-            aux = (T)iterator.next();
+            aux = (T) iterator.next();
             if (elemento.equals(aux)) {
                 miHashSet.remove(aux);
                 miHashSet.add(elemento);
@@ -68,6 +84,11 @@ public class Abm<T extends IBuscar & IJson> {
         return validacion;
     }
 
+    /**
+     * Busca el inmueble pasandole por parametros la direccion.
+     * @param direccion
+     * @return
+     */
     public T buscador(String direccion) {
         boolean validacion = false;
         Iterator iterator = miHashSet.iterator();
@@ -84,16 +105,21 @@ public class Abm<T extends IBuscar & IJson> {
         return buscado;
     }
 
+    /**
+     * Devuelve un String de la lista de todos los elementos.
+     * @param nombreClase
+     * @return
+     */
     public String listado(String nombreClase) {
         boolean validacion = false;
         Iterator iterator = miHashSet.iterator();
         String listado = "";
         String aux = "Lugares.";
         aux = aux.concat(nombreClase);
-        
+
         T itAux = null;
         while (iterator.hasNext()) {
-            itAux =(T) iterator.next();
+            itAux = (T) iterator.next();
             if (aux.equalsIgnoreCase(itAux.getClass().getName())) {
                 listado = listado.concat(itAux.toString());
             }
@@ -103,17 +129,6 @@ public class Abm<T extends IBuscar & IJson> {
 
     public int cantTotal() {
         return miHashSet.size();
-    }
-
-    public T get() {
-        Iterator iterator = miHashSet.iterator();
-        T objeto = null;
-
-        while (iterator.hasNext()) {
-            objeto = (T) iterator;
-            iterator.next();
-        }
-        return objeto;
     }
 
     public JSONObject toJsonGenerico() throws JSONException {
@@ -131,22 +146,22 @@ public class Abm<T extends IBuscar & IJson> {
         while (it.hasNext()) {
             T aux = (T) it.next();
 
-            if( aux instanceof Casa){
+            if (aux instanceof Casa) {
                 jsonArrayCasa.put(aux.toJsonObj());
-            }else if(aux instanceof Departamento){
+            } else if (aux instanceof Departamento) {
                 jsonArrayDepartamento.put(aux.toJsonObj());
-            }else{
+            } else {
                 jsonArray.put(aux.toJsonObj());
             }
         }
 
         while (itBajas.hasNext()) {
             T auxx = (T) itBajas.next();
-            if( auxx instanceof Casa){
+            if (auxx instanceof Casa) {
                 jsonArrayBajasCasa.put(auxx.toJsonObj());
-            }else if(auxx instanceof Departamento){
+            } else if (auxx instanceof Departamento) {
                 jsonArrayBajasDepartamento.put(auxx.toJsonObj());
-            }else{
+            } else {
                 jsonArrayBajas.put(auxx.toJsonObj());
             }
         }
@@ -158,11 +173,10 @@ public class Abm<T extends IBuscar & IJson> {
         jsonObject.put("departamentoBajas", jsonArrayBajasDepartamento);
         jsonObject.put("otrosBajas", jsonArrayBajas);
 
-
         return jsonObject;
     }
 
-    public void fromJsonGenerico(JSONObject obj) throws JSONException {
+    /*public void fromJsonGenerico(JSONObject obj) throws JSONException {
         JSONArray jsonArray = obj.getJSONArray("inmueble");
         JSONArray jsonArrayBajas = obj.getJSONArray("bajas");
 
@@ -182,5 +196,5 @@ public class Abm<T extends IBuscar & IJson> {
             miHashSet.add(valor);
         }
 
-    }
+    }*/
 }
