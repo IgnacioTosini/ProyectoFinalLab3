@@ -6,7 +6,9 @@ import Lugares.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Factura implements IJson, Comparable {
+import java.io.Serializable;
+
+public class Factura implements IJson, Comparable, Serializable {
     private int id;
     private String nombre;
     private String dni;

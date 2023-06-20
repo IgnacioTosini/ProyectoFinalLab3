@@ -8,9 +8,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.event.WindowStateListener;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Mail implements IJson, Comparable {
+public class Mail implements IJson, Comparable, Serializable {
 
     private String mail;
 

@@ -116,6 +116,7 @@ public class ControladoraUsuario extends Component {
         } while (respuesta.equals("si"));
         try {
             JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
+            inmobiliaria.guardarArchivoBinario();
         } catch (JSONException e) {
             System.err.println(e.getMessage());
         }

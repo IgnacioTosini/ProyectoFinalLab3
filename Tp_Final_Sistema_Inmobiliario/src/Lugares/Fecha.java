@@ -4,12 +4,13 @@ import Interfaces.IJson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Fecha implements IJson {
+public class Fecha implements IJson, Serializable {
 
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;

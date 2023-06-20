@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.*;
 import java.util.*;
 
 public class Inmobiliaria implements IJson {
@@ -801,5 +802,26 @@ public class Inmobiliaria implements IJson {
         return cocheras.modificar(cochera);
     }
 
+    public void guardarArchivoBinario(){
+        try{
+            File arch = new File("usuarios.dat");
+            ObjectOutputStream usuariosArch = new ObjectOutputStream(new FileOutputStream(arch));
+
+            usuariosArch.writeObject(usuarios);
+
+        }catch (IOException e) {
+            System.err.println(e.getMessage());;
+        }
+    }
+
+    public void cargarArchivoBinario(){
+        try {
+            File archivo = new File("usuarios.dat");
+            ObjectInputStream usuariosBinario = new ObjectInputStream(new FileInputStream(archivo));
+            usuarios = (HashMap<String, Usuario>) usuariosBinario.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 }

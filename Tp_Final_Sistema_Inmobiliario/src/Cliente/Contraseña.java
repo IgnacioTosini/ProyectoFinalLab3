@@ -7,9 +7,10 @@ import Interfaces.IJson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Contraseña implements IJson, Comparable {
+public class Contraseña implements IJson, Comparable, Serializable {
 
     private String contraseña;
 
