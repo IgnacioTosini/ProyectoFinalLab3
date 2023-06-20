@@ -160,7 +160,6 @@ public class Departamento extends Vivienda implements Comparable {
 
     @Override
     public double pagoDebito() {
-
         return getPrecio();
     }
 

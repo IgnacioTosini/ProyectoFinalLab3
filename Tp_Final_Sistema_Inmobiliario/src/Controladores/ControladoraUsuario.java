@@ -16,7 +16,9 @@ import Excepciones.LugarExistenteException;
 import Excepciones.Mail.ArrobaException;
 import Excepciones.Mail.PuntoComException;
 import Excepciones.NoDisponibleException;
+import Interfaces.JsonUtiles;
 import Lugares.*;
+import org.json.JSONException;
 //import Swing.MenuInicioGUI;
 
 import javax.swing.*;
@@ -36,7 +38,7 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      * @return retorna el usuario que se quiso registrar/logear
      */
-    public static Usuario menu(Inmobiliaria inmobiliaria) {
+    public static void menu(Inmobiliaria inmobiliaria) {
         Usuario usuario = new Usuario();
         //new MenuInicioGUI(inmobiliaria);
         String respuesta = "si";
@@ -46,7 +48,7 @@ public class ControladoraUsuario extends Component {
             System.out.println("1. Loguearse \n2. Registrarse");
             opcion = Integer.parseInt(teclado.nextLine());
             switch (opcion) {
-                case 1:
+                case 1 -> {
                     while (respuesta.equalsIgnoreCase("si")) {
                         try {
                             usuario = login(inmobiliaria);
@@ -86,25 +88,23 @@ public class ControladoraUsuario extends Component {
                             throw new RuntimeException(e);
                         }
                     }
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     while (respuesta.equalsIgnoreCase("si")) {
                         try {
                             usuario = registrarse(inmobiliaria);
                             respuesta = "no";
-                        } catch (DniInvalidoException  | EdadInvalidadException |
+                        } catch (DniInvalidoException | EdadInvalidadException |
                                  UsuarioYaExiste | UsuarioDadoDeBajaException e) {
                             System.err.println(e.getMessage());
                         }
                     }
                     inmobiliaria.agregarUsuario(usuario);
-                    break;
-                default:
-                    System.out.println("Valor ingresado no valido");
-                    break;
+                }
+                default -> System.out.println("Valor ingresado no valido");
             }
             boolean respuestaValida = false;
-            while (respuestaValida == false) {
+            while (!respuestaValida) {
                 System.out.println("¿Quiere volver al menu?, presione si");
                 respuesta = teclado.nextLine();
                 if (respuesta.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
@@ -114,7 +114,11 @@ public class ControladoraUsuario extends Component {
                 }
             }
         } while (respuesta.equals("si"));
-        return usuario;
+        try {
+            JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
+        } catch (JSONException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public static void menuAdmin(Inmobiliaria inmobiliaria) throws DireccionInvalidaException, EleccionIncorrectaException {
@@ -179,7 +183,6 @@ public class ControladoraUsuario extends Component {
      * @throws NombreYApellidoIncorrectoException
      */
     public static Usuario login(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException, MalContraseñaException, UsuarioDadoDeBajaException {
-
         boolean validarNombre = false;
         String nombre = "";
         System.out.println("Ingrese su Mail: ");
@@ -484,7 +487,11 @@ public class ControladoraUsuario extends Component {
                     break;
 
                 case 5:
-                    System.out.println(usuario.mostrarFacturas());
+                    if (Objects.equals(usuario.mostrarFacturas(), "")){
+                        System.out.println("Usted no tiene ninguna Facturas.");
+                    }else {
+                        System.out.println(usuario.mostrarFacturas());
+                    }
                     break;
                 default:
                     System.err.println("Opción invalida");
@@ -518,7 +525,7 @@ public class ControladoraUsuario extends Component {
 
         LocalDate fecha = null;
 
-        if (Fecha.validarFecha(año, mes, dia)) {
+        if (Fecha.validarFecha(año, mes - 1, dia)) {
             fecha = LocalDate.of(año, mes, dia);
         } else {
             throw new EleccionIncorrectaException("La fecha no es valida");

@@ -39,9 +39,10 @@ public class Main {
 
             ControladoraUsuario.menu(inmobiliaria);
 
-            JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
+            //JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
+
         } catch (JSONException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 }

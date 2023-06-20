@@ -138,10 +138,14 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     public boolean validarFecha(Fecha fecha) {
         Fecha aux = new Fecha();
         boolean validacion = false;
-        for(int i = 0; i<disponibilidad.size(); i++){
-            aux = disponibilidad.get(i);
-            if(aux.comprobarFecha(fecha)){
-                validacion = true;
+        if (disponibilidad.size() == 0) {
+            validacion = true;
+        } else {
+            for (int i = 0; i < disponibilidad.size(); i++) {
+                aux = disponibilidad.get(i);
+                if (aux.comprobarFecha(fecha)) {
+                    validacion = true;
+                }
             }
         }
 

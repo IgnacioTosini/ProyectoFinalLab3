@@ -86,6 +86,7 @@ public class Usuario implements IJson, Serializable, Comparable {
                 ", dni='" + dni + '\'' +
                 ", mail=" + mail +
                 ", edad=" + edad +
+                ", estado=" + estado +
                 ", historial=" + historial +
                 '}';
     }

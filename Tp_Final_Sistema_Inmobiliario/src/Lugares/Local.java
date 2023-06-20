@@ -36,7 +36,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     }
 
 
-
     public String getDireccion() {
         return direccion;
     }
@@ -81,9 +80,9 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     @Override
     public boolean equals(Object obj) {
         boolean validacion = false;
-        if(obj != null){
-            if(obj instanceof Local){
-                if(direccion.equals(((Local) obj).getDireccion())){
+        if (obj != null) {
+            if (obj instanceof Local) {
+                if (direccion.equals(((Local) obj).getDireccion())) {
                     validacion = true;
                 }
             }
@@ -94,22 +93,22 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 1;
     }
 
     @Override
     public int compareTo(Object o) {
         int valor = 0;
-        if(o != null){
-            if(o instanceof Local){
+        if (o != null) {
+            if (o instanceof Local) {
                 valor = direccion.compareTo(((Local) o).getDireccion());
             }
         }
         return valor;
     }
 
-    public void agregarDisponibilidad(Fecha fecha){
+    public void agregarDisponibilidad(Fecha fecha) {
         disponibilidad.add(fecha);
     }
 
@@ -130,10 +129,14 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     public boolean validarFecha(Fecha fecha) {
         Fecha aux = new Fecha();
         boolean validacion = false;
-        for(int i = 0; i<disponibilidad.size(); i++){
-            aux = disponibilidad.get(i);
-            if(aux.comprobarFecha(fecha)){
-                validacion = true;
+        if (disponibilidad.size() == 0) {
+            validacion = true;
+        } else {
+            for (int i = 0; i < disponibilidad.size(); i++) {
+                aux = disponibilidad.get(i);
+                if (aux.comprobarFecha(fecha)) {
+                    validacion = true;
+                }
             }
         }
 
@@ -150,7 +153,7 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         jsonObject.put("precio", precio);
 
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i<disponibilidad.size();i++){
+        for (int i = 0; i < disponibilidad.size(); i++) {
             jsonArray.put(disponibilidad.get(i).toJsonObj());
         }
         jsonObject.put("disponibilidad", jsonArray);
@@ -177,24 +180,23 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 
         Fecha fecha = new Fecha();
-        for(int i = 0; i<jsonArray.length();i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             fecha.fromJsonObj((JSONObject) jsonArray.get(i));
             disponibilidad.add(fecha);
         }
     }
 
 
-
     @Override
     public double metodoDePago(int eleccion) throws EleccionIncorrectaException {
         double valorFinal = 0;
-        if(eleccion == 1){
+        if (eleccion == 1) {
             valorFinal = pagoEfectivo();
         } else if (eleccion == 2) {
             valorFinal = pagoDebito();
         } else if (eleccion == 3) {
             valorFinal = pagoCredito();
-        }else{
+        } else {
             throw new EleccionIncorrectaException("El valor ingresado es incorrecto");
         }
 
@@ -203,7 +205,7 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
 
     @Override
     public double pagoEfectivo() {
-        double valorFinal = precio- precio*0.1;
+        double valorFinal = precio - precio * 0.1;
 
         return valorFinal;
     }
@@ -218,7 +220,7 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     public double pagoCredito() {
 
         double valorFinal = 0;
-                valorFinal = precio + (precio*0.02);
+        valorFinal = precio + (precio * 0.02);
 
         return valorFinal;
     }
@@ -226,21 +228,21 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
     @Override
     public boolean buscar(String direccion) {
         boolean encontrado = false;
-        if (this.direccion.equalsIgnoreCase(direccion)){
+        if (this.direccion.equalsIgnoreCase(direccion)) {
             encontrado = true;
         }
         return encontrado;
     }
 
-    public String mostrarFechas(){
+    public String mostrarFechas() {
         String listado = "";
-        for(Fecha fecha: disponibilidad){
+        for (Fecha fecha : disponibilidad) {
             listado = listado.concat(fecha.toString()) + '\n';
         }
         return listado;
     }
 
-    public void baja(){
+    public void baja() {
         estado = Estado.Baja;
     }
 }
