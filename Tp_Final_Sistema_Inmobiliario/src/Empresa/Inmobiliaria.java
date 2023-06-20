@@ -192,7 +192,7 @@ public class Inmobiliaria implements IJson {
     public boolean darBaja(String mail) {
         boolean validacion = false;
         Usuario aux = buscarUsuario(mail);
-        Usuario usuario = new Usuario(aux.getNombreYApellido(), aux.getContraseña(), aux.getDni(), aux.getMail(), aux.getEdad(), false);
+        Usuario usuario = new Usuario(aux.getNombreYApellido(), aux.getContraseña(), aux.getDni(), aux.getMail(), aux.getEdad(), true);
         if (usuario != null) {
             usuarios.remove(aux);
             agregarUsuario(usuario);

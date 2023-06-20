@@ -91,6 +91,11 @@ public class Usuario implements IJson, Serializable, Comparable {
                 '}';
     }
 
+    /**
+     * Comprueba que el usuario ingresado cumpla con los parametros para ser considerado un admin.
+     * @param usuario
+     * @return
+     */
     public static boolean comprobarAdmin(Usuario usuario) {
         boolean validacion = false;
         if (usuario.getMail().getMail().equals("admin@gmail.com") && usuario.getContraseña().equals("Admin123")) {

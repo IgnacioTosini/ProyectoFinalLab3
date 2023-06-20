@@ -190,5 +190,3 @@ public class Factura implements IJson, Comparable {
         setEstadoActual(obj.getString("estadoActual"));
     }
 }
-
-// imprimir dentro de la factura que reciba el inmueble

@@ -525,7 +525,7 @@ public class ControladoraUsuario extends Component {
 
         LocalDate fecha = null;
 
-        if (Fecha.validarFecha(año, mes - 1, dia)) {
+        if (Fecha.validarFecha(año, mes, dia)) {
             fecha = LocalDate.of(año, mes, dia);
         } else {
             throw new EleccionIncorrectaException("La fecha no es valida");
