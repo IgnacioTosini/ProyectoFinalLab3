@@ -29,7 +29,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     }
 
     public Cochera() {
-        disponibilidad  = new ArrayList<>();
+        disponibilidad = new ArrayList<>();
         direccion = "";
         estado = null;
         piso = 0;
@@ -38,32 +38,30 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         precio = 0;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         boolean validacion = false;
-        if(obj != null){
-            if(obj instanceof Cochera){
-                if(direccion.equals(((Cochera) obj).getDireccion())){
+        if (obj != null) {
+            if (obj instanceof Cochera) {
+                if (direccion.equals(((Cochera) obj).getDireccion())) {
                     validacion = true;
                 }
             }
         }
 
-
         return validacion;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 1;
     }
 
     @Override
     public int compareTo(Object o) {
         int valor = 0;
-        if(o != null){
-            if(o instanceof Cochera){
+        if (o != null) {
+            if (o instanceof Cochera) {
                 valor = direccion.compareTo(((Cochera) o).getDireccion());
             }
         }
@@ -72,14 +70,14 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
 
     @Override
     public String toString() {
-        return "Cochera{" +
-                "disponibilidad=" + disponibilidad +
-                ", direccion='" + direccion + '\'' +
-                ", estado=" + estado +
-                ", piso=" + piso +
-                ", posicion=" + posicion +
-                ", medioDeAcceso='" + medioDeAcceso + '\'' +
-                '}';
+        return "🚗 Cochera {\n" +
+                "  🟢 Disponibilidad: " + disponibilidad.toString() + "\n" +
+                "  📍 Dirección: '" + direccion + "'\n" +
+                "  🔑 Estado: " + estado + "\n" +
+                "  🏢 Piso: " + piso + "\n" +
+                "  🧭 Posición: " + posicion + "\n" +
+                "  🛣️ Medio de acceso: '" + medioDeAcceso + "'\n" +
+                "}";
     }
 
     public String getDireccion() {
@@ -101,11 +99,12 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     public String getMedioDeAcceso() {
         return medioDeAcceso;
     }
+
     public double getPrecio() {
         return precio;
     }
 
-    public void agregarDisponibilidad(Fecha fecha){
+    public void agregarDisponibilidad(Fecha fecha) {
         disponibilidad.add(fecha);
     }
 
@@ -133,7 +132,6 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         this.medioDeAcceso = medioDeAcceso;
     }
 
-
     @Override
     public boolean validarFecha(Fecha fecha) {
         Fecha aux = new Fecha();
@@ -148,7 +146,6 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
                 }
             }
         }
-
         return validacion;
     }
 
@@ -161,9 +158,8 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         jsonObject.put("posicion", posicion);
         jsonObject.put("mediosDeAcceso", medioDeAcceso);
 
-
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i<disponibilidad.size();i++){
+        for (int i = 0; i < disponibilidad.size(); i++) {
             jsonArray.put(disponibilidad.get(i).toJsonObj());
         }
         jsonObject.put("disponibilidad", jsonArray);
@@ -188,7 +184,7 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 
         Fecha fecha = new Fecha();
-        for(int i = 0; i<jsonArray.length();i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             fecha.fromJsonObj((JSONObject) jsonArray.get(i));
             disponibilidad.add(fecha);
         }
@@ -197,13 +193,13 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     @Override
     public double metodoDePago(int eleccion) throws EleccionIncorrectaException {
         double valorFinal = 0;
-        if(eleccion == 1){
+        if (eleccion == 1) {
             valorFinal = pagoEfectivo();
         } else if (eleccion == 2) {
             valorFinal = pagoDebito();
         } else if (eleccion == 3) {
             valorFinal = pagoCredito();
-        }else{
+        } else {
             throw new EleccionIncorrectaException("El valor ingresado es incorrecto");
         }
 
@@ -212,24 +208,21 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
 
     @Override
     public double pagoEfectivo() {
-        double valorFinal = precio- precio*0.2;
+        double valorFinal = precio - precio * 0.2;
 
         return valorFinal;
     }
 
     @Override
     public double pagoDebito() {
-
         return precio;
     }
 
     @Override
     public double pagoCredito() {
-        boolean seguir = true;
         double valorFinal = 0;
 
-                valorFinal = precio + (precio*0.1);
-
+        valorFinal = precio + (precio * 0.1);
 
         return valorFinal;
     }
@@ -237,21 +230,21 @@ public class Cochera implements IComprobarFecha, IJson, Comparable, IMetodoDePag
     @Override
     public boolean buscar(String direccion) {
         boolean encontrado = false;
-        if (this.direccion.equalsIgnoreCase(direccion)){
+        if (this.direccion.equalsIgnoreCase(direccion)) {
             encontrado = true;
         }
         return encontrado;
     }
 
-    public String mostrarFechas(){
+    public String mostrarFechas() {
         String listado = "";
-        for(Fecha fecha: disponibilidad){
+        for (Fecha fecha : disponibilidad) {
             listado = listado.concat(fecha.toString()) + '\n';
         }
         return listado;
     }
 
-    public void baja(){
+    public void baja() {
         estado = Estado.Baja;
     }
 }

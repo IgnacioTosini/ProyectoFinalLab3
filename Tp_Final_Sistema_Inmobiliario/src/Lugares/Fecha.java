@@ -98,11 +98,9 @@ public class Fecha implements IJson, Serializable {
 
     @Override
     public String toString() {
-        return "Fecha{" +
-                "fechaEntrada=" + fechaEntrada +
-                ", fechaSalida=" + fechaSalida +
-                '}';
+        return String.format("Fecha de entrada: %s, Fecha de salida: %s", fechaEntrada, fechaSalida);
     }
+
 
     public LocalDate getFechaEntrada() {
         return fechaEntrada;

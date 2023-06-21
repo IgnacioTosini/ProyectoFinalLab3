@@ -11,14 +11,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Contraseña implements IJson, Comparable, Serializable {
-
     private String contraseña;
 
     public Contraseña(String contraseña) {
         this.contraseña = contraseña;
     }
 
-    public Contraseña(){
+    public Contraseña() {
         contraseña = "";
     }
 
@@ -65,7 +64,7 @@ public class Contraseña implements IJson, Comparable, Serializable {
 
         if (contra != null) {
             if (contra instanceof String) {
-                if (Objects.equals(this.contraseña, (String) contra )) {
+                if (Objects.equals(this.contraseña, (String) contra)) {
                     validacion = true;
                 }
             }
@@ -74,15 +73,15 @@ public class Contraseña implements IJson, Comparable, Serializable {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 1;
     }
 
     @Override
     public int compareTo(Object o) {
         int valor = 0;
-        if(o != null){
-            if(o instanceof Contraseña){
+        if (o != null) {
+            if (o instanceof Contraseña) {
                 valor = contraseña.compareTo(((Contraseña) o).getContraseña());
             }
         }
@@ -93,23 +92,23 @@ public class Contraseña implements IJson, Comparable, Serializable {
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
-            jsonObject.put("contraseña", contraseña);
-
+        jsonObject.put("contraseña", contraseña);
 
         return jsonObject;
     }
-
-
     @Override
     public void fromJsonObj(JSONObject obj) throws JSONException {
-
-
-            setContraseña(obj.getString("contraseña"));
-
-
+        setContraseña(obj.getString("contraseña"));
     }
 
     private void setContraseña(String contraseña) {
         this.contraseña = contraseña;
+    }
+
+    @Override
+    public String toString() {
+        return "🔐 Contraseña {\n" +
+                "  🔑 Valor: '" + contraseña + "'\n" +
+                "}";
     }
 }

@@ -41,7 +41,6 @@ public class Factura implements IJson, Comparable, Serializable {
         dirInmobiliaria = "";
         dirInmueble = "";
         estadoActual = "";
-
     }
 
     @Override
@@ -74,17 +73,17 @@ public class Factura implements IJson, Comparable, Serializable {
 
     @Override
     public String toString() {
-        return "Factura{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", dni=" + dni +
-                ", mail=" + mail.toString() +
-                ", precioFinal=" + precioFinal +
-                ", fecha=" + fecha.toString() +
-                ", dirInmobiliaria='" + dirInmobiliaria + '\'' +
-                ", dirInmueble='" + dirInmueble + '\'' +
-                ", estadoActual='" + estadoActual + '\'' +
-                '}';
+        return "🧾 Factura {\n" +
+                "  🆔 ID: " + id + "\n" +
+                "  👤 Nombre: '" + nombre + "'\n" +
+                "  🔢 DNI: " + dni + "\n" +
+                "  📩 Email: " + mail.toString() + "\n" +
+                "  💰 Precio final: $" + precioFinal + "\n" +
+                "  📅 Fecha: " + fecha.toString() + "\n" +
+                "  🏭 Inmobiliaria: '" + dirInmobiliaria + "'\n" +
+                "  🏠 Inmueble: '" + dirInmueble + "'\n" +
+                "  🟡 Estado actual: '" + estadoActual + "'\n" +
+                "}";
     }
 
     public int getId() {

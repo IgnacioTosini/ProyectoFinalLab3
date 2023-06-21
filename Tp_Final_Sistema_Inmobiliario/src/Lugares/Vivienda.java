@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @since
  */
 
-public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable, IBuscar, IJson, IBaja{
+public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Comparable, IBuscar, IJson, IBaja {
     private ArrayList<Fecha> disponibilidad;
     private Estado estado;
     private String direccion;
@@ -48,16 +48,15 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
 
     @Override
     public String toString() {
-        return "Vivienda: " + '\n' +
-                "Tipo de venta: " + estado +
-                ", Direccion: '" + direccion + '\'' +
-                ", Ambientes: " + ambientes +
-                ", Cantidad de Baños: " + cantBanios +
-                ", Metros Cuadrados: " + metrosCuadrados +
-                ", Amueblado: " + amueblado +
-                ", Cochera: " + cochera +
-                ", Precio: " + precio +
-                ", Fechas: " + mostrarFechas();
+        return "  🔑 Tipo de venta: " + estado + "\n" +
+                "  📍 Direccion: '" + direccion + '\'' + "\n" +
+                "  🛋️ Ambientes: " + ambientes + "\n" +
+                "  🚽 Cantidad de Baños: " + cantBanios + "\n" +
+                "  📐 Metros Cuadrados: " + metrosCuadrados + "\n" +
+                "  🪑 Amueblado: " + amueblado + "\n" +
+                "  🚗 Cochera: " + cochera + "\n" +
+                "  💰 Precio: " + precio + "\n" +
+                "  📅 Fechas: " + mostrarFechas();
     }
 
     public Estado getEstado() {
@@ -163,17 +162,16 @@ public abstract class Vivienda implements IComprobarFecha, IMetodoDePago, Compar
         return encontrado;
     }
 
-    public String mostrarFechas(){
+    public String mostrarFechas() {
         String listado = "";
-        for(Fecha fecha: disponibilidad){
+        for (Fecha fecha : disponibilidad) {
             listado = listado.concat(fecha.toString()) + '\n';
         }
         return listado;
     }
 
 
-
-    public void baja(){
+    public void baja() {
         estado = Estado.Baja;
     }
 }

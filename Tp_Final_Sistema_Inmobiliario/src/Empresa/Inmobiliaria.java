@@ -2,6 +2,7 @@ package Empresa;
 
 import Cliente.Usuario;
 import Controladores.ControladoraInmobiliaria;
+import Excepciones.ControladoraUsuario.UsuarioNoEncontradoException;
 import Excepciones.EleccionIncorrectaException;
 import Excepciones.LugarExistenteException;
 import Excepciones.NoDisponibleException;
@@ -190,10 +191,16 @@ public class Inmobiliaria implements IJson {
         }
     }
 
-    public boolean darBaja(String mail) {
+    public boolean darBaja(String mail) throws UsuarioNoEncontradoException {
         boolean validacion = false;
+        Usuario usuario = null;
         Usuario aux = buscarUsuario(mail);
-        Usuario usuario = new Usuario(aux.getNombreYApellido(), aux.getContraseña(), aux.getDni(), aux.getMail(), aux.getEdad(), true);
+        if(aux != null){
+            usuario = new Usuario(aux.getNombreYApellido(), aux.getContraseña(), aux.getDni(), aux.getMail(), aux.getEdad(), true);
+        }else {
+            throw new UsuarioNoEncontradoException("Usuario no encontrado");
+        }
+
         if (usuario != null) {
             usuarios.remove(aux);
             agregarUsuario(usuario);
@@ -473,14 +480,14 @@ public class Inmobiliaria implements IJson {
 
         if (espacio <= 0) {
             validacion = false;
-        }else {
+        } else {
             for (int i = espacio + 1; i < direccion.length(); i++) {
                 if (!Character.isDigit(direccion.charAt(i)) && contadorNumeros > 4) {
                     validacion = false;
                 }
                 contadorNumeros++;
             }
-            if(validacion){
+            if (validacion) {
                 for (int i = 0; i < espacio; i++) {
                     if (!Character.isLetter(direccion.charAt(i))) {
                         validacion = false;
@@ -725,6 +732,7 @@ public class Inmobiliaria implements IJson {
             }
         }
     }
+
     public Casa buscarCasa(String direccion) {
         Casa casa = null;
         if (viviendas != null) {
@@ -802,19 +810,18 @@ public class Inmobiliaria implements IJson {
         return cocheras.modificar(cochera);
     }
 
-    public void guardarArchivoBinario(){
-        try{
+    public void guardarArchivoBinario() {
+        try {
             File arch = new File("usuarios.dat");
             ObjectOutputStream usuariosArch = new ObjectOutputStream(new FileOutputStream(arch));
-
             usuariosArch.writeObject(usuarios);
 
-        }catch (IOException e) {
-            System.err.println(e.getMessage());;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
     }
 
-    public void cargarArchivoBinario(){
+    public void cargarArchivoBinario() {
         try {
             File archivo = new File("usuarios.dat");
             ObjectInputStream usuariosBinario = new ObjectInputStream(new FileInputStream(archivo));
@@ -823,5 +830,4 @@ public class Inmobiliaria implements IJson {
             System.out.println(e.getMessage());
         }
     }
-
 }
