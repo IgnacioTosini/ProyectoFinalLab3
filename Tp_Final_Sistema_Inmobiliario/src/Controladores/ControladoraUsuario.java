@@ -39,92 +39,101 @@ public class ControladoraUsuario extends Component {
      * @return retorna el usuario que se quiso registrar/logear
      */
     public static void menu(Inmobiliaria inmobiliaria) {
-        Usuario usuario = new Usuario();
-        //new MenuInicioGUI(inmobiliaria);
         String respuesta = "si";
-        do {
-            System.out.println("Buen día ¿Qué le gustaría realizar?");
-            int opcion = 0;
-            System.out.println("1. Loguearse \n2. Registrarse");
-            try {
-                opcion = Integer.parseInt(teclado.nextLine());
-            } catch (NumberFormatException ignored) {
+       do{
+           try{
+               Usuario usuario = new Usuario();
+               //new MenuInicioGUI(inmobiliaria);
 
-            }
-            switch (opcion) {
-                case 1 -> {
-                    while (respuesta.equalsIgnoreCase("si")) {
-                        try {
-                            usuario = login(inmobiliaria);
-                            if (Usuario.comprobarAdmin(usuario)) {
-                                menuAdmin(inmobiliaria);
-                            } else {
-                                menuUsuario(inmobiliaria, usuario);
-                            }
-                            respuesta = "no";
-                        } catch (UsuarioNoEncontradoException | MalContraseñaException e) {
-                            System.err.println(e.getMessage());
-                            boolean respuestaValida = false;
-                            while (!respuestaValida) {
-                                System.out.println("¿Desea volver a intentar?");
-                                respuesta = teclado.nextLine();
-                                if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
-                                    respuestaValida = true;
-                                } else {
-                                    System.err.println("No debe contener números.");
-                                }
-                            }
-                        } catch (UsuarioDadoDeBajaException e) {
-                            System.err.println(e.getMessage());
-                            boolean respuestaValida = false;
-                            while (!respuestaValida) {
-                                System.out.println("¿Desea volver a intentar?");
-                                respuesta = teclado.nextLine();
-                                if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
-                                    respuestaValida = true;
-                                } else {
-                                    System.out.println("No debe contener números.");
-                                }
-                            }
-                        } catch (DireccionInvalidaException e) {
-                            System.err.println(e.getMessage());
-                        } catch (EleccionIncorrectaException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-                case 2 -> {
-                    while (respuesta.equalsIgnoreCase("si")) {
-                        try {
-                            usuario = registrarse(inmobiliaria);
-                            respuesta = "no";
-                        } catch (DniInvalidoException | EdadInvalidadException |
-                                 UsuarioYaExiste | UsuarioDadoDeBajaException e) {
-                            System.err.println(e.getMessage());
-                        }
-                    }
-                    inmobiliaria.agregarUsuario(usuario);
-                }
-                default -> System.err.println("Valor ingresado no valido");
-            }
-            boolean respuestaValida = false;
-            while (!respuestaValida) {
-                System.out.println("¿Quiere volver al menu?, presione si");
-                respuesta = teclado.nextLine();
-                if (respuesta.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
-                    respuestaValida = true;
-                } else {
-                    System.err.println("No debe contener números.");
-                }
-            }
-        } while (respuesta.equals("si"));
+               System.out.println("Buen día ¿Qué le gustaría realizar?");
+               int opcion = 0;
+               System.out.println("1. Loguearse \n2. Registrarse");
+               try {
+                   opcion = Integer.parseInt(teclado.nextLine());
+               } catch (NumberFormatException ignored) {
 
-        try {
-            JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
-            inmobiliaria.guardarArchivoBinario();
-        } catch (JSONException e) {
-            System.err.println(e.getMessage());
-        }
+               }
+               switch (opcion) {
+                   case 1 -> {
+                       while (respuesta.equalsIgnoreCase("si")) {
+                           try {
+                               usuario = login(inmobiliaria);
+                               if (Usuario.comprobarAdmin(usuario)) {
+                                   menuAdmin(inmobiliaria);
+                               } else {
+                                   menuUsuario(inmobiliaria, usuario);
+                               }
+                               respuesta = "no";
+                           } catch (UsuarioNoEncontradoException | MalContraseñaException e) {
+                               System.err.println(e.getMessage());
+                               boolean respuestaValida = false;
+                               while (!respuestaValida) {
+                                   System.out.println("¿Desea volver a intentar?");
+                                   respuesta = teclado.nextLine();
+                                   if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                       respuestaValida = true;
+                                   } else {
+                                       System.err.println("No debe contener números.");
+                                   }
+                               }
+                           } catch (UsuarioDadoDeBajaException e) {
+                               System.err.println(e.getMessage());
+                               boolean respuestaValida = false;
+                               while (!respuestaValida) {
+                                   System.out.println("¿Desea volver a intentar?");
+                                   respuesta = teclado.nextLine();
+                                   if (respuesta.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                       respuestaValida = true;
+                                   } else {
+                                       System.out.println("No debe contener números.");
+                                   }
+                               }
+                           } catch (DireccionInvalidaException e) {
+                               System.err.println(e.getMessage());
+                           } catch (EleccionIncorrectaException e) {
+                               throw new RuntimeException(e);
+                           }
+                       }
+                   }
+                   case 2 -> {
+                       while (respuesta.equalsIgnoreCase("si")) {
+                           try {
+                               usuario = registrarse(inmobiliaria);
+                               respuesta = "no";
+                           } catch (DniInvalidoException | EdadInvalidadException |
+                                    UsuarioYaExiste | UsuarioDadoDeBajaException e) {
+                               System.err.println(e.getMessage());
+                           }
+                       }
+                       inmobiliaria.agregarUsuario(usuario);
+                   }
+                   default -> System.err.println("Valor ingresado no valido");
+               }
+               boolean respuestaValida = false;
+               while (!respuestaValida) {
+                   System.out.println("¿Quiere volver al menu?, presione si");
+                   respuesta = teclado.nextLine();
+                   if (respuesta.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                       respuestaValida = true;
+                   } else {
+                       System.err.println("No debe contener números.");
+                   }
+               }
+
+
+               try {
+                   JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
+                   inmobiliaria.guardarArchivoBinario();
+               } catch (JSONException e) {
+                   System.err.println(e.getMessage());
+               }
+           }catch(RuntimeException e){
+               System.out.println("Error al escribir valor");
+               respuesta = "si";
+           }
+       }while(respuesta.equals("si"));
+
+
     }
 
     public static void menuAdmin(Inmobiliaria inmobiliaria) throws DireccionInvalidaException, EleccionIncorrectaException {
@@ -378,141 +387,146 @@ public class ControladoraUsuario extends Component {
         String tipoInmueble = "";
         boolean valido = true;
         do {
-            System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble \n 5- Mostrar Facturas");
-            int opcion = Integer.parseInt(teclado.nextLine());
-            switch (opcion) {
-                case 1:
-                    try {
-                        listarInmueble(inmobiliaria);
-                    } catch (EleccionIncorrectaException e) {
-                        System.err.println(e.getMessage());
-                    }
-                    break;
-
-                case 2:
-                    try {
-                        buscarInmueble(inmobiliaria);
-                    } catch (EleccionIncorrectaException e) {
-                        System.err.println(e.getMessage());
-                    }
-                    break;
-
-                case 3:
-                    do {
-                        boolean inmuebleValido = false;
-                        while (inmuebleValido == false) {
-                            System.out.println("Ingrese el tipo de inmueble que desea comprar. (Casa, Departamento, Local, Cochera)");
-                            tipoInmueble = teclado.nextLine();
-                            if (tipoInmueble.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
-                                inmuebleValido = true;
-                            } else {
-                                System.out.println("No debe contener números.");
-                            }
-                        }
-
-                        if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
-                            valido = false;
-                        } else {
-                            valido = true;
-                        }
-                    } while (valido == false);
-
-                    do {
-                        System.out.println("Ingrese la direeción del inmueble que desea comprar");
-                        direccion = teclado.nextLine();
-
-                        if (!Inmobiliaria.validarDireccion(direccion)) {
-                            throw new DireccionInvalidaException("Direccion ingresada es invalida");
-                        }
-
-                        LocalDate fechaIngreso = LocalDate.now();
-                        LocalDate fechaSalida = LocalDate.now();
-
-                        Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
+            try {
+                System.out.println("Hola " + usuario.getNombreYApellido() + ", que desea hacer? \n 1- Ver lista de inmuebles \n 2- Buscar un inmueble \n 3- Comprar un inmueble \n 4- Alquilar un inmueble \n 5- Mostrar Facturas");
+                int opcion = Integer.parseInt(teclado.nextLine());
+                switch (opcion) {
+                    case 1:
                         try {
-                            inmobiliaria.venta(usuario, direccion, tipoInmueble, fecha);
-                        } catch (LugarExistenteException e) {
+                            listarInmueble(inmobiliaria);
+                        } catch (EleccionIncorrectaException e) {
                             System.err.println(e.getMessage());
+                        }
+                        break;
 
-                            boolean continuarValido = false;
-                            while (continuarValido == false) {
-                                System.out.println("¿Quiere intentar otra vez?");
-                                continuar = teclado.nextLine();
-                                if (continuar.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
-                                    continuarValido = true;
+                    case 2:
+                        try {
+                            buscarInmueble(inmobiliaria);
+                        } catch (EleccionIncorrectaException e) {
+                            System.err.println(e.getMessage());
+                        }
+                        break;
+
+                    case 3:
+                        do {
+                            boolean inmuebleValido = false;
+                            while (inmuebleValido == false) {
+                                System.out.println("Ingrese el tipo de inmueble que desea comprar. (Casa, Departamento, Local, Cochera)");
+                                tipoInmueble = teclado.nextLine();
+                                if (tipoInmueble.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                    inmuebleValido = true;
                                 } else {
                                     System.out.println("No debe contener números.");
                                 }
                             }
-                        }
-                        continuar = "no";
-                    } while (continuar.equalsIgnoreCase("si"));
-                    break;
-                case 4:
-                    do {
-                        System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
-                        tipoInmueble = teclado.nextLine();
-                        if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
-                            valido = false;
-                        } else {
-                            valido = true;
-                        }
-                    } while (valido == false);
 
-                    do {
-                        System.out.println("Ingrese la direeción del inmueble que desea alquilar");
-                        direccion = teclado.nextLine();
+                            if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
+                                valido = false;
+                            } else {
+                                valido = true;
+                            }
+                        } while (valido == false);
 
-                        if (!Inmobiliaria.validarDireccion(direccion)) {
-                            throw new DireccionInvalidaException("Direccion ingresada es invalida");
-                        }
-
-                        LocalDate fechaIngreso = null;
-                        LocalDate fechaSalida = null;
                         do {
-                            try {
-                                System.out.println("Ingrese la fecha de ingreso:\n");
-                                fechaIngreso = crearFechaAlquiler();
+                            System.out.println("Ingrese la direeción del inmueble que desea comprar");
+                            direccion = teclado.nextLine();
 
-                                System.out.println("Ingrese cuantos dias desea estar: ");
-                                int cantDias = Integer.parseInt(teclado.nextLine());
-                                fechaSalida = fechaIngreso.plusDays(cantDias);
-                                continuar = "no";
-                            } catch (EleccionIncorrectaException e) {
+                            if (!Inmobiliaria.validarDireccion(direccion)) {
+                                throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                            }
+
+                            LocalDate fechaIngreso = LocalDate.now();
+                            LocalDate fechaSalida = LocalDate.now();
+
+                            Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
+                            try {
+                                inmobiliaria.venta(usuario, direccion, tipoInmueble, fecha);
+                            } catch (LugarExistenteException e) {
+                                System.err.println(e.getMessage());
+
+                                boolean continuarValido = false;
+                                while (continuarValido == false) {
+                                    System.out.println("¿Quiere intentar otra vez?");
+                                    continuar = teclado.nextLine();
+                                    if (continuar.matches("^[a-zA-Z\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
+                                        continuarValido = true;
+                                    } else {
+                                        System.out.println("No debe contener números.");
+                                    }
+                                }
+                            }
+                            continuar = "no";
+                        } while (continuar.equalsIgnoreCase("si"));
+                        break;
+                    case 4:
+                        do {
+                            System.out.println("Ingrese el tipo de inmueble que desea alquilar. (Casa, Departamento, Local, Cochera)");
+                            tipoInmueble = teclado.nextLine();
+                            if (!(tipoInmueble.equalsIgnoreCase("casa") || tipoInmueble.equalsIgnoreCase("departamento") || tipoInmueble.equalsIgnoreCase("local") || tipoInmueble.equalsIgnoreCase("cochera"))) {
+                                valido = false;
+                            } else {
+                                valido = true;
+                            }
+                        } while (valido == false);
+
+                        do {
+                            System.out.println("Ingrese la direeción del inmueble que desea alquilar");
+                            direccion = teclado.nextLine();
+
+                            if (!Inmobiliaria.validarDireccion(direccion)) {
+                                throw new DireccionInvalidaException("Direccion ingresada es invalida");
+                            }
+
+                            LocalDate fechaIngreso = null;
+                            LocalDate fechaSalida = null;
+                            do {
+                                try {
+                                    System.out.println("Ingrese la fecha de ingreso:\n");
+                                    fechaIngreso = crearFechaAlquiler();
+
+                                    System.out.println("Ingrese cuantos dias desea estar: ");
+                                    int cantDias = Integer.parseInt(teclado.nextLine());
+                                    fechaSalida = fechaIngreso.plusDays(cantDias);
+                                    continuar = "no";
+                                } catch (EleccionIncorrectaException e) {
+                                    System.err.println(e.getMessage());
+                                    System.out.println("¿Quiere intentar otra vez?");
+                                    continuar = teclado.nextLine();
+                                }
+                            } while (continuar.equalsIgnoreCase("si"));
+                            Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
+                            try {
+                                inmobiliaria.alquilar(usuario, direccion, tipoInmueble, fecha);
+                            } catch (NoDisponibleException e) {
+                                System.err.println(e.getMessage());
+                                System.out.println("Fechas ocupadas: " + e.getDisponibilidad());
+                                System.out.println("¿Quiere intentar otra vez?");
+                                continuar = teclado.nextLine();
+                            } catch (LugarExistenteException e) {
                                 System.err.println(e.getMessage());
                                 System.out.println("¿Quiere intentar otra vez?");
                                 continuar = teclado.nextLine();
                             }
                         } while (continuar.equalsIgnoreCase("si"));
-                        Fecha fecha = new Fecha(fechaIngreso, fechaSalida);
-                        try {
-                            inmobiliaria.alquilar(usuario, direccion, tipoInmueble, fecha);
-                        } catch (NoDisponibleException e) {
-                            System.err.println(e.getMessage());
-                            System.out.println("Fechas ocupadas: " + e.getDisponibilidad());
-                            System.out.println("¿Quiere intentar otra vez?");
-                            continuar = teclado.nextLine();
-                        } catch (LugarExistenteException e) {
-                            System.err.println(e.getMessage());
-                            System.out.println("¿Quiere intentar otra vez?");
-                            continuar = teclado.nextLine();
-                        }
-                    } while (continuar.equalsIgnoreCase("si"));
-                    break;
+                        break;
 
-                case 5:
-                    if (Objects.equals(usuario.mostrarFacturas(), "")) {
-                        System.out.println("Usted no tiene ninguna Facturas.");
-                    } else {
-                        System.out.println(usuario.mostrarFacturas());
-                    }
-                    break;
-                default:
-                    System.err.println("Opción invalida");
-                    break;
+                    case 5:
+                        if (Objects.equals(usuario.mostrarFacturas(), "")) {
+                            System.out.println("Usted no tiene ninguna Facturas.");
+                        } else {
+                            System.out.println(usuario.mostrarFacturas());
+                        }
+                        break;
+                    default:
+                        System.err.println("Opción invalida");
+                        break;
+                }
+                System.out.println("¿Desea hacer otra acción? Si es así ingrese si");
+                continuar = teclado.nextLine();
+            }catch (Exception e){
+                System.err.println("Valor ingresado incorrecto");
+                continuar="si";
             }
-            System.out.println("¿Desea hacer otra acción? Si es así ingrese si");
-            continuar = teclado.nextLine();
 
         } while (continuar.equalsIgnoreCase("si"));
     }
