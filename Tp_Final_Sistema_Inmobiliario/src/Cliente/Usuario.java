@@ -80,16 +80,17 @@ public class Usuario implements IJson, Serializable, Comparable {
 
     @Override
     public String toString() {
-        return "Usuario{" +
-                "nombreYApellido='" + nombreYApellido + '\'' +
-                ", contraseña=" + contraseña +
-                ", dni='" + dni + '\'' +
-                ", mail=" + mail +
-                ", edad=" + edad +
-                ", estado=" + estado +
-                ", historial=" + historial +
-                '}';
+        return "👤 Usuario {\n" +
+                "  👨‍💼 nombre y apellido = '" + nombreYApellido + "'\n" +
+                "  🔒 contraseña = " + contraseña.toString() + "\n" +
+                "  🆔 dni = '" + dni + "'\n" +
+                "  ✉️ mail = " + mail.toString() + "\n" +
+                "  🎂 edad = " + edad + "\n" +
+                "  🌐 estado = " + estado + "\n" +
+                "  📜 historial = " + historial + "\n" +
+                "}";
     }
+
 
     /**
      * Comprueba que el usuario ingresado cumpla con los parametros para ser considerado un admin.

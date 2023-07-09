@@ -1,8 +1,6 @@
 package Lugares;
 
-import Controladores.ControladoraInmobiliaria;
 import Excepciones.EleccionIncorrectaException;
-import Interfaces.IJson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +9,7 @@ public class Departamento extends Vivienda implements Comparable {
     private String nroPiso;
     private String disposicion;
 
-    public Departamento(Estado estado, String direccion , short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, double precio, String nroPiso, String disposicion) {
+    public Departamento(Estado estado, String direccion, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, double precio, String nroPiso, String disposicion) {
         super(estado, direccion, ambientes, cantBanios, metrosCuadrados, amueblado, cochera, precio);
         this.nroPiso = nroPiso;
         this.disposicion = disposicion;
@@ -26,28 +24,27 @@ public class Departamento extends Vivienda implements Comparable {
     @Override
     public boolean equals(Object obj) {
         boolean validacion = false;
-        if(obj != null){
-            if(obj instanceof Departamento){
-                if(getDireccion().equals(((Departamento) obj).getDireccion())){
+        if (obj != null) {
+            if (obj instanceof Departamento) {
+                if (getDireccion().equals(((Departamento) obj).getDireccion())) {
                     validacion = true;
                 }
             }
         }
 
-
         return validacion;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 1;
     }
 
     @Override
     public int compareTo(Object o) {
         int valor = 0;
-        if(o != null){
-            if(o instanceof Departamento){
+        if (o != null) {
+            if (o instanceof Departamento) {
                 valor = getDireccion().compareTo(((Departamento) o).getDireccion());
             }
         }
@@ -56,10 +53,9 @@ public class Departamento extends Vivienda implements Comparable {
 
     @Override
     public String toString() {
-        return "Departamento{" +
-                "nroPiso='" + nroPiso + '\'' +
-                ", disposicion='" + disposicion + '\'' +
-                "} " + super.toString();
+        return "🏢 Departamento {\n" +
+                "  🏢 Número de Piso: '" + nroPiso + "'\n" +
+                "  ↕️ Disposición: '" + disposicion + "'\n" + super.toString();
     }
 
     public String getNroPiso() {
@@ -78,12 +74,11 @@ public class Departamento extends Vivienda implements Comparable {
         this.disposicion = disposicion;
     }
 
-
     @Override
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("estado",getEstado().name());
+        jsonObject.put("estado", getEstado().name());
         jsonObject.put("direccion", getDireccion());
         jsonObject.put("ambientes", getAmbientes());
         jsonObject.put("canBanios", getCantBanios());
@@ -94,14 +89,11 @@ public class Departamento extends Vivienda implements Comparable {
         jsonObject.put("nroPiso", nroPiso);
         jsonObject.put("disposicion", disposicion);
 
-
-
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i<cantDeFechas();i++){
+        for (int i = 0; i < cantDeFechas(); i++) {
             jsonArray.put(buscarFecha(i).toJsonObj());
         }
         jsonObject.put("disponibilidad", jsonArray);
-
 
         return jsonObject;
     }
@@ -114,7 +106,6 @@ public class Departamento extends Vivienda implements Comparable {
             case "EnAlquiler" -> setEstado(Estado.EnAlquiler);
             case "Baja" -> setEstado(Estado.Baja);
         }
-
         setDireccion(obj.getString("direccion"));
         setAmbientes((short) obj.getInt("ambientes"));
         setCantBanios((short) obj.getInt("canBanios"));
@@ -125,11 +116,10 @@ public class Departamento extends Vivienda implements Comparable {
         setNroPiso(obj.getString("nroPiso"));
         setDisposicion(obj.getString("disposicion"));
 
-
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 
         Fecha fecha = new Fecha();
-        for(int i = 0; i<jsonArray.length();i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             fecha.fromJsonObj((JSONObject) jsonArray.get(i));
             agregarDisponibilidad(fecha);
         }
@@ -138,13 +128,13 @@ public class Departamento extends Vivienda implements Comparable {
     @Override
     public double metodoDePago(int eleccion) throws EleccionIncorrectaException {
         double valorFinal = 0;
-        if(eleccion == 1){
+        if (eleccion == 1) {
             valorFinal = pagoEfectivo();
         } else if (eleccion == 2) {
             valorFinal = pagoDebito();
         } else if (eleccion == 3) {
             valorFinal = pagoCredito();
-        }else{
+        } else {
             throw new EleccionIncorrectaException("El valor ingresado es incorrecto");
         }
 
@@ -153,7 +143,7 @@ public class Departamento extends Vivienda implements Comparable {
 
     @Override
     public double pagoEfectivo() {
-        double valorFinal = getPrecio()- getPrecio()*0.05;
+        double valorFinal = getPrecio() - getPrecio() * 0.05;
 
         return valorFinal;
     }
@@ -166,7 +156,7 @@ public class Departamento extends Vivienda implements Comparable {
     @Override
     public double pagoCredito() {
         double valorFinal = 0;
-                valorFinal = getPrecio() + (getPrecio()*0.03);
+        valorFinal = getPrecio() + (getPrecio() * 0.03);
 
         return valorFinal;
     }

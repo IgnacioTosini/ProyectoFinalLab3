@@ -1456,12 +1456,18 @@ public class MenuInicioGUI extends JFrame {
                     "Dar de Baja Usuario", JOptionPane.PLAIN_MESSAGE);
             if (mailUsuario == null) { // Si el usuario cierra la ventana emergente sin ingresar datos
                 return;
-            } else if (!inmobiliaria.darBaja(mailUsuario)) { // Si el método devuelve falso
-                JOptionPane.showMessageDialog(null, "No se encontró ningún usuario con ese mail.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(null, "Usuario dado de baja exitosamente.",
-                        "Dar de Baja Usuario", JOptionPane.INFORMATION_MESSAGE);
+                try {
+                    if (!inmobiliaria.darBaja(mailUsuario)) { // Si el método devuelve falso
+                        JOptionPane.showMessageDialog(null, "No se encontró ningún usuario con ese mail.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Usuario dado de baja exitosamente.",
+                                "Dar de Baja Usuario", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (UsuarioNoEncontradoException e) {
+                    System.err.println(e.getMessage());
+                }
             }
 
             int seleccion = JOptionPane.showOptionDialog(

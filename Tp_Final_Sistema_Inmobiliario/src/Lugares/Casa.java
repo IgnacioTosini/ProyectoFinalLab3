@@ -15,7 +15,7 @@ public class Casa extends Vivienda {
     private short pisos;
 
     public Casa(Estado estado, String direccion, short ambientes, short cantBanios, int metrosCuadrados, boolean amueblado, boolean cochera, double precio, boolean patio, short pisos) {
-        super(estado, direccion , ambientes, cantBanios, metrosCuadrados, amueblado, cochera, precio);
+        super(estado, direccion, ambientes, cantBanios, metrosCuadrados, amueblado, cochera, precio);
         this.patio = patio;
         this.pisos = pisos;
     }
@@ -28,37 +28,37 @@ public class Casa extends Vivienda {
 
     @Override
     public String toString() {
-        return "Casa{" +
-                "patio=" + patio +
-                ", pisos=" + pisos +
-                "} " + super.toString();
+        return "🏠 Casa {\n" +
+                "  🌳 patio = " + patio + "\n" +
+                "  🏢 pisos = " + pisos + "\n" +
+                super.toString();
     }
+
 
     @Override
     public boolean equals(Object obj) {
         boolean validacion = false;
-        if(obj != null){
-            if(obj instanceof Casa){
-                if(getDireccion().equals(((Casa) obj).getDireccion())){
+        if (obj != null) {
+            if (obj instanceof Casa) {
+                if (getDireccion().equals(((Casa) obj).getDireccion())) {
                     validacion = true;
                 }
             }
         }
 
-
         return validacion;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 1;
     }
 
     @Override
     public int compareTo(Object o) {
         int valor = 0;
-        if(o != null){
-            if(o instanceof Casa){
+        if (o != null) {
+            if (o instanceof Casa) {
                 valor = getDireccion().compareTo(((Casa) o).getDireccion());
             }
         }
@@ -84,7 +84,7 @@ public class Casa extends Vivienda {
     @Override
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("estado",getEstado().name());
+        jsonObject.put("estado", getEstado().name());
         jsonObject.put("direccion", getDireccion());
         jsonObject.put("ambientes", getAmbientes());
         jsonObject.put("canBanios", getCantBanios());
@@ -96,11 +96,10 @@ public class Casa extends Vivienda {
         jsonObject.put("pisos", getPisos());
 
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i<cantDeFechas();i++){
+        for (int i = 0; i < cantDeFechas(); i++) {
             jsonArray.put(buscarFecha(i).toJsonObj());
         }
         jsonObject.put("disponibilidad", jsonArray);
-
 
         return jsonObject;
     }
@@ -127,8 +126,8 @@ public class Casa extends Vivienda {
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 
         Fecha fecha = new Fecha();
-        for(int i = 0; i<jsonArray.length();i++){
-            fecha.fromJsonObj( jsonArray.getJSONObject(i));
+        for (int i = 0; i < jsonArray.length(); i++) {
+            fecha.fromJsonObj(jsonArray.getJSONObject(i));
             agregarDisponibilidad(fecha);
         }
     }
@@ -136,13 +135,13 @@ public class Casa extends Vivienda {
     @Override
     public double metodoDePago(int eleccion) throws EleccionIncorrectaException {
         double valorFinal = 0;
-        if(eleccion == 1){
+        if (eleccion == 1) {
             valorFinal = pagoEfectivo();
         } else if (eleccion == 2) {
             valorFinal = pagoDebito();
         } else if (eleccion == 3) {
             valorFinal = pagoCredito();
-        }else{
+        } else {
             throw new EleccionIncorrectaException("El valor ingresado es incorrecto");
         }
 
@@ -151,22 +150,20 @@ public class Casa extends Vivienda {
 
     @Override
     public double pagoEfectivo() {
-        double valorFinal = getPrecio()- getPrecio()*0.05;
+        double valorFinal = getPrecio() - getPrecio() * 0.05;
 
         return valorFinal;
     }
 
     @Override
     public double pagoDebito() {
-
         return getPrecio();
     }
 
     @Override
     public double pagoCredito() {
         double valorFinal = 0;
-                valorFinal = getPrecio() + (getPrecio()*0.03);
-
+        valorFinal = getPrecio() + (getPrecio() * 0.03);
 
         return valorFinal;
     }

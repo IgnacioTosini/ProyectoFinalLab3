@@ -1,6 +1,5 @@
 package Lugares;
 
-import Controladores.ControladoraInmobiliaria;
 import Excepciones.EleccionIncorrectaException;
 import Interfaces.*;
 import org.json.JSONArray;
@@ -34,7 +33,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         vidriera = false;
         precio = 0;
     }
-
 
     public String getDireccion() {
         return direccion;
@@ -76,7 +74,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         this.precio = precio;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         boolean validacion = false;
@@ -87,7 +84,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
                 }
             }
         }
-
 
         return validacion;
     }
@@ -112,17 +108,16 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
         disponibilidad.add(fecha);
     }
 
-
     @Override
     public String toString() {
-        return "Local{" +
-                "disponibilidad=" + disponibilidad +
-                ", direccion='" + direccion + '\'' +
-                ", estado=" + estado +
-                ", ambientes=" + ambientes +
-                ", vidriera=" + vidriera +
-                ", precio=" + precio +
-                '}';
+        return "🏬 Local {\n" +
+                "  🟢 Disponibilidad: " + disponibilidad.toString() + "\n" +
+                "  🏠 Dirección: '" + direccion + "'\n" +
+                "  🟣 Estado: " + estado + "\n" +
+                "  🚪 Ambientes: " + ambientes + "\n" +
+                "  🔍 Vidriera: " + vidriera + "\n" +
+                "  💰 Precio: $" + precio + "\n" +
+                "}";
     }
 
     @Override
@@ -170,12 +165,10 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
             case "Baja" -> setEstado(Estado.Baja);
         }
 
-
         setDireccion(obj.getString("direccion"));
         setAmbientes((short) obj.getInt("ambientes"));
         setVidriera(obj.getBoolean("vidriera"));
         setPrecio(obj.getDouble("precio"));
-
 
         JSONArray jsonArray = obj.getJSONArray("disponibilidad");
 
@@ -185,7 +178,6 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
             disponibilidad.add(fecha);
         }
     }
-
 
     @Override
     public double metodoDePago(int eleccion) throws EleccionIncorrectaException {
@@ -212,13 +204,11 @@ public class Local implements IComprobarFecha, IJson, Comparable, IMetodoDePago,
 
     @Override
     public double pagoDebito() {
-
         return precio;
     }
 
     @Override
     public double pagoCredito() {
-
         double valorFinal = 0;
         valorFinal = precio + (precio * 0.02);
 

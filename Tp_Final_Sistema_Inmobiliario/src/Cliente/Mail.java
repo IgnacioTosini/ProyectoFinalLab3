@@ -3,16 +3,13 @@ package Cliente;
 import Excepciones.Mail.ArrobaException;
 import Excepciones.Mail.PuntoComException;
 import Interfaces.IJson;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.awt.event.WindowStateListener;
+
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Mail implements IJson, Comparable, Serializable {
-
     private String mail;
 
     public Mail(String mail) {
@@ -67,17 +64,16 @@ public class Mail implements IJson, Comparable, Serializable {
         }
         return validacion;
     }
-
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 1;
     }
 
     @Override
     public int compareTo(Object o) {
         int valor = 0;
-        if(o != null){
-            if(o instanceof Mail){
+        if (o != null) {
+            if (o instanceof Mail) {
                 valor = mail.compareTo(((Mail) o).getMail());
             }
         }
@@ -87,7 +83,6 @@ public class Mail implements IJson, Comparable, Serializable {
     @Override
     public JSONObject toJsonObj() throws JSONException {
         JSONObject jsonObject = new JSONObject();
-
         jsonObject.put("mail", mail);
 
         return jsonObject;
@@ -104,8 +99,8 @@ public class Mail implements IJson, Comparable, Serializable {
 
     @Override
     public String toString() {
-        return "Mail{" +
-                "mail='" + mail + '\'' +
-                '}';
+        return "Mail {" +
+                "\n📨 Correo electrónico: '" + mail + '\'' +
+                "\n}";
     }
 }

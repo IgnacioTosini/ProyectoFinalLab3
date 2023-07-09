@@ -46,7 +46,11 @@ public class ControladoraUsuario extends Component {
             System.out.println("Buen día ¿Qué le gustaría realizar?");
             int opcion = 0;
             System.out.println("1. Loguearse \n2. Registrarse");
-            opcion = Integer.parseInt(teclado.nextLine());
+            try {
+                opcion = Integer.parseInt(teclado.nextLine());
+            } catch (NumberFormatException ignored) {
+
+            }
             switch (opcion) {
                 case 1 -> {
                     while (respuesta.equalsIgnoreCase("si")) {
@@ -101,7 +105,7 @@ public class ControladoraUsuario extends Component {
                     }
                     inmobiliaria.agregarUsuario(usuario);
                 }
-                default -> System.out.println("Valor ingresado no valido");
+                default -> System.err.println("Valor ingresado no valido");
             }
             boolean respuestaValida = false;
             while (!respuestaValida) {
@@ -114,6 +118,7 @@ public class ControladoraUsuario extends Component {
                 }
             }
         } while (respuesta.equals("si"));
+
         try {
             JsonUtiles.grabar(inmobiliaria.toJsonObj(), "inmobiliaria");
             inmobiliaria.guardarArchivoBinario();
@@ -151,10 +156,18 @@ public class ControladoraUsuario extends Component {
                     buscarInmueble(inmobiliaria);
                     break;
                 case 6:
-                    darDeBajaUsuario(inmobiliaria);
+                    try {
+                        darDeBajaUsuario(inmobiliaria);
+                    } catch (UsuarioNoEncontradoException e) {
+                        System.err.println(e.getMessage());
+                    }
                     break;
                 case 7:
-                    mostrarUsuario(inmobiliaria);
+                    try {
+                        mostrarUsuario(inmobiliaria);
+                    } catch (UsuarioNoEncontradoException e) {
+                        System.err.println(e.getMessage());
+                    }
                     break;
                 default:
                     System.err.println("Valor ingresado no valido");
@@ -233,7 +246,7 @@ public class ControladoraUsuario extends Component {
             if (nombre.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
                 nombreValido = true;
             } else {
-                System.out.println("Nombre inválido. No debe contener números.");
+                System.err.println("Nombre inválido. No debe contener números.");
             }
         }
         Contraseña contra = null;
@@ -488,9 +501,9 @@ public class ControladoraUsuario extends Component {
                     break;
 
                 case 5:
-                    if (Objects.equals(usuario.mostrarFacturas(), "")){
+                    if (Objects.equals(usuario.mostrarFacturas(), "")) {
                         System.out.println("Usted no tiene ninguna Facturas.");
-                    }else {
+                    } else {
                         System.out.println(usuario.mostrarFacturas());
                     }
                     break;
@@ -541,13 +554,16 @@ public class ControladoraUsuario extends Component {
      * @param inmobiliaria
      * @return void.
      */
-    public static void mostrarUsuario(Inmobiliaria inmobiliaria) {
+    public static void mostrarUsuario(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException {
         String continuar = "";
         do {
             System.out.println("Mail del usuario: ");
             String mail = teclado.nextLine();
-            System.out.println(inmobiliaria.buscarUsuario(mail).toString());
-
+            if (inmobiliaria.buscarUsuario(mail) == null) {
+                throw new UsuarioNoEncontradoException("Usuario no encontrado");
+            } else {
+                System.out.println(inmobiliaria.buscarUsuario(mail).toString());
+            }
             System.out.println("Desea mostrar otro usuario? (Si/No)");
             continuar = teclado.nextLine();
         } while (continuar.equalsIgnoreCase("si"));
@@ -561,13 +577,13 @@ public class ControladoraUsuario extends Component {
      * @return void.
      */
 
-    public static void darDeBajaUsuario(Inmobiliaria inmobiliaria) {
+    public static void darDeBajaUsuario(Inmobiliaria inmobiliaria) throws UsuarioNoEncontradoException {
         String continuar = "no";
         do {
             System.out.println("Que usuario desea dar de baja? (Mail del Usuario)");
             String mailUsuario = teclado.nextLine();
             if (!inmobiliaria.darBaja(mailUsuario)) {
-                //excepcion
+                throw new UsuarioNoEncontradoException("Usuario no encontrado");
             }
             System.out.println("Desea dar de baja otro usuario?");
             continuar = teclado.nextLine();
@@ -1205,7 +1221,7 @@ public class ControladoraUsuario extends Component {
             String tipoInmueble = teclado.nextLine();
             if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "si";
-                System.out.println("Opcion ingresada es incorrecta");
+                System.err.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 System.out.println("Ingrese la direccion del inmueble: ");
                 String direccion = teclado.nextLine();
@@ -1256,13 +1272,13 @@ public class ControladoraUsuario extends Component {
                 }
             }
             boolean continuarValido = false;
-            while (continuarValido == false) {
+            while (!continuarValido) {
                 System.out.println("Desea mostrar otro inmueble?");
                 continuar = teclado.nextLine();
                 if (continuar.matches("^[a-zA-Z\\s]+$")) { // Verificar que el nombre solo contenga letras y espacios
                     continuarValido = true;
                 } else {
-                    System.out.println(" No debe contener números.");
+                    System.err.println(" No debe contener números.");
                 }
             }
         } while (continuar.equalsIgnoreCase("si"));
@@ -1278,8 +1294,6 @@ public class ControladoraUsuario extends Component {
 
     public static void agregarInmuebles(Inmobiliaria inmobiliaria) throws NombreYApellidoIncorrectoException {
         String continuar = "si";
-
-        int opcion = 0;
         do {
             boolean tipoInmuebleValido = false;
             String tipoInmueble = "";
@@ -1294,7 +1308,7 @@ public class ControladoraUsuario extends Component {
             }
             if (!(tipoInmueble.equalsIgnoreCase("Casa") || tipoInmueble.equalsIgnoreCase("Departamento") || tipoInmueble.equalsIgnoreCase("Local") || tipoInmueble.equalsIgnoreCase("Cochera"))) {
                 continuar = "no";
-                System.out.println("Opcion ingresada es incorrecta");
+                System.err.println("Opcion ingresada es incorrecta");
             } else if (tipoInmueble.equalsIgnoreCase("Casa")) {
                 try {
                     agregarCasa(inmobiliaria);
@@ -1321,13 +1335,13 @@ public class ControladoraUsuario extends Component {
                 }
             }
             boolean continuarValido = false;
-            while (continuarValido == false) {
+            while (!continuarValido) {
                 System.out.println("Desea agregar otro inmueble?  Si es asi ingrese Si");
                 continuar = teclado.nextLine();
                 if (continuar.matches("^[a-zA-Z\\s]+$")) {
                     continuarValido = true;
                 } else {
-                    System.out.println("No debe contener números.");
+                    System.err.println("No debe contener números.");
                 }
             }
         } while (continuar.equalsIgnoreCase("si"));
@@ -1366,7 +1380,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 amueblado = false;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1379,7 +1393,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 cochera = false;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1395,7 +1409,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 patio = false;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1411,7 +1425,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 estado = Estado.EnVenta;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1453,7 +1467,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 amueblado = false;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1466,7 +1480,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 cochera = false;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1482,7 +1496,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 disposicion = "Interno";
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1498,7 +1512,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 estado = Estado.EnVenta;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1535,7 +1549,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 vidrieras = false;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1551,7 +1565,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 estado = Estado.EnVenta;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1592,7 +1606,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 medioDeAcceso = "Rampa";
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
@@ -1608,7 +1622,7 @@ public class ControladoraUsuario extends Component {
             } else if (opcion == 2) {
                 estado = Estado.EnVenta;
             } else {
-                System.out.println("Opcion invalida");
+                System.err.println("Opcion invalida");
             }
         } while (opcion != 1 && opcion != 2);
 
